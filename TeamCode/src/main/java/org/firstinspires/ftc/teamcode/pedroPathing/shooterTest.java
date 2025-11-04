@@ -27,16 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This file contains a minimal example of a Linear "OpMode". An OpMode is a 'program' that runs
- * in either the autonomous or the TeleOp period of an FTC match. The names of OpModes appear on
- * the menu of the FTC Driver Station. When an selection is made from the menu, the corresponding
- * OpMode class is instantiated on the Robot Controller and executed.
- *
- * Remove the @Disabled annotation on the next line or two (if present) to add this OpMode to the
- * Driver Station OpMode list, or add a @Disabled annotation to prevent this OpMode from being
- * added to the Driver Station.
- */
+
 @TeleOp
 
 public class shooterTest extends LinearOpMode {
@@ -48,9 +39,10 @@ public class shooterTest extends LinearOpMode {
     private DcMotor intake = null;
     private DcMotor blender = null;
     private DcMotorEx shooter = null;
+    private Servo ls = null;
+    private Servo rs = null;
 
-    private Servo block = null;
-
+    //private Servo block = null;
     private boolean lastYState = false;
     private boolean state = false;
 
@@ -67,11 +59,11 @@ public class shooterTest extends LinearOpMode {
         intake  = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
         shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
-        shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        ls  = hardwareMap.get(Servo.class, "ls");
+        rs  = hardwareMap.get(Servo.class, "rs");
 
-        block = hardwareMap.get(Servo.class, "Block");
+        //block = hardwareMap.get(Servo.class, "Block");
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -88,6 +80,8 @@ public class shooterTest extends LinearOpMode {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -97,45 +91,20 @@ public class shooterTest extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad1.a){
-                intake.setPower(0.8);
-                //blender.setPower(0.55);
-                shooter.setPower(0);
-            }
-
-            if(gamepad1.b){
-                intake.setPower(-0.8);
-                //blender.setPower(-0.55);
-                shooter.setPower(0);
-            }
-            if(gamepad1.square){
-                shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                sleep(300);
-            }
-
-            if(gamepad1.dpad_down){//低
-                block.setPosition(0.23);
-            }
-            if(gamepad1.dpad_up){
-                block.setPosition(0.5);
-            }
+            ls.setPosition(0.4);
+            rs.setPosition(0.6);
 
             double max;
 
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double axial   = -gamepad1.left_stick_y;
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
 
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
@@ -152,6 +121,22 @@ public class shooterTest extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
+
+            if(gamepad1.a){
+                intake.setPower(0.8);
+                //blender.setPower(0.55);
+                shooter.setPower(0);
+            }
+
+            if(gamepad1.b){
+                intake.setPower(-0.8);
+                //blender.setPower(-0.55);
+                shooter.setPower(0);
+            }
+            if(gamepad1.square){
+                shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                sleep(300);
+            }
 
             boolean currentYState = gamepad1.y;
             if (currentYState && !lastYState && !state) {
@@ -182,11 +167,18 @@ public class shooterTest extends LinearOpMode {
                 shooter.setPower(0);
             }
 
+//            if(gamepad1.dpad_down){//低
+//                block.setPosition(0.23);
+//            }
+//            if(gamepad1.dpad_up){
+//                block.setPosition(0.5);
+//            }
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
-             telemetry.update();
+            telemetry.update();
 
         }
     }
