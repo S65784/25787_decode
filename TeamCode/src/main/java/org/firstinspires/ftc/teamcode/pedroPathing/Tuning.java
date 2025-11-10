@@ -27,6 +27,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 /**
  * This is the Tuning class. It contains a selection menu for various tuning OpModes.
  *
