@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import pedroPathing.Constants;
+//import pedroPathing.Constants;
 
 
 
@@ -47,7 +47,8 @@ public class RedAutoUno extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,controlPickup1Ready,pickup1Ready))
+//                .addPath(new BezierLine(scorePose,controlPickup1Ready,pickup1Ready))
+                .addPath(new BezierLine(scorePose,pickup1Ready))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading())
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
