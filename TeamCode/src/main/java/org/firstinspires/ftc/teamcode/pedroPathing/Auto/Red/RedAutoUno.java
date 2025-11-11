@@ -31,16 +31,20 @@ public class RedAutoUno extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+    public static double getPointPreX = 90;
+    public static double getPointX = 125;
+    public static double Point1Y = 83;
+    public static double Point2Y = 83;
 
     // Define Poses
     private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
     private final Pose scorePose = new Pose(114.68, 113.07, Math.toRadians(38));
     private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(38));
-    private final Pose pickup1Ready = new Pose(90, 83, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(125, 83, Math.toRadians(0));
+    private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
     private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
-    private final Pose pickup2Ready = new Pose(90, 54.35, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(125, 54.35, Math.toRadians(0));
+    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(0));
 
     private Path scorePreload, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;

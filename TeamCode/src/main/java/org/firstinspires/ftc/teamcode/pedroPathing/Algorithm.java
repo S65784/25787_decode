@@ -1,36 +1,44 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class Algorithm {
-    public IMU imu;
-    public DcMotor leftFrontDrive = null;
-    public DcMotor leftBackDrive = null;
-    public DcMotor rightFrontDrive = null;
-    public DcMotor rightBackDrive = null;
-    public DcMotor intake = null;
-    public DcMotor blender = null;
-    public DcMotorEx shooter = null;
+    public static IMU imu;
+    public static DcMotor leftFrontDrive = null;
+    public static DcMotor leftBackDrive = null;
+    public static DcMotor rightFrontDrive = null;
+    public static DcMotor rightBackDrive = null;
+    public static DcMotor intake = null;
+    public static DcMotor blender = null;
+    public static DcMotorEx shooter = null;
 
-    @Override
+    public static Servo block = null;
+    public static Servo ls = null;
+    public static Servo rs = null;
+
+
     public void runOpMode() {
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "LeftBackDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "LeftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
-        intake  = hardwareMap.get(DcMotor.class, "Intake");
+        intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
         shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
 
         block = hardwareMap.get(Servo.class, "Block");
-        ls = hardwareMap.get(Servo.class,"ls");
-        rs = hardwareMap.get(Servo.class,"rs");
+        ls = hardwareMap.get(Servo.class, "ls");
+        rs = hardwareMap.get(Servo.class, "rs");
 
-        imu = hardwareMap.get(IMU.class,"imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new com.qualcomm.hardware.rev.RevHubOrientationOnRobot(
                 com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP));
@@ -50,14 +58,28 @@ public class Algorithm {
         shooter.setDirection(DcMotor.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
 
-    private Servo block = null;
-    private Servo ls = null;
-    private Servo rs = null;
-    public static void shoot(int RPM, int error){
+//    public static boolean readyShoot(int RPM, int error){
+//
+//        double currentVelocityTicks = shooter.getVelocity();
+//        int MOTOR_TICK_COUNT = 28;
+//        double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
+//        boolean volocitycheck = false;
+//        if((RPM+error)>currentRPM && currentRPM>(RPM-error)) {
+//            volocitycheck = true;
+//        }
+//        else {
+//            volocitycheck = false;
+//        }
+//        return volocitycheck;
+//    }
+
+    public static void Shoot(int RPM, int error, boolean state){
 
         double currentVelocityTicks = shooter.getVelocity();
         int MOTOR_TICK_COUNT = 28;
+        double targetTicksPerSecond = RPM * MOTOR_TICK_COUNT / 60;
         double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
         boolean volocitycheck = false;
         if((RPM+error)>currentRPM && currentRPM>(RPM-error)) {
@@ -66,5 +88,24 @@ public class Algorithm {
         else {
             volocitycheck = false;
         }
+        if (state && !volocitycheck) {
+            block.setPosition(1);
+            intake.setPower(0);
+            blender.setPower(0);
+        }
+        else if (state && volocitycheck) {
+            block.setPosition(1);
+            intake.setPower(1);
+            blender.setPower(0.55);
+        }
+        shooter.setVelocity(targetTicksPerSecond);
+        telemetry.addData("当前 RPM", "%.2f", currentRPM);
+        telemetry.update();
+
     }
+
+
+
+    public static double P = 140, I = 20, D = 33, F = 14.5;//p=140
 }
+
