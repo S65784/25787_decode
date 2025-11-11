@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
 /**
  * This file contains a minimal example of a Linear "OpMode". An OpMode is a 'program' that runs
@@ -29,18 +30,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class GO extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private IMU imu;
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor intake = null;
-    private DcMotor blender = null;
-    private DcMotorEx shooter = null;
 
-    private Servo block = null;
-    private Servo ls = null;
-    private Servo rs = null;
 
     private boolean lastYState = false;
     private boolean state = false;
@@ -158,26 +148,26 @@ public class GO extends LinearOpMode {
                 TARGET_RPM = 1500;
             }
 
-            if(gamepad1.dpad_right){
-                TARGET_RPM = 2950;
-                ERROR_RANGE = 100;
-                //超远
-            }
-            if(gamepad1.dpad_left){
-                TARGET_RPM = 1900;
-                ERROR_RANGE = 100;
-                //三角腰
-            }
-            if(gamepad1.dpad_down){
-                TARGET_RPM = 1700;
-                ERROR_RANGE = 100;
-                //三角底部
-            }
-            if(gamepad1.dpad_up){
-                TARGET_RPM = 2300;
-                ERROR_RANGE = 50;
-                //三角顶点
-            }
+//            if(gamepad1.dpad_right){
+//                TARGET_RPM = 2950;
+//                ERROR_RANGE = 100;
+//                //超远
+//            }
+//            if(gamepad1.dpad_left){
+//                TARGET_RPM = 1900;
+//                ERROR_RANGE = 100;
+//                //三角腰
+//            }
+//            if(gamepad1.dpad_down){
+//                TARGET_RPM = 1700;
+//                ERROR_RANGE = 100;
+//                //三角底部
+//            }
+//            if(gamepad1.dpad_up){
+//                TARGET_RPM = 2300;
+//                ERROR_RANGE = 50;
+//                //三角顶点
+//            }
 
             // 如果正在自动转向，执行转向控制
 
