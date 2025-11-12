@@ -18,6 +18,8 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -38,6 +40,8 @@ public class RedAutoUno extends OpMode {
     public static double Point1Y = 83;
     public static double Point2Y = 60;
     public static double Point3Y = 35;
+
+
 
     // Define Poses
     private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
@@ -60,8 +64,10 @@ public class RedAutoUno extends OpMode {
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
-        scorePreload = new Path(new BezierLine(startPose, scorePose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+//        scorePreload = new Path(new BezierLine(startPose, scorePose));
+//        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+        scorePreload = new Path(new BezierLine(startPose, startPose));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), startPose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready))
@@ -109,8 +115,8 @@ public class RedAutoUno extends OpMode {
             case 0:
                     follower.followPath(scorePreload);
                     sleep(100);
-                    Algorithm.Shoot(1600,50,true);
-                    setPathState(1);
+                    //Algorithm.Shoot(1600,50,true);
+                    setPathState(-1);
                 break;
             case 1:
                 if (!follower.isBusy()) {

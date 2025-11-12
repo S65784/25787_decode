@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -55,9 +56,10 @@ public class Algorithm {
 
         intake.setDirection(DcMotor.Direction.FORWARD);
         blender.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 //    public static boolean readyShoot(int RPM, int error){
@@ -76,7 +78,9 @@ public class Algorithm {
 //    }
 
     public static void Shoot(int RPM, int error, boolean state){
-
+        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+        shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         double currentVelocityTicks = shooter.getVelocity();
         int MOTOR_TICK_COUNT = 28;
         double targetTicksPerSecond = RPM * MOTOR_TICK_COUNT / 60;
@@ -119,9 +123,18 @@ public class Algorithm {
 
     }
 
+    public static void servoControl(boolean servoState) {
+        if (servoState = true) {
+            Algorithm.ls.setPosition(0.4);
+            Algorithm.rs.setPosition(0.6);
+        }
+    }
+
 
     public static double P = 140, I = 20, D = 33, F = 14.5;//p=140
     public static boolean lastYState = false;
     public static boolean state = false;
+
+
 }
 

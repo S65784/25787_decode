@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+
 
 /**
  * This file contains a minimal example of a Linear "OpMode". An OpMode is a 'program' that runs
@@ -35,13 +37,7 @@ public class UNO extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Algorithm.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Algorithm.shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(Algorithm.P, Algorithm.I, Algorithm.D, Algorithm.F);
-        Algorithm.shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-
-        Algorithm.ls.setPosition(0.4);
-        Algorithm.rs.setPosition(0.6);
+        Algorithm.servoControl(true);
 
         runtime.reset();
         Algorithm.imu.resetYaw();
