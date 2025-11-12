@@ -103,9 +103,25 @@ public class Algorithm {
         telemetry.update();
 
     }
+    public static void Draw(boolean intakeState) {
+        if (intakeState = true) {
+            Algorithm.state = false;
+            Algorithm.block.setPosition(0.3);
+            Algorithm.intake.setPower(0.8);
+            Algorithm.blender.setPower(0);
+            Shoot(1500, 50, false);
+        }
+        if (intakeState = false) {
+            Algorithm.intake.setPower(0);
+            Algorithm.blender.setPower(0);
+            Shoot(1500, 50, false);
+        }
 
+    }
 
 
     public static double P = 140, I = 20, D = 33, F = 14.5;//p=140
+    public static boolean lastYState = false;
+    public static boolean state = false;
 }
 
