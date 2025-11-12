@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -25,7 +26,10 @@ public class Algorithm {
     public static Servo rs = null;
 
 
-    public void runOpMode() {
+
+
+    public static int MOTOR_TICK_COUNT = 28;
+    public Algorithm(HardwareMap hardwareMap) {
 
         leftFrontDrive = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "LeftBackDrive");
@@ -76,35 +80,38 @@ public class Algorithm {
 //        }
 //        return volocitycheck;
 //    }
-
-    public static void Shoot(int RPM, int error, boolean state){
-        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-        shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+    public static double getCurrentRPM(){
         double currentVelocityTicks = shooter.getVelocity();
-        int MOTOR_TICK_COUNT = 28;
-        double targetTicksPerSecond = RPM * MOTOR_TICK_COUNT / 60;
+        //int MOTOR_TICK_COUNT = 28;
         double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
-        boolean volocitycheck = false;
-        if((RPM+error)>currentRPM && currentRPM>(RPM-error)) {
-            volocitycheck = true;
+        return currentRPM;
+    }
+    public static void Shoot(int targetRPM, int error, boolean state){
+        if(state) {
+            shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+            shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            //double currentVelocityTicks = shooter.getVelocity();
+            //int MOTOR_TICK_COUNT = 28;
+            double targetTicksPerSecond = targetRPM * MOTOR_TICK_COUNT / 60;
+            double currentRPM = getCurrentRPM();
+            boolean volocitycheck = false;
+            if ((targetRPM + error) > currentRPM && currentRPM > (targetRPM - error)) {
+                volocitycheck = true;
+            } else {
+                volocitycheck = false;
+            }
+            if (!volocitycheck) {
+                block.setPosition(1);
+                intake.setPower(0);
+                blender.setPower(0);
+            } else if (volocitycheck) {
+                block.setPosition(1);
+                intake.setPower(1);
+                blender.setPower(0.55);
+            }
+            shooter.setVelocity(targetTicksPerSecond);
         }
-        else {
-            volocitycheck = false;
-        }
-        if (state && !volocitycheck) {
-            block.setPosition(1);
-            intake.setPower(0);
-            blender.setPower(0);
-        }
-        else if (state && volocitycheck) {
-            block.setPosition(1);
-            intake.setPower(1);
-            blender.setPower(0.55);
-        }
-        shooter.setVelocity(targetTicksPerSecond);
-        telemetry.addData("当前 RPM", "%.2f", currentRPM);
-        telemetry.update();
 
     }
     public static void Draw(boolean intakeState) {
@@ -128,6 +135,17 @@ public class Algorithm {
             Algorithm.ls.setPosition(0.4);
             Algorithm.rs.setPosition(0.6);
         }
+    }
+
+    public static boolean flag(boolean gamepad){
+        boolean currentState = gamepad;
+        boolean lastState = false;
+        if (currentState && !lastState) {
+            state = !state;
+        }
+        //Algorithm.Shoot(TARGET_RPM, ERROR_RANGE, Algorithm.state);
+        lastState = currentState;
+        return state;
     }
 
 
