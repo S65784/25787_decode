@@ -35,8 +35,6 @@ public class UNO extends LinearOpMode {
     public static int ERROR_RANGE = 0;
 
 
-
-
     @Override
     public void runOpMode() {
         Algorihthm = new Algorithm(hardwareMap);
@@ -46,7 +44,7 @@ public class UNO extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Algorithm.servoControl(true);
+        Algorithm.servoControl();
 
         runtime.reset();
         Algorithm.imu.resetYaw();
@@ -92,26 +90,11 @@ public class UNO extends LinearOpMode {
             //Algorithm.shooter.setVelocity(targetTicksPerSecond);
 
             if (gamepad1.a) {
-                Algorithm.Draw(true);
-//                Algorithm.state = false;
-//                Algorithm.block.setPosition(0.3);
-//                Algorithm.intake.setPower(0.8);
-//                Algorithm.blender.setPower(0);
-//                TARGET_RPM = 1500;
+                Algorithm.draw();
             }
 
-//            if (gamepad1.b) {
-//                Algorithm.intake.setPower(-0.8);
-//                Algorithm.blender.setPower(-0.55);
-//                Algorithm.shooter.setPower(0);
-//            }
             if (gamepad1.x) {
-                Algorithm.Draw(false);
-                //Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
-
-//                Algorithm.intake.setPower(0);
-//                Algorithm.blender.setPower(0);
-//                TARGET_RPM = 1500;
+                Algorithm.stopShoot();
             }
 
             Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,gamepad1.dpad_down);

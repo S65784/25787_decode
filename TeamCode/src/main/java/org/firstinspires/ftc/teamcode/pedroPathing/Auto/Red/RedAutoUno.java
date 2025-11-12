@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Red;
 
-//import android.graphics.Point;
-
-
-
 import static android.os.SystemClock.sleep;
 
 import com.pedropathing.follower.Follower;
@@ -25,14 +21,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-
 @Autonomous(name = "RedAutoUno", group = "Competition")
 public class RedAutoUno extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
-    public static final double MOTOR_TICK_COUNT = 28;
-    public static int TARGET_RPM = 0;
-    public static int ERROR_RANGE = 100;
+
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
@@ -43,13 +36,12 @@ public class RedAutoUno extends OpMode {
     public static double Point3Y = 35;
 
 
-
     // Define Poses
     private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
 
     private final Pose scorePose = new Pose(114.68, 113.07, Math.toRadians(38));
 
-    private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(38));
+    private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(0));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
@@ -61,15 +53,14 @@ public class RedAutoUno extends OpMode {
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
 
-
     private Path scorePreload, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
 //        scorePreload = new Path(new BezierLine(startPose, scorePose));
 //        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
-        scorePreload = new Path(new BezierLine(startPose, startPose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), startPose.getHeading());
+        scorePreload = new Path(new BezierLine(startPose, scorePose));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready))
@@ -116,24 +107,24 @@ public class RedAutoUno extends OpMode {
         switch (pathState) {
             case 0:
                     follower.followPath(scorePreload);
-                    sleep(100);
-                    //Algorithm.Shoot(1600,50,true);
-                    setPathState(-1);
+                    //sleep(100);
+                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
+                    setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.Draw(true);
+                    Algorithm.draw();
                     follower.followPath(grabPickup1, true);
                     sleep(100);
-                    Algorithm.Draw(false);
-                    setPathState(2);
+                    Algorithm.stopShoot();
+                    setPathState(-1);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup1, true);
                     sleep(100);
-                    Algorithm.shoot(1600,50,true);
+                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
                     setPathState(-1);
                 }
                 break;
@@ -142,10 +133,10 @@ public class RedAutoUno extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    Algorithm.Draw(true);
+                    Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     sleep(100);
-                    Algorithm.Draw(false);
+                    Algorithm.stopShoot();
                     setPathState(4);
                 }
                 break;
@@ -153,17 +144,17 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup2, true);
                     sleep(100);
-                    Algorithm.shoot(1600,50,true);
+                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
                     setPathState(5);
                 }
                 break;
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.Draw(true);
+                    Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     sleep(100);
-                    Algorithm.Draw(false);
+                    Algorithm.draw();
                     setPathState(6);
                 }
                 break;
@@ -172,7 +163,7 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup3, true);
                     sleep(100);
-                    Algorithm.shoot(1600,50,true);
+                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
                     setPathState(-1);
                 }
                 break;
@@ -193,6 +184,12 @@ public class RedAutoUno extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Running");
+        telemetry.addData("目标 RPM", Algorithm.targetRPM);
+        telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+
+        telemetry.update();
         telemetry.update();
     }
 
@@ -207,6 +204,8 @@ public class RedAutoUno extends OpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
         setPathState(0);
+
+        Algorithm.servoControl();
     }
 
     @Override

@@ -31,13 +31,15 @@ public class Algorithm {
     //constants
     public static final int TARGET_RPM_YI = 1700;
     public static final int ERROR_RANGE_YI = 100;
+
     public static final int TARGET_RPM_ER = 1900;
     public static final int ERROR_RANGE_ER = 100;
+
     public static final int TARGET_RPM_SAN = 2300;
     public static final int ERROR_RANGE_SAN = 50;
+
     public static final int TARGET_RPM_SI = 2950;
     public static final int ERROR_RANGE_SI = 100;
-
 
 
 
@@ -79,20 +81,6 @@ public class Algorithm {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-//    public static boolean readyShoot(int RPM, int error){
-//
-//        double currentVelocityTicks = shooter.getVelocity();
-//        int MOTOR_TICK_COUNT = 28;
-//        double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
-//        boolean volocitycheck = false;
-//        if((RPM+error)>currentRPM && currentRPM>(RPM-error)) {
-//            volocitycheck = true;
-//        }
-//        else {
-//            volocitycheck = false;
-//        }
-//        return volocitycheck;
-//    }
     public static double getCurrentRPM(){
         double currentVelocityTicks = shooter.getVelocity();
         //int MOTOR_TICK_COUNT = 28;
@@ -109,19 +97,15 @@ public class Algorithm {
             //int MOTOR_TICK_COUNT = 28;
             double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
             double currentRPM = getCurrentRPM();
-            boolean volocitycheck = false;
+
             if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
-                volocitycheck = true;
-            } else {
-                volocitycheck = false;
-            }
-            if (!volocitycheck) {
-                stopShoot();
-            } else if (volocitycheck) {
-                block.setPosition(1);
+                 //block.setPosition(1);
                 intake.setPower(1);
                 blender.setPower(0.55);
+            } else {
+                stopShoot();
             }
+
             shooter.setVelocity(targetTicksPerSecond);
             targetRPM = target_RPM;
         }
@@ -131,27 +115,17 @@ public class Algorithm {
         intake.setPower(0);
         blender.setPower(0);
     }
-    public static void Draw(boolean intakeState) {
-        if (intakeState = true) {
-            Algorithm.state = false;
-            Algorithm.block.setPosition(0.3);
-            Algorithm.intake.setPower(0.8);
-            Algorithm.blender.setPower(0);
-            stopShoot();
-        }
-        if (intakeState = false) {
-            Algorithm.intake.setPower(0);
-            Algorithm.blender.setPower(0);
-            stopShoot();
-        }
-
+    public static void draw() {
+            state = false;
+            block.setPosition(0.3);
+            intake.setPower(0.8);
+            blender.setPower(0);
+        shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
     }
 
-    public static void servoControl(boolean servoState) {
-        if (servoState = true) {
+    public static void servoControl() {
             Algorithm.ls.setPosition(0.4);
             Algorithm.rs.setPosition(0.6);
-        }
     }
     private static boolean lastState = false;
     private static boolean flagState = false;
@@ -165,7 +139,8 @@ public class Algorithm {
     }
 
 
-    public static double P = 140, I = 20, D = 33, F = 14.5;//p=140
+    public static double P = 135, I = 0, D = 80, F = 14;
+//    public static double P = 140, I = 20, D = 33, F = 14.5;
     public static boolean lastYState = false;
     public static boolean state = false;
 
