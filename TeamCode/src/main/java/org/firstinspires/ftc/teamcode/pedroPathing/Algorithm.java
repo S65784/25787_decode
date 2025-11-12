@@ -28,6 +28,19 @@ public class Algorithm {
 
 
 
+    //constants
+    public static final int TARGET_RPM_YI = 1700;
+    public static final int ERROR_RANGE_YI = 100;
+    public static final int TARGET_RPM_ER = 1900;
+    public static final int ERROR_RANGE_ER = 100;
+    public static final int TARGET_RPM_SAN = 2300;
+    public static final int ERROR_RANGE_SAN = 50;
+    public static final int TARGET_RPM_SI = 2950;
+    public static final int ERROR_RANGE_SI = 100;
+
+
+
+
     public static int MOTOR_TICK_COUNT = 28;
     public Algorithm(HardwareMap hardwareMap) {
 
@@ -86,33 +99,37 @@ public class Algorithm {
         double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
         return currentRPM;
     }
-    public static void Shoot(int targetRPM, int error, boolean state){
+    public static int targetRPM;
+    public static void shoot(int target_RPM, int error, boolean state){
         if(state) {
             shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
             shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
             //double currentVelocityTicks = shooter.getVelocity();
             //int MOTOR_TICK_COUNT = 28;
-            double targetTicksPerSecond = targetRPM * MOTOR_TICK_COUNT / 60;
+            double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
             double currentRPM = getCurrentRPM();
             boolean volocitycheck = false;
-            if ((targetRPM + error) > currentRPM && currentRPM > (targetRPM - error)) {
+            if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
                 volocitycheck = true;
             } else {
                 volocitycheck = false;
             }
             if (!volocitycheck) {
-                block.setPosition(1);
-                intake.setPower(0);
-                blender.setPower(0);
+                stopShoot();
             } else if (volocitycheck) {
                 block.setPosition(1);
                 intake.setPower(1);
                 blender.setPower(0.55);
             }
             shooter.setVelocity(targetTicksPerSecond);
+            targetRPM = target_RPM;
         }
-
+    }
+    public static void stopShoot(){
+        block.setPosition(1);
+        intake.setPower(0);
+        blender.setPower(0);
     }
     public static void Draw(boolean intakeState) {
         if (intakeState = true) {
@@ -120,12 +137,12 @@ public class Algorithm {
             Algorithm.block.setPosition(0.3);
             Algorithm.intake.setPower(0.8);
             Algorithm.blender.setPower(0);
-            Shoot(1500, 50, false);
+            stopShoot();
         }
         if (intakeState = false) {
             Algorithm.intake.setPower(0);
             Algorithm.blender.setPower(0);
-            Shoot(1500, 50, false);
+            stopShoot();
         }
 
     }
@@ -136,16 +153,15 @@ public class Algorithm {
             Algorithm.rs.setPosition(0.6);
         }
     }
-
+    private static boolean lastState = false;
+    private static boolean flagState = false;
     public static boolean flag(boolean gamepad){
         boolean currentState = gamepad;
-        boolean lastState = false;
         if (currentState && !lastState) {
-            state = !state;
+            flagState = !flagState;
         }
-        //Algorithm.Shoot(TARGET_RPM, ERROR_RANGE, Algorithm.state);
         lastState = currentState;
-        return state;
+        return flagState;
     }
 
 

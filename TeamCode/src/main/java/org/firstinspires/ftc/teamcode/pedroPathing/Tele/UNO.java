@@ -31,7 +31,7 @@ public class UNO extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     public static final double MOTOR_TICK_COUNT = 28;
-    public static int TARGET_RPM = 0;
+    //public static int TARGET_RPM = 0;
     public static int ERROR_RANGE = 0;
 
 
@@ -88,7 +88,7 @@ public class UNO extends LinearOpMode {
                 Algorithm.imu.resetYaw();
             }
 
-            double targetTicksPerSecond = TARGET_RPM * MOTOR_TICK_COUNT / 60;
+            //double targetTicksPerSecond = TARGET_RPM * MOTOR_TICK_COUNT / 60;
             //Algorithm.shooter.setVelocity(targetTicksPerSecond);
 
             if (gamepad1.a) {
@@ -107,32 +107,17 @@ public class UNO extends LinearOpMode {
 //            }
             if (gamepad1.x) {
                 Algorithm.Draw(false);
+                //Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
+
 //                Algorithm.intake.setPower(0);
 //                Algorithm.blender.setPower(0);
 //                TARGET_RPM = 1500;
             }
 
-//            if(gamepad1.dpad_down){
-//                TARGET_RPM = 1700;
-//                ERROR_RANGE = 100;
-//            }
-            Algorithm.Shoot(1700,100,Algorithm.flag(gamepad1.y));
-            Algorithm.Shoot(0,10,Algorithm.flag(gamepad1.b));
-
-            if(gamepad1.dpad_left){
-                TARGET_RPM = 1900;
-                ERROR_RANGE = 100;
-            }
-
-            if(gamepad1.dpad_up){
-                TARGET_RPM = 2300;
-                ERROR_RANGE = 50;
-            }
-
-            if(gamepad1.dpad_right){
-                TARGET_RPM = 2950;
-                ERROR_RANGE = 100;
-            }
+            Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,gamepad1.dpad_down);
+            Algorithm.shoot(Algorithm.TARGET_RPM_ER,Algorithm.ERROR_RANGE_ER,gamepad1.dpad_left);
+            Algorithm.shoot(Algorithm.TARGET_RPM_SAN,Algorithm.ERROR_RANGE_SAN,gamepad1.dpad_up);
+            Algorithm.shoot(Algorithm.TARGET_RPM_SI,Algorithm.ERROR_RANGE_SI,gamepad1.dpad_right);
 
 
 
@@ -140,7 +125,6 @@ public class UNO extends LinearOpMode {
             if (currentYState && !Algorithm.lastYState) {
                 Algorithm.state = true;
             }
-            //Algorithm.Shoot(TARGET_RPM, ERROR_RANGE, Algorithm.state);
             Algorithm.lastYState = currentYState;
 
 //            if (gamepad1.dpad_down) {
@@ -154,7 +138,7 @@ public class UNO extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
-            telemetry.addData("目标 RPM", TARGET_RPM);
+            telemetry.addData("目标 RPM", Algorithm.targetRPM);
             telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
 
             telemetry.update();

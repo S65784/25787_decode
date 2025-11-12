@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
 @Autonomous(name = "RedAutoUno", group = "Competition")
 public class RedAutoUno extends OpMode {
+    private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
     public static final double MOTOR_TICK_COUNT = 28;
     public static int TARGET_RPM = 0;
@@ -59,6 +60,7 @@ public class RedAutoUno extends OpMode {
     private final Pose controlPickup3Ready = new Pose(79, 70, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
+
 
     private Path scorePreload, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
@@ -131,7 +133,7 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup1, true);
                     sleep(100);
-                    Algorithm.Shoot(1600,50,true);
+                    Algorithm.shoot(1600,50,true);
                     setPathState(-1);
                 }
                 break;
@@ -151,7 +153,7 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup2, true);
                     sleep(100);
-                    Algorithm.Shoot(1600,50,true);
+                    Algorithm.shoot(1600,50,true);
                     setPathState(5);
                 }
                 break;
@@ -170,7 +172,7 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup3, true);
                     sleep(100);
-                    Algorithm.Shoot(1600,50,true);
+                    Algorithm.shoot(1600,50,true);
                     setPathState(-1);
                 }
                 break;
@@ -196,6 +198,7 @@ public class RedAutoUno extends OpMode {
 
     @Override
     public void init() {
+        Algorihthm = new Algorithm(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
