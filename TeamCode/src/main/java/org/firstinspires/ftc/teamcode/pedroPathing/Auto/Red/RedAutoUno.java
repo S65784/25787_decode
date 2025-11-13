@@ -64,6 +64,7 @@ public class RedAutoUno extends OpMode {
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
+
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
@@ -111,6 +112,7 @@ public class RedAutoUno extends OpMode {
 
     public void autonomousPathUpdate() {
         switch (pathState) {
+
             case 0:
                     follower.followPath(scorePreload);
                     setPathState(1);
@@ -121,12 +123,16 @@ public class RedAutoUno extends OpMode {
                     setPathState(2);
                 }
                 break;
+
+
+
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(runto1);
                     setPathState(3);
                 }
                 break;
+
             case 3:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
@@ -135,6 +141,7 @@ public class RedAutoUno extends OpMode {
                     setPathState(4);
                 }
                 break;
+
             case 4:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
@@ -152,12 +159,14 @@ public class RedAutoUno extends OpMode {
                 break;
 
 
+
             case 6:
                 if (!follower.isBusy()) {
                     follower.followPath(runto2);
                     setPathState(7);
                 }
                 break;
+
             case 7:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
@@ -166,6 +175,7 @@ public class RedAutoUno extends OpMode {
                     setPathState(8);
                 }
                 break;
+
             case 8:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
@@ -173,6 +183,8 @@ public class RedAutoUno extends OpMode {
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
+                break;
+
             case 9:
                 if (!follower.isBusy()) {
                 Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
@@ -181,12 +193,14 @@ public class RedAutoUno extends OpMode {
             break;
 
 
+
             case 10:
                 if (!follower.isBusy()) {
                     follower.followPath(runto3);
                     setPathState(11);
                 }
                 break;
+
             case 11:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
@@ -203,6 +217,7 @@ public class RedAutoUno extends OpMode {
                     follower.followPath(scorePickup3, true);
                     setPathState(13);
                 }
+                break;
 
             case 13:
                 if (!follower.isBusy()) {
@@ -211,14 +226,6 @@ public class RedAutoUno extends OpMode {
                 }
                 break;
 
-            case 523:
-                if (!follower.isBusy()) {
-                    follower.followPath(scorePickup3, true);
-                    sleep(100);
-                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true,true);
-                    setPathState(-1);
-                }
-                break;
         }
     }
 

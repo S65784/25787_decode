@@ -42,7 +42,11 @@ public class BlueAutoUno extends OpMode {
 
     private final Pose scorePose = new Pose(27.48, 115.52, Math.toRadians(142));
     private final Pose scorePose1 = new Pose(27, 111, Math.toRadians(148));
+    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
     private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
+    private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
+    private final Pose scorePose3 = new Pose(27, 109, Math.toRadians(148));
+
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
@@ -56,10 +60,11 @@ public class BlueAutoUno extends OpMode {
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(180));
 
-    private Path scorePreload, runto1,runto2,park;
+    private Path scorePreload, runto1, runto2, runto3;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
+
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
@@ -68,6 +73,10 @@ public class BlueAutoUno extends OpMode {
 
         runto2 = new Path(new BezierCurve(scorePose,controlPickup2Ready,pickup2Ready));
         runto2.setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Ready.getHeading());
+
+        runto3 = new Path(new BezierCurve(scorePose,controlPickup3Ready,pickup3Ready));
+        runto3.setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading());
+
 
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
@@ -79,6 +88,7 @@ public class BlueAutoUno extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
                 .build();
 
+
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
@@ -89,37 +99,42 @@ public class BlueAutoUno extends OpMode {
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
+
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,controlPickup3Ready,pickup3Ready))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading())
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
                 .build();
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
+                .build();
 
-//        park = new Path(new BezierCurve(new Point(scorePose),
-//                new Point(parkControlPose),
-//                new Point(parkPose)));
-//        park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
+
             case 0:
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
+
             case 1:
                 if (!follower.isBusy()) {
                     Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
                     setPathState(2);
                 }
                 break;
+
+
+
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(runto1);
                     setPathState(3);
                 }
                 break;
+
             case 3:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
@@ -128,6 +143,7 @@ public class BlueAutoUno extends OpMode {
                     setPathState(4);
                 }
                 break;
+
             case 4:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
@@ -145,12 +161,14 @@ public class BlueAutoUno extends OpMode {
                 break;
 
 
+
             case 6:
                 if (!follower.isBusy()) {
                     follower.followPath(runto2);
                     setPathState(7);
                 }
                 break;
+
             case 7:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
@@ -167,37 +185,49 @@ public class BlueAutoUno extends OpMode {
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
+                break;
 
             case 9:
+                if (!follower.isBusy()) {
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    setPathState(10);
+                }
+                break;
+
+
+
+            case 10:
+                if (!follower.isBusy()) {
+                    follower.followPath(runto3);
+                    setPathState(11);
+                }
+                break;
+
+            case 11:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.37);
+                    Algorithm.draw();
+                    follower.followPath(grabPickup3, true);
+                    setPathState(12);
+                }
+                break;
+
+            case 12:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    Algorithm.stopShoot();
+                    follower.followPath(scorePickup3, true);
+                    setPathState(13);
+                }
+                break;
+
+            case 13:
                 if (!follower.isBusy()) {
                     Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
                     setPathState(-1);
                 }
                 break;
 
-
-
-//                    follower.followPath(scorePickup2, true);
-//                    sleep(100);
-//                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true,true);
-//                    setPathState(5);
-//
-//                    Algorithm.draw();
-//                    follower.followPath(grabPickup3, true);
-//                    sleep(100);
-//                    Algorithm.draw();
-//                    setPathState(6);
-//                }
-//                break;
-
-            case 523:
-                if (!follower.isBusy()) {
-                    follower.followPath(scorePickup3, true);
-                    sleep(100);
-                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true,true);
-                    setPathState(-1);
-                }
-                break;
         }
     }
 
