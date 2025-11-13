@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "RedAutoUno", group = "Competition")
+@Autonomous(name = "BlueAutoUno(3+1)", group = "Competition")
 public class BlueAutoUno extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -30,8 +30,8 @@ public class BlueAutoUno extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    public static double getPointPreX = 50;
-    public static double getPointX = 13.5;
+    public static double getPointPreX = 45;
+    public static double getPointX = 12;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
     public static double Point3Y = 35;
@@ -40,12 +40,12 @@ public class BlueAutoUno extends OpMode {
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
-    private final Pose scorePose = new Pose(27.48, 115.52, Math.toRadians(142));
-    private final Pose scorePose1 = new Pose(27, 111, Math.toRadians(148));
+    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
+    private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
     private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
     private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
-    private final Pose scorePose3 = new Pose(27, 109, Math.toRadians(148));
+    private final Pose scorePose3 = new Pose(29, 106, Math.toRadians(148));
 
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));
@@ -58,7 +58,7 @@ public class BlueAutoUno extends OpMode {
 
     private final Pose controlPickup3Ready = new Pose(61, 70, Math.toRadians(180));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
 
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
@@ -90,12 +90,12 @@ public class BlueAutoUno extends OpMode {
 
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Ready,pickup2Pose))
+                .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Pose, scorePose2))
+                .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
@@ -121,7 +121,7 @@ public class BlueAutoUno extends OpMode {
 
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
                     setPathState(2);
                 }
                 break;
@@ -155,7 +155,7 @@ public class BlueAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
                     setPathState(6);
                 }
                 break;
@@ -189,7 +189,7 @@ public class BlueAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
                     setPathState(10);
                 }
                 break;

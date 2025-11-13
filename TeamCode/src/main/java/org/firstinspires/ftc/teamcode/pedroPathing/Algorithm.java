@@ -31,7 +31,7 @@ public class Algorithm {
 
     //constants
     public static final int TARGET_RPM_YI = 1600;
-    public static final int ERROR_RANGE_YI = 75;
+    public static final int ERROR_RANGE_YI = 50;
 
     public static final int TARGET_RPM_ER = 1900;
     public static final int ERROR_RANGE_ER = 100;
