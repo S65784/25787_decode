@@ -26,9 +26,6 @@ public class UNO extends LinearOpMode {
     private Algorithm Algorihthm;
 
     private ElapsedTime runtime = new ElapsedTime();
-    public static final double MOTOR_TICK_COUNT = 28;
-    //public static int TARGET_RPM = 0;
-    public static int ERROR_RANGE = 0;
 
 
     @Override
@@ -82,8 +79,6 @@ public class UNO extends LinearOpMode {
                 Algorithm.imu.resetYaw();
             }
 
-            //double targetTicksPerSecond = TARGET_RPM * MOTOR_TICK_COUNT / 60;
-            //Algorithm.shooter.setVelocity(targetTicksPerSecond);
 
             if (gamepad1.a) {
                 Algorithm.draw();
@@ -95,42 +90,18 @@ public class UNO extends LinearOpMode {
 
             boolean yState = Algorithm.flag(gamepad1.y);
 
-//            Algorithm.shoot(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, Algorithm.flag(gamepad1.dpad_down),yState);
-//            Algorithm.shoot(Algorithm.TARGET_RPM_ER, Algorithm.ERROR_RANGE_ER, Algorithm.flag(gamepad1.dpad_left),yState);
-//            Algorithm.shoot(Algorithm.TARGET_RPM_SAN, Algorithm.ERROR_RANGE_SAN, Algorithm.flag(gamepad1.dpad_up),yState);
-//            Algorithm.shoot(Algorithm.TARGET_RPM_SI, Algorithm.ERROR_RANGE_SI, Algorithm.flag(gamepad1.dpad_right),yState);
             int mode = -1;
-            if (gamepad1.dpad_down) {
-                mode = 1;
-            }else if (gamepad1.dpad_left) {
-                mode = 2;
-            }else if(gamepad1.dpad_up) {
-                mode = 3;
-            }else if(gamepad1.dpad_right) {
-                mode = 4;
-            }
+            if (gamepad1.dpad_down) mode = 1;
+            else if (gamepad1.dpad_left) mode = 2;
+            else if(gamepad1.dpad_up) mode = 3;
+            else if(gamepad1.dpad_right) mode = 4;
             
             Algorithm.shootMode(mode,yState);
 
-            
-            
-//            boolean currentYState = gamepad1.y;
-//            if (currentYState && !Algorithm.lastYState) {
-//                Algorithm.state = true;
-//            }
-//            Algorithm.lastYState = currentYState;
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
 
-//            if (gamepad1.dpad_down) {
-//                Algorithm.block.setPosition(0.35);
-//            }
-//            if (gamepad1.dpad_up) {
-//                Algorithm.block.setPosition(0.9);
-//            }
-
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-
-            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
             telemetry.addData("目标 RPM", Algorithm.targetRPM);
             telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
