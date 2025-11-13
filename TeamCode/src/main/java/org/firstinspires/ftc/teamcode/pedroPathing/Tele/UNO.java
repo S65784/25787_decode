@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-import com.pedropathing.follower.Follower;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -93,22 +89,36 @@ public class UNO extends LinearOpMode {
                 Algorithm.draw();
             }
 
-            if (gamepad1.x) {
+            if (Algorithm.flag(gamepad1.x)) {
                 Algorithm.stopShoot();
             }
 
-            Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,gamepad1.dpad_down);
-            Algorithm.shoot(Algorithm.TARGET_RPM_ER,Algorithm.ERROR_RANGE_ER,gamepad1.dpad_left);
-            Algorithm.shoot(Algorithm.TARGET_RPM_SAN,Algorithm.ERROR_RANGE_SAN,gamepad1.dpad_up);
-            Algorithm.shoot(Algorithm.TARGET_RPM_SI,Algorithm.ERROR_RANGE_SI,gamepad1.dpad_right);
+            boolean yState = Algorithm.flag(gamepad1.y);
 
-
-
-            boolean currentYState = gamepad1.y;
-            if (currentYState && !Algorithm.lastYState) {
-                Algorithm.state = true;
+//            Algorithm.shoot(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, Algorithm.flag(gamepad1.dpad_down),yState);
+//            Algorithm.shoot(Algorithm.TARGET_RPM_ER, Algorithm.ERROR_RANGE_ER, Algorithm.flag(gamepad1.dpad_left),yState);
+//            Algorithm.shoot(Algorithm.TARGET_RPM_SAN, Algorithm.ERROR_RANGE_SAN, Algorithm.flag(gamepad1.dpad_up),yState);
+//            Algorithm.shoot(Algorithm.TARGET_RPM_SI, Algorithm.ERROR_RANGE_SI, Algorithm.flag(gamepad1.dpad_right),yState);
+            int mode = -1;
+            if (gamepad1.dpad_down) {
+                mode = 1;
+            }else if (gamepad1.dpad_left) {
+                mode = 2;
+            }else if(gamepad1.dpad_up) {
+                mode = 3;
+            }else if(gamepad1.dpad_right) {
+                mode = 4;
             }
-            Algorithm.lastYState = currentYState;
+            
+            Algorithm.shootMode(mode,yState);
+
+            
+            
+//            boolean currentYState = gamepad1.y;
+//            if (currentYState && !Algorithm.lastYState) {
+//                Algorithm.state = true;
+//            }
+//            Algorithm.lastYState = currentYState;
 
 //            if (gamepad1.dpad_down) {
 //                Algorithm.block.setPosition(0.35);
@@ -117,12 +127,17 @@ public class UNO extends LinearOpMode {
 //                Algorithm.block.setPosition(0.9);
 //            }
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
             telemetry.addData("目标 RPM", Algorithm.targetRPM);
             telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+            telemetry.addData("test", Algorithm.test);
+            telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
+            telemetry.addData("YState", Algorithm.flag(gamepad1.y));
+
 
             telemetry.update();
 
