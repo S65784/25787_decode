@@ -34,7 +34,7 @@ public class RedAutoUno extends OpMode {
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
-    public static double Point3Y = 35;
+    public static double Point3Y = 34.5;
 
 
     // Define Poses
@@ -42,7 +42,11 @@ public class RedAutoUno extends OpMode {
 
     private final Pose scorePose = new Pose(112.52, 115.52, Math.toRadians(38));
     private final Pose scorePose1 = new Pose(113, 111, Math.toRadians(32));
+    private final Pose controlScorePose2 = new Pose(104, 60.3, Math.toRadians(32));
     private final Pose scorePose2 = new Pose(113, 109, Math.toRadians(32));
+    private final Pose controlScorePose3 = new Pose(113, 39, Math.toRadians(32));
+    private final Pose scorePose3 = new Pose(113, 109, Math.toRadians(32));
+
 
     private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(0));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
@@ -52,11 +56,11 @@ public class RedAutoUno extends OpMode {
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(0));
 
-    private final Pose controlPickup3Ready = new Pose(79, 70, Math.toRadians(0));
+    private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
 
-    private Path scorePreload, runto1,runto2,park;
+    private Path scorePreload, runto1, runto2, runto3, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
@@ -69,11 +73,13 @@ public class RedAutoUno extends OpMode {
         runto2 = new Path(new BezierCurve(scorePose,controlPickup2Ready,pickup2Ready));
         runto2.setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Ready.getHeading());
 
+        runto3 = new Path(new BezierCurve(scorePose,controlPickup3Ready,pickup3Ready));
+        runto3.setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading());
+
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
                 .build();
-
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
@@ -83,18 +89,18 @@ public class RedAutoUno extends OpMode {
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
                 .build();
-
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Pose, scorePose2))
+                .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,controlPickup3Ready,pickup3Ready))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading())
-                .setTimeoutConstraint(100)
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
+                .build();
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
 //        park = new Path(new BezierCurve(new Point(scorePose),
@@ -160,7 +166,6 @@ public class RedAutoUno extends OpMode {
                     setPathState(8);
                 }
                 break;
-
             case 8:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
@@ -168,28 +173,43 @@ public class RedAutoUno extends OpMode {
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
-
             case 9:
                 if (!follower.isBusy()) {
                 Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
-                setPathState(-1);
+                setPathState(10);
             }
             break;
 
 
+            case 10:
+                if (!follower.isBusy()) {
+                    follower.followPath(runto3);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.37);
+                    Algorithm.draw();
+                    follower.followPath(grabPickup3, true);
+                    setPathState(12);
+                }
+                break;
 
-//                    follower.followPath(scorePickup2, true);
-//                    sleep(100);
-//                    Algorithm.shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true,true);
-//                    setPathState(5);
-//
-//                    Algorithm.draw();
-//                    follower.followPath(grabPickup3, true);
-//                    sleep(100);
-//                    Algorithm.draw();
-//                    setPathState(6);
-//                }
-//                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    Algorithm.stopShoot();
+                    follower.followPath(scorePickup3, true);
+                    setPathState(13);
+                }
+
+            case 13:
+                if (!follower.isBusy()) {
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    setPathState(-1);
+                }
+                break;
 
             case 523:
                 if (!follower.isBusy()) {

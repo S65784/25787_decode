@@ -30,31 +30,31 @@ public class BlueAutoUno extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    public static double getPointPreX = 90;
-    public static double getPointX = 126.5;
+    public static double getPointPreX = 50;
+    public static double getPointX = 13.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
     public static double Point3Y = 35;
 
 
     // Define Poses
-    private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
+    private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
-    private final Pose scorePose = new Pose(112.52, 115.52, Math.toRadians(38));
-    private final Pose scorePose1 = new Pose(113, 111, Math.toRadians(32));
-    private final Pose scorePose2 = new Pose(113, 109, Math.toRadians(32));
+    private final Pose scorePose = new Pose(27.48, 115.52, Math.toRadians(142));
+    private final Pose scorePose1 = new Pose(27, 111, Math.toRadians(148));
+    private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
 
-    private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(0));
-    private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
+    private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));
+    private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
-    private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
-    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(0));
+    private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
+    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(180));
 
-    private final Pose controlPickup3Ready = new Pose(79, 70, Math.toRadians(0));
-    private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
-    private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
+    private final Pose controlPickup3Ready = new Pose(61, 70, Math.toRadians(180));
+    private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(180));
 
     private Path scorePreload, runto1,runto2,park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
@@ -92,7 +92,6 @@ public class BlueAutoUno extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,controlPickup3Ready,pickup3Ready))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading())
-                .setTimeoutConstraint(100)
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
                 .build();
