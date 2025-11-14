@@ -66,7 +66,7 @@ public class RedAutoDos extends OpMode {
     private PathChain grabPickup2, grabPickup3, scorePickup2, scorePickup3, runTheGate;
 
     public void buildPaths() {
-
+//ichi ni san shi/yon go roku shichi/nana hachi kyu jyu
         scorePreload = new Path(new BezierCurve(startPose, controlScorePose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
