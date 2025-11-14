@@ -32,8 +32,8 @@ public class BlueAutoDos extends OpMode {
     private int pathState;
 
     public static int san = 2400;
-    public static double getPointPreX = 95;
-    public static double getPointX = 126.5;
+    public static double getPointPreX = 140-95;
+    public static double getPointX = 140-126.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
     public static double Point3Y = 34.5;
