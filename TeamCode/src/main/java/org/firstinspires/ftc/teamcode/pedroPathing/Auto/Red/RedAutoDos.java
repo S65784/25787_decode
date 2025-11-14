@@ -40,7 +40,7 @@ public class RedAutoDos extends OpMode {
 
 
     // Define Poses
-    private final Pose startPose = new Pose(84.8, 8.8, Math.toRadians(90));
+    private final Pose startPose = new Pose(84.8, 8.4, Math.toRadians(90));
 
     private final Pose controlScorePose = new Pose(93.06631989596879, 62.91807542262679, Math.toRadians(0));
     private final Pose scorePose = new Pose(87.2, 81.8, Math.toRadians(40));
