@@ -1,29 +1,21 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Blue;
-
-import static android.os.SystemClock.sleep;
+package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Red;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathConstraints;
-import com.pedropathing.paths.PathPoint;
-import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.Path;
-
+import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "蓝色远端合作(调试中)", group = "Competition")
-public class BlueAutoDos extends OpMode {
+@Autonomous(name = "红色离开", group = "Competition")
+public class RedAutoCuatro extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -32,56 +24,55 @@ public class BlueAutoDos extends OpMode {
     private int pathState;
 
     public static int san = 2400;
-    public static double getPointPreX = 140-95;
-    public static double getPointX = 140-126.5;
+    public static double getPointPreX = 95;
+    public static double getPointX = 126.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
     public static double Point3Y = 34.5;
 
 
     // Define Poses
-    private final Pose startPose = new Pose(140-84.8, 8.4, Math.toRadians(90));
+    private final Pose startPose = new Pose(85, 8.4, Math.toRadians(90));
 
-    private final Pose controlScorePose = new Pose(140-93.06631989596879, 62.91807542262679, Math.toRadians(180-0));
-    private final Pose scorePose = new Pose(140-87.2, 81.8, Math.toRadians(180-40));
+    private final Pose controlScorePose = new Pose(93.06631989596879, 62.91807542262679, Math.toRadians(0));
+    private final Pose leavePose = new Pose(109, 8.4, Math.toRadians(90));
 
-    private final Pose controlScorePose2 = new Pose(140-83.51625487646294, 62.73081924577374, Math.toRadians(180-40));
-    private final Pose scorePose2 = new Pose(140-87.2, 81.8, Math.toRadians(180-40));
+    private final Pose controlScorePose2 = new Pose(83.51625487646294, 62.73081924577374, Math.toRadians(40));
+    private final Pose scorePose2 = new Pose(87.2, 81.8, Math.toRadians(40));
 
-    private final Pose controlScorePose3 = new Pose(140-84, 55, Math.toRadians(180-40));
-    private final Pose scorePose3 = new Pose(140-87.2, 81.87, Math.toRadians(180-40));
+    private final Pose controlScorePose3 = new Pose(84, 55, Math.toRadians(40));
+    private final Pose scorePose3 = new Pose(87.2, 81.87, Math.toRadians(40));
 
 
-//un dux toi
-    private final Pose pickup2Ready = new Pose(140-103.17815344603382, 59.36020806241872, Math.toRadians(180-0));
-    private final Pose pickup2Pose = new Pose(140-getPointX, 59.36020806241872, Math.toRadians(180-0));
+    private final Pose pickup2Ready = new Pose(103.17815344603382, 59.36020806241872, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(getPointX, 59.36020806241872, Math.toRadians(0));
 
-    private final Pose controlTheGate = new Pose(140-119.84395318595578, 68.34850455136541, Math.toRadians(180-0));
-    private final Pose theGate = new Pose(140-129.01950585175553, 68.16124837451235, Math.toRadians(180-0));
+    private final Pose controlTheGate = new Pose(119.84395318595578, 68.34850455136541, Math.toRadians(0));
+    private final Pose theGate = new Pose(129.01950585175553, 68.16124837451235, Math.toRadians(0));
 
-    private final Pose pickup3Ready = new Pose(140-101.30559167750326, Point3Y, Math.toRadians(180-0));
-    private final Pose pickup3Pose = new Pose(140-131, Point3Y, Math.toRadians(180-0));
+    private final Pose pickup3Ready = new Pose(101.30559167750326, Point3Y, Math.toRadians(0));
+    private final Pose pickup3Pose = new Pose(131, Point3Y, Math.toRadians(0));
 
     private Path scorePreload, runto2, runto3, park;
     private PathChain grabPickup2, grabPickup3, scorePickup2, scorePickup3, runTheGate;
 
     public void buildPaths() {
 //ichi ni san shi/yon go roku shichi/nana hachi kyu jyu
-        scorePreload = new Path(new BezierCurve(startPose, controlScorePose, scorePose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+        scorePreload = new Path(new BezierLine(startPose, leavePose));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), leavePose.getHeading());
 
-        runto2 = new Path(new BezierLine(scorePose,pickup2Ready));
-        runto2.setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Ready.getHeading());
-
-        runto3 = new Path(new BezierLine(scorePose,pickup3Ready));
-        runto3.setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading());
+//        runto2 = new Path(new BezierLine(scorePose, pickup2Ready));
+//        runto2.setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Ready.getHeading());
+//
+//        runto3 = new Path(new BezierLine(scorePose, pickup3Ready));
+//        runto3.setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading());
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Ready,pickup2Pose))
+                .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
                 .build();
         runTheGate = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup2Pose,controlTheGate, theGate))
+                .addPath(new BezierCurve(pickup2Pose, controlTheGate, theGate))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup2Pose.getHeading())
                 .build();
         scorePickup2 = follower.pathBuilder()
@@ -90,7 +81,7 @@ public class BlueAutoDos extends OpMode {
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup3Ready,pickup3Pose))
+                .addPath(new BezierLine(pickup3Ready, pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
                 .build();
         scorePickup3 = follower.pathBuilder()
@@ -105,7 +96,7 @@ public class BlueAutoDos extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
-                setPathState(1);
+                setPathState(-1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
@@ -113,7 +104,6 @@ public class BlueAutoDos extends OpMode {
                     setPathState(2);
                 }
                 break;
-
 
 
             case 2:
@@ -156,7 +146,6 @@ public class BlueAutoDos extends OpMode {
                     setPathState(6);
                 }
                 break;
-
 
 
             case 6:
@@ -212,7 +201,7 @@ public class BlueAutoDos extends OpMode {
         telemetry.addData("Status", "Running");
         telemetry.addData("目标 RPM", Algorithm.targetRPM);
         telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
-        telemetry.addData("test",Algorithm.test);
+        telemetry.addData("test", Algorithm.test);
 
 
         telemetry.update();
@@ -239,5 +228,6 @@ public class BlueAutoDos extends OpMode {
         opmodeTimer.resetTimer();
     }
 
-
 }
+
+

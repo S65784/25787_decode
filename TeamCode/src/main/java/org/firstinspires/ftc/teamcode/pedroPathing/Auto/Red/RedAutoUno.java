@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "RedAutoUno(3+1)", group = "Competition")
+@Autonomous(name = "红色近端单独跑", group = "Competition")
 public class RedAutoUno extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -61,9 +61,11 @@ public class RedAutoUno extends OpMode {
     private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(131, Point3Y, Math.toRadians(0));
+    private final Pose end = new Pose(120.78023407022106, 93.6, Math.toRadians(32));
+
 
     private Path scorePreload, runto1, runto2, runto3, park;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
     public void buildPaths() {
 
@@ -106,6 +108,11 @@ public class RedAutoUno extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        endpath = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose3, end))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
+                .build();
+
 //        park = new Path(new BezierCurve(new Point(scorePose),
 //                new Point(parkControlPose),
 //                new Point(parkPose)));
@@ -121,7 +128,7 @@ public class RedAutoUno extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(2);
                 }
                 break;
@@ -155,7 +162,7 @@ public class RedAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(6);
                 }
                 break;
@@ -189,7 +196,7 @@ public class RedAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 3000);
+                Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
                 setPathState(10);
             }
             break;
@@ -224,6 +231,12 @@ public class RedAutoUno extends OpMode {
             case 13:
                 if (!follower.isBusy()) {
                     Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(endpath, true);
                     setPathState(-1);
                 }
                 break;

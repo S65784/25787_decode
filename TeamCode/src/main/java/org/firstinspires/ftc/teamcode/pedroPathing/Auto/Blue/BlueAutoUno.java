@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "BlueAutoUno(3+1)", group = "Competition")
+@Autonomous(name = "蓝色近端单独跑", group = "Competition")
 public class BlueAutoUno extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -60,8 +60,11 @@ public class BlueAutoUno extends OpMode {
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
 
+    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(148));
+
+
     private Path scorePreload, runto1, runto2, runto3;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
     public void buildPaths() {
 
@@ -109,6 +112,11 @@ public class BlueAutoUno extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        endpath = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose3, end))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
+                .build();
+
     }
 
     public void autonomousPathUpdate() {
@@ -121,7 +129,7 @@ public class BlueAutoUno extends OpMode {
 
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2500);
                     setPathState(2);
                 }
                 break;
@@ -155,7 +163,7 @@ public class BlueAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
                     setPathState(6);
                 }
                 break;
@@ -189,7 +197,7 @@ public class BlueAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
                     setPathState(10);
                 }
                 break;
@@ -223,7 +231,14 @@ public class BlueAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
+                    setPathState(14);
+                }
+                break;
+
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(endpath, true);
                     setPathState(-1);
                 }
                 break;
