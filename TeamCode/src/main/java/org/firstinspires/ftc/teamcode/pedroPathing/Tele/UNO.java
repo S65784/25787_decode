@@ -78,7 +78,10 @@ public class UNO extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 Algorithm.imu.resetYaw();
             }
+            if (gamepad2.a) {
+                Algorithm.shootTime(1700, Algorithm.ERROR_RANGE_YI, true, 2500);
 
+            }
 
             if (gamepad1.a) {
                 Algorithm.draw();
@@ -95,7 +98,7 @@ public class UNO extends LinearOpMode {
             else if (gamepad1.dpad_left) mode = 2;
             else if(gamepad1.dpad_up) mode = 3;
             else if(gamepad1.dpad_right) mode = 4;
-            
+
             Algorithm.shootMode(mode,yState);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());

@@ -40,10 +40,10 @@ public class BlueAutoUno extends OpMode {
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
-    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
-    private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
+    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(144));
+    private final Pose scorePose1 = new Pose(29, 107.5, Math.toRadians(150));
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
+    private final Pose scorePose2 = new Pose(29, 107.5, Math.toRadians(150));
     private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
     private final Pose scorePose3 = new Pose(29, 106, Math.toRadians(148));
 
@@ -129,7 +129,7 @@ public class BlueAutoUno extends OpMode {
 
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2500);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(2);
                 }
                 break;
@@ -163,7 +163,7 @@ public class BlueAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(6);
                 }
                 break;
@@ -197,7 +197,7 @@ public class BlueAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(10);
                 }
                 break;
@@ -231,7 +231,7 @@ public class BlueAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2650);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(14);
                 }
                 break;
