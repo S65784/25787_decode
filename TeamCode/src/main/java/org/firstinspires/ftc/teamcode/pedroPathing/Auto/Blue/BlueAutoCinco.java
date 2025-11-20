@@ -1,29 +1,22 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Blue;
 
-import static android.os.SystemClock.sleep;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathConstraints;
-import com.pedropathing.paths.PathPoint;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.Path;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
 @Autonomous(name = "蓝色远端合作5", group = "Competition")
-public class BlueAutofive extends OpMode {
+public class BlueAutoCinco extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
 

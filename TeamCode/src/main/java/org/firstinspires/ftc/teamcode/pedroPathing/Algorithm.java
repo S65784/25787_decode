@@ -171,7 +171,16 @@ public class Algorithm {
             shootMode4.shoot(yState);
         }
     }
+    public static Runnable shoot(Runnable shootingMethod){
+        //general
+        shootingMethod.run();
+        return null;
+    }
+    public static void test(){
+        shoot(()->{
 
+        });
+    }
     public static double P = 135, I = 0, D = 80, F = 14;
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
     public static boolean lastYState = false;
