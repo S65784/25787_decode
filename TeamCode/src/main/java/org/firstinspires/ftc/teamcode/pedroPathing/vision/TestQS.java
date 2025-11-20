@@ -171,9 +171,9 @@ public class TestQS extends LinearOpMode {
             // 设置电机的目标速度
             shooter.setVelocity(targetTicksPerSecond);
             // --- B. 获取手柄输入 ---
-            if (gamepad1.x) targetAlliance = "Blue";
-            if (gamepad1.b) targetAlliance = "Red";
-            if (gamepad1.a) {
+            if (gamepad1.dpad_left) targetAlliance = "Blue";
+            if (gamepad1.dpad_right) targetAlliance = "Red";
+            if (gamepad1.left_bumper) {
                 pinpointPoseProvider.reset();
                 // --- 修改: 手动重置时，也重置IMU的场地0度参考点 ---
                 imu.resetYaw();
@@ -291,7 +291,7 @@ public class TestQS extends LinearOpMode {
         }
 
         double turnPower = calculatePIDOutput(headingError);
-        setMecanumPower(0, 0, turnPower);
+        setMecanumPower(turnPower);
     }
 
 
@@ -345,7 +345,7 @@ public class TestQS extends LinearOpMode {
     private void updateTelemetry(LaunchSolution solution, String targetAlliance) {
         telemetry.addLine("--- Archer 系统状态 ---");
         telemetry.addData("底盘模式", isAutoAiming ? ">> 自动对准 <<" : "手动驾驶");
-        telemetry.addData("目标联盟", "%s (按X/B切换)", targetAlliance);
+        telemetry.addData("目标联盟", "%s (按dpad_left/dpad_right切换)", targetAlliance);
 
         telemetry.addLine("\n--- 瞄准信息 ---");
         if (solution != null) {
@@ -394,11 +394,11 @@ public class TestQS extends LinearOpMode {
         return output;
     }
 
-    private void setMecanumPower(double drive, double strafe, double turn) {
-        double leftFrontPower = drive + strafe + turn;
-        double rightFrontPower = drive - strafe - turn;
-        double leftBackPower = drive - strafe + turn;
-        double rightBackPower = drive + strafe - turn;
+    private void setMecanumPower(double turn) {
+        double leftFrontPower = + turn;
+        double rightFrontPower = - turn;
+        double leftBackPower = + turn;
+        double rightBackPower = - turn;
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
