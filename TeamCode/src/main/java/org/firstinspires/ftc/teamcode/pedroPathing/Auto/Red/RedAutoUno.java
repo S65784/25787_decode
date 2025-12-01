@@ -12,6 +12,7 @@ import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.Path;
 
+
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -31,7 +32,7 @@ public class RedAutoUno extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    public static int yi = 1700;
+    private static int yi = 1700;
     public static double getPointPreX = 95;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
