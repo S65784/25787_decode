@@ -41,6 +41,7 @@ public class RedAutoTres extends OpMode {
     private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
 
     private final Pose scorePose = new Pose(112.52, 115.52, Math.toRadians(38));
+    private final Pose controlScorePose1 = new Pose(104.91220028208745, 77.99153737658675, Math.toRadians(32));
     private final Pose scorePose1 = new Pose(113, 111, Math.toRadians(32));
     private final Pose controlScorePose2 = new Pose(104, 60.3, Math.toRadians(32));
     private final Pose scorePose2 = new Pose(113, 109, Math.toRadians(32));
@@ -52,6 +53,9 @@ public class RedAutoTres extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
+    private final Pose controlTheGate = new Pose(123.39456981664316, 75.14809590973204, Math.toRadians(0));
+    private final Pose theGate = new Pose(128.8783497884344, 70.6798307475317468, Math.toRadians(0));
+
     private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(0));
@@ -61,12 +65,17 @@ public class RedAutoTres extends OpMode {
     private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
 
     private Path scorePreload, runto1, runto2, runto3, park;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+
+        runTheGate = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
+                .build();
 
         runto1 = new Path(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready));
         runto1.setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading());
@@ -82,8 +91,8 @@ public class RedAutoTres extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose, scorePose1))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
+                .addPath(new BezierCurve(theGate, controlScorePose1, scorePose1))
+                .setLinearHeadingInterpolation(theGate.getHeading(), scorePose1.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
@@ -138,14 +147,23 @@ public class RedAutoTres extends OpMode {
                     follower.setMaxPower(0.37);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
+                    setPathState(30);
+                }
+                break;
+
+            case 30:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    Algorithm.stopShoot();
+                    follower.followPath(runTheGate, true);
                     setPathState(4);
                 }
                 break;
 
+
+
             case 4:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    Algorithm.stopShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
