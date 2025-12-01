@@ -41,7 +41,7 @@ public class BlueAutoTres extends OpMode {
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
     private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
-    private final Pose controlScorePose1 = new Pose(104.91220028208745, 77.99153737658675, Math.toRadians(32));
+    private final Pose controlScorePose1 = new Pose(140-104.91220028208745, 77.99153737658675, Math.toRadians(180-32));
     private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
     private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
@@ -53,8 +53,8 @@ public class BlueAutoTres extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
-    private final Pose controlTheGate = new Pose(123.39456981664316, 75.14809590973204, Math.toRadians(0));
-    private final Pose theGate = new Pose(128.8783497884344, 70.6798307475317468, Math.toRadians(0));
+    private final Pose controlTheGate = new Pose(140-123.39456981664316, 75.14809590973204, Math.toRadians(180));
+    private final Pose theGate = new Pose(140-128.8783497884344, 70.6798307475317468, Math.toRadians(180));
 
     private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
