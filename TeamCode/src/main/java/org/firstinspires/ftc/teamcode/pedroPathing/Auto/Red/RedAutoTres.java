@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "RedAutoUno(4)", group = "Competition")
+@Autonomous(name = "红色近端单独跑(推gate版)", group = "Competition")
 public class RedAutoTres extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
