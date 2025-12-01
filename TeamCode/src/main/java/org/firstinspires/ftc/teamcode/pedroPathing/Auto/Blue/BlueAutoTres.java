@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "BlueAutoTres(4)", group = "Competition")
+@Autonomous(name = "篮色近端单独跑(推gate版)", group = "Competition")
 public class BlueAutoTres extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -41,6 +41,7 @@ public class BlueAutoTres extends OpMode {
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
     private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
+    private final Pose controlScorePose1 = new Pose(104.91220028208745, 77.99153737658675, Math.toRadians(32));
     private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
     private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
@@ -52,6 +53,9 @@ public class BlueAutoTres extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
+    private final Pose controlTheGate = new Pose(123.39456981664316, 75.14809590973204, Math.toRadians(0));
+    private final Pose theGate = new Pose(128.8783497884344, 70.6798307475317468, Math.toRadians(0));
+
     private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(180));
@@ -61,12 +65,17 @@ public class BlueAutoTres extends OpMode {
     private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
 
     private Path scorePreload, runto1, runto2, runto3;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths() {
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+
+        runTheGate = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
+                .build();
 
         runto1 = new Path(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready));
         runto1.setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading());
@@ -84,8 +93,8 @@ public class BlueAutoTres extends OpMode {
                 .build();
 
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose, scorePose1))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
+                .addPath(new BezierLine(theGate, scorePose1))
+                .setLinearHeadingInterpolation(theGate.getHeading(), scorePose1.getHeading())
                 .build();
 
 
@@ -140,18 +149,29 @@ public class BlueAutoTres extends OpMode {
                     follower.setMaxPower(0.37);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
+                    setPathState(30);
+                }
+                break;
+
+
+            case 30:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    Algorithm.stopShoot();
+                    follower.followPath(runTheGate, true);
                     setPathState(4);
                 }
                 break;
 
+
             case 4:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    Algorithm.stopShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
                 break;
+
+
 
             case 5:
                 if (!follower.isBusy()) {
