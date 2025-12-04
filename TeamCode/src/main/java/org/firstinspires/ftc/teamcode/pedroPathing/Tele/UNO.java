@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
 
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Algorithm.drawTimer;
+
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,6 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+
+
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import kotlin.math.*;
 
 
 /**
@@ -24,6 +34,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
 public class UNO extends LinearOpMode {
     private Algorithm Algorihthm;
+    private TelemetryManager telemetryManager;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -31,6 +42,7 @@ public class UNO extends LinearOpMode {
     @Override
     public void runOpMode() {
         Algorihthm = new Algorithm(hardwareMap);
+        telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -83,13 +95,19 @@ public class UNO extends LinearOpMode {
 
             }
 
-            if (gamepad1.a) {
-                Algorithm.draw();
-            }
+            if (gamepad1.a) Algorithm.intakeState=true;
+//                Algorithm.drawTime(3000);
 
-            if (Algorithm.flag(gamepad1.x)) {
+
+            if(Algorithm.intakeState==true) Algorithm.draw();
+
+
+            if (gamepad1.x) {
                 Algorithm.stopShoot();
             }
+//            if (Algorithm.flag(gamepad1.x)) {
+//                Algorithm.stopShoot();
+//            }
 
             boolean yState = Algorithm.flag(gamepad1.y);
 
@@ -103,6 +121,8 @@ public class UNO extends LinearOpMode {
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 
+            telemetry.addData("Status", "Intake Time: " + drawTimer.toString());
+
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
@@ -111,10 +131,12 @@ public class UNO extends LinearOpMode {
             telemetry.addData("test", Algorithm.test);
             telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
             telemetry.addData("YState", Algorithm.flag(gamepad1.y));
-
-
             telemetry.update();
 
+            telemetryManager.addData("current RPM", Algorithm.getCurrentRPM());
+            telemetryManager.update(telemetry);
+//            panelsTelemetry.addLine("extra1:${t} extra2:${t*t} extra3:${sqrt(t)}");
+//            panelsTelemetry.update(telemetry);
         }
     }
 }

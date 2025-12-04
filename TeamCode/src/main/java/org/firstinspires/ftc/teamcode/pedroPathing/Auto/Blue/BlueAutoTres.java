@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "篮色近端单独跑(推gate版)", group = "Competition")
+@Autonomous(name = "篮色近端单独跑(推gate)", group = "Competition")
 public class BlueAutoTres extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -63,9 +63,9 @@ public class BlueAutoTres extends OpMode {
     private final Pose controlPickup3Ready = new Pose(61, 70, Math.toRadians(180));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
-
+    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(32));
     private Path scorePreload, runto1, runto2, runto3;
-    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
     public void buildPaths() {
 
@@ -118,6 +118,12 @@ public class BlueAutoTres extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        endpath = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose2, end))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), end.getHeading())
+                .build();
+
+
     }
 
     public void autonomousPathUpdate() {
@@ -127,10 +133,9 @@ public class BlueAutoTres extends OpMode {
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
-
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(2);
                 }
                 break;
@@ -146,36 +151,34 @@ public class BlueAutoTres extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(0.5);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
                     setPathState(30);
                 }
                 break;
 
-
             case 30:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
-                    Algorithm.stopShoot();
                     follower.followPath(runTheGate, true);
                     setPathState(4);
                 }
                 break;
 
 
+
             case 4:
                 if (!follower.isBusy()) {
+                    Algorithm.stopShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
                 break;
 
-
-
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(6);
                 }
                 break;
@@ -191,7 +194,7 @@ public class BlueAutoTres extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(0.5);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
@@ -209,7 +212,7 @@ public class BlueAutoTres extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2700);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(10);
                 }
                 break;
@@ -225,7 +228,7 @@ public class BlueAutoTres extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(0.5);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);
@@ -243,10 +246,17 @@ public class BlueAutoTres extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
-                    setPathState(-1);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    setPathState(14);
                 }
                 break;
+
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(endpath, true);
+                    setPathState(-1);
+                }
+                break       ;
 
         }
     }

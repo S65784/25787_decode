@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Red;
 
 import static android.os.SystemClock.sleep;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -22,15 +23,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "红色近端单独跑(推gate版)", group = "Competition")
+@Autonomous(name = "红色近端单独跑(推gate)", group = "Competition")
 public class RedAutoTres extends OpMode {
     private Algorithm Algorihthm;
+    private TelemetryManager telemetryManager;
     private ElapsedTime runtime = new ElapsedTime();
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    public static double getPointPreX = 90;
+    public static double getPointPreX = 93.9;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
@@ -49,12 +51,12 @@ public class RedAutoTres extends OpMode {
     private final Pose scorePose3 = new Pose(113, 109, Math.toRadians(32));
 
 
-    private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(0));
+    private final Pose controlPickup1Ready = new Pose(93.94464033850494, 96.27080394922427, Math.toRadians(0));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
-    private final Pose controlTheGate = new Pose(123.39456981664316, 75.14809590973204, Math.toRadians(0));
-    private final Pose theGate = new Pose(128.8783497884344, 70.6798307475317468, Math.toRadians(0));
+    private final Pose controlTheGate = new Pose(114.05183356840621, 69.86741889985896, Math.toRadians(0));
+    private final Pose theGate = new Pose(128.26, 70.6798307475317468, Math.toRadians(0));
 
     private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
@@ -62,10 +64,11 @@ public class RedAutoTres extends OpMode {
 
     private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
-    private final Pose pickup3Pose = new Pose(getPointX, Point3Y, Math.toRadians(0));
+    private final Pose pickup3Pose = new Pose(131, Point3Y, Math.toRadians(0));
+    private final Pose end = new Pose(120.78023407022106, 93.6, Math.toRadians(32));
 
     private Path scorePreload, runto1, runto2, runto3, park;
-    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
     public void buildPaths() {
 
@@ -113,6 +116,11 @@ public class RedAutoTres extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        endpath = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose3, end))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
+                .build();
+
 //        park = new Path(new BezierCurve(new Point(scorePose),
 //                new Point(parkControlPose),
 //                new Point(parkPose)));
@@ -128,7 +136,7 @@ public class RedAutoTres extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(2);
                 }
                 break;
@@ -154,7 +162,6 @@ public class RedAutoTres extends OpMode {
             case 30:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
-                    Algorithm.stopShoot();
                     follower.followPath(runTheGate, true);
                     setPathState(4);
                 }
@@ -164,6 +171,7 @@ public class RedAutoTres extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
+                    Algorithm.stopShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -171,7 +179,7 @@ public class RedAutoTres extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(6);
                 }
                 break;
@@ -205,7 +213,7 @@ public class RedAutoTres extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
                     setPathState(10);
                 }
                 break;
@@ -239,7 +247,14 @@ public class RedAutoTres extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 3000);
+                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    setPathState(14);
+                }
+                break;
+
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(endpath, true);
                     setPathState(-1);
                 }
                 break;
@@ -266,10 +281,10 @@ public class RedAutoTres extends OpMode {
         telemetry.addData("目标 RPM", Algorithm.targetRPM);
         telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
         telemetry.addData("test",Algorithm.test);
-
-
         telemetry.update();
-        telemetry.update();
+
+//        telemetryManager.addData("test",Algorithm.test);
+//        telemetryManager.update(telemetry);
     }
 
     @Override

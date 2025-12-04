@@ -26,14 +26,14 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 @Autonomous(name = "红色近端单独跑", group = "Competition")
 public class RedAutoUno extends OpMode {
     private Algorithm Algorihthm;
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static int yi = 1700;
-    public static double getPointPreX = 95;
+    private static final int yi = 1900;
+    public static double getPointPreX = 93.9;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
@@ -51,7 +51,7 @@ public class RedAutoUno extends OpMode {
     private final Pose scorePose3 = new Pose(113, 109, Math.toRadians(32));
 
 
-    private final Pose controlPickup1Ready = new Pose(92, 97, Math.toRadians(0));
+    private final Pose controlPickup1Ready = new Pose(93.94464033850494, 96.27080394922427, Math.toRadians(0));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
@@ -124,8 +124,8 @@ public class RedAutoUno extends OpMode {
         switch (pathState) {
 
             case 0:
-                    follower.followPath(scorePreload);
-                    setPathState(1);
+                follower.followPath(scorePreload);
+                setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
@@ -155,7 +155,7 @@ public class RedAutoUno extends OpMode {
             case 4:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
-                    Algorithm.stopShoot();
+                    Algorithm.stopShoot(120);
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -181,6 +181,7 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.37);
                     Algorithm.draw();
+
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
                 }
@@ -189,7 +190,7 @@ public class RedAutoUno extends OpMode {
             case 8:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
-                    Algorithm.stopShoot();
+                    Algorithm.stopShoot(120);
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -222,8 +223,9 @@ public class RedAutoUno extends OpMode {
 
             case 12:
                 if (!follower.isBusy()) {
+
                     follower.setMaxPower(1);
-                    Algorithm.stopShoot();
+                    Algorithm.stopShoot(120);
                     follower.followPath(scorePickup3, true);
                     setPathState(13);
                 }
@@ -280,6 +282,7 @@ public class RedAutoUno extends OpMode {
         actionTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+
         setPathState(0);
 
         Algorithm.servoControl();
@@ -288,6 +291,7 @@ public class RedAutoUno extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+
     }
 
 

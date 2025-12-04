@@ -40,6 +40,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 @TeleOp(name = "Tuning", group = "Pedro Pathing")
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
+    private String t23;
 
     @IgnoreConfigurable
     static PoseHistory poseHistory;

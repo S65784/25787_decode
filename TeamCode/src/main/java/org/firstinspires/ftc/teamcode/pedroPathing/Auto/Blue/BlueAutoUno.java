@@ -261,6 +261,7 @@ public class BlueAutoUno extends OpMode {
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        //telemetry.addData("Statu s", "Intake Time: " + drawTimer.toString());
         telemetry.addData("Status", "Running");
         telemetry.addData("目标 RPM", Algorithm.targetRPM);
         telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
