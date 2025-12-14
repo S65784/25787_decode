@@ -112,7 +112,7 @@ public class Algorithm {
                     intake.setPower(1);
                     blender.setPower(0.55);
                 } else {
-                    stopShoot();
+                    stopShoot(100);
                 }
             }
 
@@ -123,15 +123,22 @@ public class Algorithm {
 
     static ElapsedTime shootTimer = new ElapsedTime();
 
-    public static void shootTime(int target_RPM, int error, boolean state, int time) {
+    public static void shootTime(int target_RPM, int error, boolean state, int millitime) {
         shootTimer.reset();
-        while (shootTimer.milliseconds() < time) {
+        while (shootTimer.milliseconds() < millitime) {
             shoot(target_RPM, error, state, true);
+        }
+    }
+    public static ElapsedTime drawTimer = new ElapsedTime();
+    public static void stopShoot(int millitime) {
+        drawTimer.reset();
+        while (drawTimer.milliseconds() < millitime) {
+            intake.setPower(0);
+            blender.setPower(0);
         }
     }
 
     public static void stopShoot() {
-        block.setPosition(1);
         intake.setPower(0);
         blender.setPower(0);
     }
@@ -146,8 +153,8 @@ public class Algorithm {
     }
 
     public static void servoControl() {
-        ls.setPosition(0.4);
-        rs.setPosition(0.6);
+        ls.setPosition(0.5);
+        rs.setPosition(0.5);
     }
 
     private static boolean lastState = false;

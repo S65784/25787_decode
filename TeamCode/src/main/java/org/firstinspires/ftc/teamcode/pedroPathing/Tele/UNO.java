@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Algorithm.drawTimer;
 
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -95,11 +94,11 @@ public class UNO extends LinearOpMode {
 
             }
 
-            if (gamepad1.a) Algorithm.intakeState=true;
+            if (gamepad1.a) Algorithm.draw();
 //                Algorithm.drawTime(3000);
 
 
-            if(Algorithm.intakeState==true) Algorithm.draw();
+//            if(Algorithm.intakeState==true) Algorithm.draw();
 
 
             if (gamepad1.x) {
@@ -121,7 +120,7 @@ public class UNO extends LinearOpMode {
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 
-            telemetry.addData("Status", "Intake Time: " + drawTimer.toString());
+            telemetry.addData("Status", "Intake Time: " + Algorithm.drawTimer.toString());
 
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
