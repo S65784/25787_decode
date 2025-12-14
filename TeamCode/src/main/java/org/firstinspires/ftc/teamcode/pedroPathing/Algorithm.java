@@ -27,24 +27,25 @@ public class Algorithm {
     public static Servo rs = null;
 
 
-
-
     //constants
-    public static final int TARGET_RPM_YI = 1900;
+    public static final int TARGET_RPM_YI = 1600;
     public static final int ERROR_RANGE_YI = 50;
+    public static final double SERVO_POSITION_YI = 0;
 
-    public static final int TARGET_RPM_ER = 2200;
+    public static final int TARGET_RPM_ER = 1900;
     public static final int ERROR_RANGE_ER = 100;
+    public static final double SERVO_POSITION_ER = 0;
 
-    public static final int TARGET_RPM_SAN = 2700;//2300
+    public static final int TARGET_RPM_SAN = 2400;//2300
     public static final int ERROR_RANGE_SAN = 50;
-
-    public static final int TARGET_RPM_SI = 3500;//2950
+    public static final double SERVO_POSITION_SAN = 0;
+    public static final int TARGET_RPM_SI = 3200;//2950
     public static final int ERROR_RANGE_SI = 34;
-
+    public static final double SERVO_POSITION_SI = 0;
 
 
     public static int MOTOR_TICK_COUNT = 28;
+
     public Algorithm(HardwareMap hardwareMap) {
 
         leftFrontDrive = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
@@ -82,19 +83,20 @@ public class Algorithm {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public static double getCurrentRPM(){
+    public static double getCurrentRPM() {
         double currentVelocityTicks = shooter.getVelocity();
         //int MOTOR_TICK_COUNT = 28;
         double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
         return currentRPM;
     }
+
     public static int targetRPM = 0;
     public static double currentRPM;
     public static boolean test = false;
 
 
-    public static void shoot(int target_RPM, int error, boolean state, boolean yState){
-        if(state) {
+    public static void shoot(int target_RPM, int error, boolean state, boolean yState) {
+        if (state) {
             shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
             shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -104,7 +106,7 @@ public class Algorithm {
             double current_RPM = getCurrentRPM();
             currentRPM = current_RPM;
 
-            if(yState) {
+            if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
                     //block.setPosition(1);
                     intake.setPower(1);
@@ -124,50 +126,34 @@ public class Algorithm {
     public static void shootTime(int target_RPM, int error, boolean state, int time) {
         shootTimer.reset();
         while (shootTimer.milliseconds() < time) {
-            shoot(target_RPM,error,state,true);
+            shoot(target_RPM, error, state, true);
         }
     }
-    public static void stopShoot(){
-        intakeState = false;
+
+    public static void stopShoot() {
         block.setPosition(1);
         intake.setPower(0);
         blender.setPower(0);
-        test = false;
     }
 
-    static ElapsedTime intakeStopTimer = new ElapsedTime();
-
-    public static void stopShoot(int time) {
-        intakeStopTimer.reset();
-        while (intakeStopTimer.milliseconds() < time) {
-            draw();
-        }
-    }
-
-    public static ElapsedTime drawTimer = new ElapsedTime();
-    public static void drawTime(int time) {
-        drawTimer.reset();
-        while (drawTimer.milliseconds() < time) {
-            draw();
-        }
-    }
     public static void draw() {
-            state = false;
-            block.setPosition(0.3);
-            intake.setPower(0.8);
-            blender.setPower(0);
-            test = true;
+        state = false;
+        block.setPosition(0.3);
+        intake.setPower(1);
+        blender.setPower(0);
+        //shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
+        test = true;
     }
 
     public static void servoControl() {
-            ls.setPosition(0.5);
-            rs.setPosition(0.5);
-//        ls.setPosition(0.4);
-//        rs.setPosition(0.6);
+        ls.setPosition(0.4);
+        rs.setPosition(0.6);
     }
+
     private static boolean lastState = false;
     private static boolean flagState = false;
-    public static boolean flag(boolean gamepad){
+
+    public static boolean flag(boolean gamepad) {
         //boolean currentState = gamepad;
         if (gamepad && !lastState) {
             flagState = !flagState;
@@ -176,25 +162,22 @@ public class Algorithm {
         return flagState;
     }
 
-    public static void shootMode(int mode,boolean yState){
-        ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI,ERROR_RANGE_YI);
-        ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER,ERROR_RANGE_ER);
-        ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN,ERROR_RANGE_SAN);
-        ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI,ERROR_RANGE_SI);
-        if(mode==1){
+    public static void shootMode(int mode, boolean yState) {
+        ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI);
+        ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER);
+        ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN);
+        ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI);
+        if (mode == 1) {
             shootMode1.shoot(yState);
-        }else if(mode==2){
+        } else if (mode == 2) {
             shootMode2.shoot(yState);
-        }else if(mode==3){
+        } else if (mode == 3) {
             shootMode3.shoot(yState);
-        }else if(mode==4){
+        } else if (mode == 4) {
             shootMode4.shoot(yState);
         }
     }
 
-    public static void sleep(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-    }
 //    public static Runnable shoot(Runnable shootingMethod){
 //        //general
 //        shootingMethod.run();
@@ -205,12 +188,43 @@ public class Algorithm {
 //
 //        });
 //    }
-    public static double P = 135, I = 0, D = 80, F = 14;
+
+    public static void shootOpenLoop(int target_RPM, boolean state, boolean yState) {
+        if (state) {
+            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            //double currentVelocityTicks = shooter.getVelocity();
+            //int MOTOR_TICK_COUNT = 28;
+            double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
+            double current_RPM = getCurrentRPM();
+            currentRPM = current_RPM;
+            if (yState) {
+                intake.setPower(1);
+                blender.setPower(0.55);
+            }
+            shooter.setVelocity(targetTicksPerSecond);
+            targetRPM = target_RPM;
+        }
+
+
+    }
+
+    public static void sleep(long ms){
+            try {
+                Thread.sleep(ms);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+    }
+
+        public static double P = 135, I = 0, D = 80, F = 14;
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
-    public static boolean lastYState = false;
-    public static boolean state = false;
-    public static boolean intakeState = false;
+        public static boolean lastYState = false;
+        public static boolean state = false;
+
+
 
 
 }
-
