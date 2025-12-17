@@ -96,6 +96,7 @@ public class UNO extends LinearOpMode {
 
             if (gamepad1.a) Algorithm.draw();
 //                Algorithm.drawTime(3000);
+            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, 2000);
 
 
 //            if(Algorithm.intakeState==true) Algorithm.draw();
@@ -116,7 +117,7 @@ public class UNO extends LinearOpMode {
             else if(gamepad1.dpad_up) mode = 3;
             else if(gamepad1.dpad_right) mode = 4;
 
-            Algorithm.shootMode(mode,yState);
+
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 

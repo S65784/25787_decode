@@ -28,20 +28,21 @@ public class Algorithm {
 
 
     //constants
-    public static final int TARGET_RPM_YI = 1600;
-    public static final int ERROR_RANGE_YI = 50;
-    public static final double SERVO_POSITION_YI = 0;
+    public static final int TARGET_RPM_YI = 2800;
+    public static final int ERROR_RANGE_YI = 3000;
+    public static final double SERVO_POSITION_YI = 0.45;
 
-    public static final int TARGET_RPM_ER = 1900;
-    public static final int ERROR_RANGE_ER = 100;
-    public static final double SERVO_POSITION_ER = 0;
+    public static final int TARGET_RPM_ER = 3400;
+    public static final int ERROR_RANGE_ER = 3000;
+    public static final double SERVO_POSITION_ER = 0.45;
 
-    public static final int TARGET_RPM_SAN = 2400;//2300
-    public static final int ERROR_RANGE_SAN = 50;
-    public static final double SERVO_POSITION_SAN = 0;
-    public static final int TARGET_RPM_SI = 3200;//2950
-    public static final int ERROR_RANGE_SI = 34;
-    public static final double SERVO_POSITION_SI = 0;
+    public static final int TARGET_RPM_SAN = 4000;//2300
+    public static final int ERROR_RANGE_SAN = 3000;
+    public static final double SERVO_POSITION_SAN = 0.5;
+
+    public static final int TARGET_RPM_SI = 5100;//2950
+    public static final int ERROR_RANGE_SI = 3400;
+    public static final double SERVO_POSITION_SI = 0.55;
 
 
     public static int MOTOR_TICK_COUNT = 28;
@@ -168,22 +169,24 @@ public class Algorithm {
         lastState = gamepad;
         return flagState;
     }
+    public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI);
+    public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER);
+    public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN);
+    public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI);
+//    public static void shootMode(int mode, boolean yState) {
+//
+//        if (mode == 1) {
+//            shootMode1.shoot(yState);
+//        } else if (mode == 2) {
+//            shootMode2.shoot(yState);
+//        } else if (mode == 3) {
+//            shootMode3.shoot(yState);
+//        } else if (mode == 4) {
+//            shootMode4.shoot(yState);
+//        }
+//    }
 
-    public static void shootMode(int mode, boolean yState) {
-        ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI);
-        ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER);
-        ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN);
-        ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI);
-        if (mode == 1) {
-            shootMode1.shoot(yState);
-        } else if (mode == 2) {
-            shootMode2.shoot(yState);
-        } else if (mode == 3) {
-            shootMode3.shoot(yState);
-        } else if (mode == 4) {
-            shootMode4.shoot(yState);
-        }
-    }
+
 
 //    public static Runnable shoot(Runnable shootingMethod){
 //        //general

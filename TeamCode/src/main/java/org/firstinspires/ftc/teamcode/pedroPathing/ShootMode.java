@@ -10,8 +10,15 @@ public class ShootMode {
         this.error = error;
         lsServoPosition = servoPosition;
     }
+
+//    ShootMode ShootMode1=
     public void shoot(boolean yState){
         Algorithm.shoot(targetRPM,error,true,yState);
+        Algorithm.ls.setPosition(lsServoPosition);
+        Algorithm.rs.setPosition(rsServoPosition);
+    }
+    public void shootTime(boolean state, int millitime){
+        Algorithm.shootTime(targetRPM,error,state,millitime);
         Algorithm.ls.setPosition(lsServoPosition);
         Algorithm.rs.setPosition(rsServoPosition);
     }

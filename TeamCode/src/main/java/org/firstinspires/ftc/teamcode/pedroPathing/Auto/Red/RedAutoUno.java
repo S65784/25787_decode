@@ -129,7 +129,7 @@ public class RedAutoUno extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, 2000);
                     setPathState(2);
                 }
                 break;
@@ -163,7 +163,7 @@ public class RedAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, 2000);
                     setPathState(6);
                 }
                 break;
@@ -198,7 +198,7 @@ public class RedAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                Algorithm.shootTime(yi, Algorithm.ERROR_RANGE_YI, true, 2600);
+                Algorithm.shootMode2.shootTime(true, 2000);
                 setPathState(10);
             }
             break;
@@ -233,7 +233,7 @@ public class RedAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, 2000);
                     setPathState(14);
                 }
                 break;
