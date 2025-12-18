@@ -116,7 +116,7 @@ public class BlueAutoCinco extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, 2000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(2);
                 }
                 break;
@@ -165,7 +165,7 @@ public class BlueAutoCinco extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, 2000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(6);
                 }
                 break;
@@ -199,7 +199,7 @@ public class BlueAutoCinco extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, 2000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(10);
                 }
                 break;

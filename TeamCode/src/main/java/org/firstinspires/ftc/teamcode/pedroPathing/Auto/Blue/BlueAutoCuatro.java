@@ -100,7 +100,7 @@ public class BlueAutoCuatro extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(2);
                 }
                 break;
@@ -142,7 +142,7 @@ public class BlueAutoCuatro extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(6);
                 }
                 break;
@@ -175,7 +175,7 @@ public class BlueAutoCuatro extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(-1);
                 }
                 break;
