@@ -29,11 +29,11 @@ public class Algorithm {
 
     //constants
     public static final int TARGET_RPM_YI = 2800;
-    public static final int ERROR_RANGE_YI = 3000;
+    public static final int ERROR_RANGE_YI = 2600;
     public static final double SERVO_POSITION_YI = 0.45;
 
     public static final int TARGET_RPM_ER = 3400;
-    public static final int ERROR_RANGE_ER = 3000;
+    public static final int ERROR_RANGE_ER = 2600;
     public static final double SERVO_POSITION_ER = 0.45;
 
     public static final int TARGET_RPM_SAN = 4000;//2300
@@ -94,6 +94,7 @@ public class Algorithm {
     public static int targetRPM = 0;
     public static double currentRPM;
     public static boolean test = false;
+    public static boolean shootState = false;
 
 
     public static void shoot(int target_RPM, int error, boolean state, boolean yState) {
@@ -109,13 +110,21 @@ public class Algorithm {
 
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
-                    //block.setPosition(1);
+//                    shootState = true;
                     intake.setPower(1);
-                    blender.setPower(0.55);
+                    blender.setPower(1);
+                    //block.setPosition(1);
+
                 } else {
                     stopShoot(100);
                 }
             }
+
+
+//            if(shootState) {
+//                intake.setPower(1);
+//                blender.setPower(1);
+//            }
 
             shooter.setVelocity(targetTicksPerSecond);
             targetRPM = target_RPM;
@@ -124,10 +133,10 @@ public class Algorithm {
 
     static ElapsedTime shootTimer = new ElapsedTime();
 
-    public static void shootTime(int target_RPM, int error, boolean state, int millitime) {
+    public static void shootTime(int target_RPM, int error, boolean state, boolean yState, int millitime) {
         shootTimer.reset();
         while (shootTimer.milliseconds() < millitime) {
-            shoot(target_RPM, error, state, true);
+            shoot(target_RPM, error, state, yState);
         }
     }
     public static ElapsedTime drawTimer = new ElapsedTime();
@@ -151,6 +160,17 @@ public class Algorithm {
         blender.setPower(0);
         //shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
         test = true;
+    }
+
+
+    static ElapsedTime preShooterTimer = new ElapsedTime();
+    public static void preShooterMove(int millitime) {
+            shootState = true;
+            preShooterTimer.reset();
+
+        if(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.5);
+        else  blender.setPower(0);
+
     }
 
     public static void servoControl() {

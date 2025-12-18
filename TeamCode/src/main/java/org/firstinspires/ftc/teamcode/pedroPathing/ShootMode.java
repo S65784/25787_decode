@@ -17,8 +17,13 @@ public class ShootMode {
         Algorithm.ls.setPosition(lsServoPosition);
         Algorithm.rs.setPosition(rsServoPosition);
     }
-    public void shootTime(boolean state, int millitime){
-        Algorithm.shootTime(targetRPM,error,state,millitime);
+    public void preShoot(){
+        Algorithm.shoot(targetRPM,error,true,false);
+        Algorithm.ls.setPosition(lsServoPosition);
+        Algorithm.rs.setPosition(rsServoPosition);
+    }
+    public void shootTime(boolean state, boolean yState,int millitime){
+        Algorithm.shootTime(targetRPM,error,state,yState,millitime);
         Algorithm.ls.setPosition(lsServoPosition);
         Algorithm.rs.setPosition(rsServoPosition);
     }
