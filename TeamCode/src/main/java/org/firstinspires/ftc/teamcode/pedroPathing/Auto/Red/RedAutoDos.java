@@ -35,11 +35,11 @@ public class RedAutoDos extends OpMode {
     private static final double lowMaxPower = 0.657;
     private static final double t = 0.5;
 
-    public static double getPointPreX = 95;
-    public static double getPointX = 126.5;
-    public static double Point1Y = 82;
-    public static double Point2Y = 58;
-    public static double Point3Y = 34.5;
+    private static final double getPointPreX = 95;
+    private static final double getPointX = 126.5;
+    private static final double Point1Y = 82;
+    private static final double Point2Y = 58;
+    private static final double Point3Y = 34.5;
 
 
     // Define Poses
@@ -83,6 +83,8 @@ public class RedAutoDos extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose,controlTheGate, theGate))
@@ -96,6 +98,7 @@ public class RedAutoDos extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -210,7 +213,14 @@ public class RedAutoDos extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode4.shootTime(true, true,millitime);                    setPathState(-1);
+                    Algorithm.shootMode4.shootTime(true, true,millitime);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    follower.followPath(endpath, true);
+                    setPathState(-1);
                 }
                 break;
 
