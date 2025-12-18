@@ -31,33 +31,31 @@ public class BlueAutoCinco extends OpMode {
 
     private static final double getPointPreX = 45;
     private static final double getPointX = 12;
-    private static final double Point1Y = 82;
-    private static final double Point2Y = 58;
+    private static final double Point1Y = 84;
+    private static final double Point2Y = 59;
 
 
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
-
     private final Pose scorePose = new Pose(40, 99.85542168674698, Math.toRadians(180-38));
-    private final Pose controlScorePose1 = new Pose(140-104.91220028208745, 77.99153737658675, Math.toRadians(180-32));
-    private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
-    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
-
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));
-    private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
-    private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
+    private final Pose pickup1Ready = new Pose(46.45783132530121, 84.43373493975903, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(16.19277108433735, 84.43373493975903, Math.toRadians(180));
 
     private final Pose controlTheGate = new Pose(36.81927710843374, 82.89156626506025, Math.toRadians(90));
     private final Pose theGate = new Pose(16.3855421686747, 71.32530120481928, Math.toRadians(90));
 
-    private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
-    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(180));
+    private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
+
+    private final Pose controlPickup2Ready = new Pose(53.59036144578314, 67.0843373493976, Math.toRadians(180));
+    private final Pose pickup2Ready = new Pose(42.98795180722892, 59.951807228915655, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(8.867469879518072, 59.951807228915655, Math.toRadians(180));
+    private final Pose controlScorePose2 = new Pose(28.14457831325301, 53.78313253012048, Math.toRadians(148));
+    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
 
 
-    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(32));
+    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(180-35));
     private Path scorePreload, runto1, runto2;
     private PathChain runTheGate, grabPickup1, grabPickup2, scorePickup1, scorePickup2, endpath;
 
@@ -66,14 +64,11 @@ public class BlueAutoCinco extends OpMode {
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-
-
         runto1 = new Path(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready));
         runto1.setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading());
 
         runto2 = new Path(new BezierCurve(scorePose1,controlPickup2Ready,pickup2Ready));
         runto2.setLinearHeadingInterpolation(scorePose1.getHeading(), pickup2Ready.getHeading());
-
 
 
         grabPickup1 = follower.pathBuilder()
@@ -86,10 +81,9 @@ public class BlueAutoCinco extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(theGate, controlScorePose1, scorePose1))
+                .addPath(new BezierCurve(theGate, scorePose1))
                 .setLinearHeadingInterpolation(theGate.getHeading(), scorePose1.getHeading())
                 .build();
-
 
 
         grabPickup2 = follower.pathBuilder()
