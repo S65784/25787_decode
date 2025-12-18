@@ -32,7 +32,7 @@ public class RedAutoUno extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int yi = 1900;
+//    private static final int yi = 1900;
     public static double getPointPreX = 93.9;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
