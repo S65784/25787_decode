@@ -31,7 +31,10 @@ public class RedAutoDos extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    public static int san = 2400;
+    private static final int millitime = 3000;
+    private static final double lowMaxPower = 0.657;
+    private static final double t = 0.5;
+
     public static double getPointPreX = 95;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
@@ -61,9 +64,10 @@ public class RedAutoDos extends OpMode {
 
     private final Pose pickup3Ready = new Pose(101.30559167750326, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(131, Point3Y, Math.toRadians(0));
+    private final Pose end = new Pose(102, 14.8, Math.toRadians(32));
 
     private Path scorePreload, runto2, runto3, park;
-    private PathChain grabPickup2, grabPickup3, scorePickup2, scorePickup3, runTheGate;
+    private PathChain grabPickup2, grabPickup3, scorePickup2, scorePickup3, runTheGate, endpath;
 
     public void buildPaths() {
 //ichi ni san shi/yon go roku shichi/nana hachi kyu jyu
@@ -98,6 +102,11 @@ public class RedAutoDos extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        endpath = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose3, end))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
+                .build();
+
     }
 
     public void autonomousPathUpdate() {
@@ -105,11 +114,12 @@ public class RedAutoDos extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
+                Algorithm.shootMode4.preShoot();;
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
+                    Algorithm.shootMode4.shootTime(true, true,millitime);
                     setPathState(2);
                 }
                 break;
@@ -125,7 +135,7 @@ public class RedAutoDos extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(40);
@@ -145,6 +155,13 @@ public class RedAutoDos extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(50);
+                }
+                break;
+
+            case 50:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode4.preShoot();;
                     follower.followPath(scorePickup2, true);
                     setPathState(5);
                 }
@@ -152,7 +169,7 @@ public class RedAutoDos extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
+                    Algorithm.shootMode4.shootTime(true, true,millitime);
                     setPathState(6);
                 }
                 break;
@@ -168,7 +185,7 @@ public class RedAutoDos extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(8);
@@ -179,15 +196,21 @@ public class RedAutoDos extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
-                    follower.followPath(scorePickup3, true);
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode4.preShoot();
+                    follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
                 break;
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(san, Algorithm.ERROR_RANGE_SAN, true, 4000);
-                    setPathState(-1);
+                    Algorithm.shootMode4.shootTime(true, true,millitime);                    setPathState(-1);
                 }
                 break;
 
