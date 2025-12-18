@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "篮色近端合作(推gate)", group = "Competition")
+@Autonomous(name = "27570侧板篮色近端合作(推gate)", group = "Competition")
 public class BlueAutoCinco extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
@@ -23,13 +23,19 @@ public class BlueAutoCinco extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    public static double getPointPreX = 45;
-    public static double getPointX = 12;
-    public static double Point1Y = 82;
-    public static double Point2Y = 58;
+
+    private static final int millitime = 1600;
+    private static final double lowMaxPower = 0.657;
+    private static final double t = 0.5;
 
 
-  // Define Poses
+    private static final double getPointPreX = 45;
+    private static final double getPointX = 12;
+    private static final double Point1Y = 82;
+    private static final double Point2Y = 58;
+
+
+    // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
     private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
@@ -43,8 +49,8 @@ public class BlueAutoCinco extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
-    private final Pose controlTheGate = new Pose(140-123.39456981664316, 75.14809590973204, Math.toRadians(180));
-    private final Pose theGate = new Pose(140-128.8783497884344, 70.6798307475317468, Math.toRadians(180));
+    private final Pose controlTheGate = new Pose(36.81927710843374, 82.89156626506025, Math.toRadians(90));
+    private final Pose theGate = new Pose(16.3855421686747, 71.32530120481928, Math.toRadians(90));
 
     private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
@@ -73,6 +79,7 @@ public class BlueAutoCinco extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -88,6 +95,7 @@ public class BlueAutoCinco extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
@@ -101,10 +109,7 @@ public class BlueAutoCinco extends OpMode {
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), end.getHeading())
                 .build();
 
-//        park = new Path(new BezierCurve(new Point(scorePose),
-//                new Point(parkControlPose),
-//                new Point(parkPose)));
-//        park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
+
     }
 
     public void autonomousPathUpdate() {
@@ -112,11 +117,12 @@ public class BlueAutoCinco extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
+                Algorithm.shootMode2.preShoot();;
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,2000);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(2);
                 }
                 break;
@@ -132,9 +138,8 @@ public class BlueAutoCinco extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-                    follower.setMaxPower(0.37);
                     follower.followPath(grabPickup1, true);
                     setPathState(30);
                 }
@@ -156,16 +161,15 @@ public class BlueAutoCinco extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
                 break;
 
-
-
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,2000);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(6);
                 }
                 break;
@@ -181,8 +185,8 @@ public class BlueAutoCinco extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-                    follower.setMaxPower(0.37);
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
                 }
@@ -192,6 +196,13 @@ public class BlueAutoCinco extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();;
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -199,7 +210,7 @@ public class BlueAutoCinco extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,2000);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(10);
                 }
                 break;

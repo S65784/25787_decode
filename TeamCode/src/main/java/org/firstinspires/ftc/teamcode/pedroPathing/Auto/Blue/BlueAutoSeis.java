@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
-@Autonomous(name = "电池27570coop-蓝", group = "Competition")
+@Autonomous(name = "侧板27570coop-蓝", group = "Competition")
 public class BlueAutoSeis  extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();

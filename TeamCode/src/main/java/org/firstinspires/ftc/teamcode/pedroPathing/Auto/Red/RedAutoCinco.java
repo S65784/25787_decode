@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "红色近端合作(推gate版)", group = "Competition")
+@Autonomous(name = "红色侧板27570近端合作(推gate版)", group = "Competition")
 public class RedAutoCinco extends OpMode {
     private Algorithm Algorihthm;
     private TelemetryManager telemetryManager;
@@ -32,6 +32,10 @@ public class RedAutoCinco extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+    private static final int millitime = 1600;
+    private static final double lowMaxPower = 0.657;
+    private static final double t = 0.5;
+
     public static double getPointPreX = 93.9;
     public static double getPointX = 126.5;
     public static double Point1Y = 82;
@@ -85,6 +89,7 @@ public class RedAutoCinco extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -100,6 +105,7 @@ public class RedAutoCinco extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
@@ -113,10 +119,7 @@ public class RedAutoCinco extends OpMode {
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), end.getHeading())
                 .build();
 
-//        park = new Path(new BezierCurve(new Point(scorePose),
-//                new Point(parkControlPose),
-//                new Point(parkPose)));
-//        park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
+
     }
 
     public void autonomousPathUpdate() {
@@ -124,11 +127,12 @@ public class RedAutoCinco extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
+                Algorithm.shootMode2.preShoot();;
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(2);
                 }
                 break;
@@ -144,9 +148,8 @@ public class RedAutoCinco extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-                    follower.setMaxPower(0.37);
                     follower.followPath(grabPickup1, true);
                     setPathState(30);
                 }
@@ -168,6 +171,7 @@ public class RedAutoCinco extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -177,7 +181,7 @@ public class RedAutoCinco extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(6);
                 }
                 break;
@@ -193,8 +197,8 @@ public class RedAutoCinco extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-                    follower.setMaxPower(0.37);
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
                 }
@@ -204,6 +208,13 @@ public class RedAutoCinco extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();;
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -211,7 +222,7 @@ public class RedAutoCinco extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,2000);
                     setPathState(10);
                 }
                 break;

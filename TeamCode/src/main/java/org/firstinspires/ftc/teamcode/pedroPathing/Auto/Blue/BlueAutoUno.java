@@ -30,11 +30,17 @@ public class BlueAutoUno extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+
+    private static final int millitime = 1600;
+    private static final double lowMaxPower = 0.657;
+    private static final double t = 0.5;
+
+
     public static double getPointPreX = 45;
     public static double getPointX = 12;
     public static double Point1Y = 82;
     public static double Point2Y = 58;
-    public static double Point3Y = 35;
+    private static double Point3Y = 34.5;
 
 
     // Define Poses
@@ -84,6 +90,7 @@ public class BlueAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -95,6 +102,7 @@ public class BlueAutoUno extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -106,6 +114,7 @@ public class BlueAutoUno extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -124,12 +133,13 @@ public class BlueAutoUno extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
+                Algorithm.shootMode2.preShoot();;
                 setPathState(1);
                 break;
 
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(2);
                 }
                 break;
@@ -145,7 +155,7 @@ public class BlueAutoUno extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
                     setPathState(4);
@@ -156,6 +166,13 @@ public class BlueAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(50);
+                }
+                break;
+
+            case 50:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();;
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -163,7 +180,7 @@ public class BlueAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(6);
                 }
                 break;
@@ -179,7 +196,7 @@ public class BlueAutoUno extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
@@ -190,6 +207,13 @@ public class BlueAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -197,10 +221,10 @@ public class BlueAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
-                    setPathState(10);
-                }
-                break;
+                Algorithm.shootMode2.shootTime(true, true,millitime);
+                setPathState(10);
+            }
+            break;
 
 
 
@@ -213,7 +237,7 @@ public class BlueAutoUno extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.37);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);
@@ -224,6 +248,14 @@ public class BlueAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+
+                    setPathState(130);
+                }
+                break;
+
+            case 130:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();;
                     follower.followPath(scorePickup3, true);
                     setPathState(13);
                 }
@@ -231,7 +263,7 @@ public class BlueAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, 2600);
+                    Algorithm.shootMode2.shootTime(true, true,millitime);
                     setPathState(14);
                 }
                 break;

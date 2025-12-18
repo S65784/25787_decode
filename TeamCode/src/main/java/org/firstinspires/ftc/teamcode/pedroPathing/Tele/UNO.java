@@ -89,14 +89,14 @@ public class UNO extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 Algorithm.imu.resetYaw();
             }
-            if (gamepad2.a) {
-                Algorithm.shootTime(1700, Algorithm.ERROR_RANGE_YI, true, 2500);
-
-            }
+//            if (gamepad2.a) {
+//                Algorithm.shootTime(1700, Algorithm.ERROR_RANGE_YI, true, true,2500);
+//
+//            }
 
             if (gamepad1.a) Algorithm.draw();
 //                Algorithm.drawTime(3000);
-            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, 2000);
+            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true,2000);
 
 
 //            if(Algorithm.intakeState==true) Algorithm.draw();

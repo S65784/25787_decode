@@ -141,6 +141,12 @@ public class Algorithm {
             shoot(target_RPM, error, state, yState);
         }
     }
+    public static void shootTime(int target_RPM, int error, boolean state, int millitime) {
+        shootTimer.reset();
+        while (shootTimer.milliseconds() < millitime) {
+            shoot(target_RPM, error, state, true);
+        }
+    }
     public static ElapsedTime drawTimer = new ElapsedTime();
     public static void stopShoot(int millitime) {
         drawTimer.reset();
@@ -282,7 +288,11 @@ public class Algorithm {
 
     }
 
-        public static double P = 135, I = 0, D = 80, F = 14;
+
+    public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
+
+//        public static double P = 135, I = 0, D = 80, F = 14;
+
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
         public static boolean lastYState = false;
         public static boolean state = false;
