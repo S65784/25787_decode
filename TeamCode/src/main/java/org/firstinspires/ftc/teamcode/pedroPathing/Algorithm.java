@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import java.util.Arrays;
+
 public class Algorithm {
     public static IMU imu;
     public static DcMotor leftFrontDrive = null;
@@ -207,7 +209,6 @@ public class Algorithm {
 //    }
 
 
-
 //    public static Runnable shoot(Runnable shootingMethod){
 //        //general
 //        shootingMethod.run();
@@ -227,8 +228,6 @@ public class Algorithm {
             //double currentVelocityTicks = shooter.getVelocity();
             //int MOTOR_TICK_COUNT = 28;
             double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
-            double current_RPM = getCurrentRPM();
-            currentRPM = current_RPM;
             if (yState) {
                 intake.setPower(1);
                 blender.setPower(0.55);
@@ -238,6 +237,40 @@ public class Algorithm {
         }
 
 
+    }
+    public static boolean checkRPM(int targetRPM,int error){
+        double current_RPM = getCurrentRPM();
+        currentRPM = current_RPM;
+        if ((targetRPM + error) > currentRPM && currentRPM > (targetRPM - error)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    static boolean isChecked = false;
+    public static void shootCheckOnce(int target_RPM,int error,boolean state, boolean yState){
+        if(state) {
+            if (yState) {
+                if (checkRPM(target_RPM, error)) {
+                    isChecked = true;
+                }
+                if (isChecked) {
+                    intake.setPower(1);
+                    blender.setPower(0.55);
+                }
+            }
+            double targetTicksPerSecond = targetRPM * MOTOR_TICK_COUNT / 60;
+            shooter.setVelocity(targetTicksPerSecond);
+            targetRPM = target_RPM;
+        }
+    }
+
+    public static void shootCheckOnceTime(int target_RPM,int error,boolean state, boolean yState,int milli){
+        shootTimer.reset();
+        while (shootTimer.milliseconds() < milli) {
+            shootCheckOnce(target_RPM, error, state, yState);
+        }
+        isChecked = false;
     }
 
     public static void sleep(long ms){
