@@ -38,11 +38,11 @@ public class BlueAutoCinco extends OpMode {
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
-    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
+    private final Pose scorePose = new Pose(40, 99.85542168674698, Math.toRadians(180-38));
     private final Pose controlScorePose1 = new Pose(140-104.91220028208745, 77.99153737658675, Math.toRadians(180-32));
-    private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
+    private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
+    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
 
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));

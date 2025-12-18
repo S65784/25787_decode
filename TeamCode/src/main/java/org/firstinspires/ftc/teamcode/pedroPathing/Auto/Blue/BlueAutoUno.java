@@ -36,22 +36,22 @@ public class BlueAutoUno extends OpMode {
     private static final double t = 0.5;
 
 
-    public static double getPointPreX = 45;
-    public static double getPointX = 12;
-    public static double Point1Y = 82;
-    public static double Point2Y = 58;
-    private static double Point3Y = 34.5;
+    private static final double getPointPreX = 45;
+    private static final double getPointX = 12;
+    private static final double Point1Y = 82;
+    private static final double Point2Y = 58;
+    private static final double Point3Y = 34.5;
 
 
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
 
-    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(144));
-    private final Pose scorePose1 = new Pose(29, 107.5, Math.toRadians(150));
-    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(29, 107.5, Math.toRadians(150));
-    private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
-    private final Pose scorePose3 = new Pose(29, 106, Math.toRadians(148));
+    private final Pose scorePose = new Pose(40, 99.85542168674698, Math.toRadians(180-38));
+    private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
+    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(180-35.6));
+    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
+    private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(180-35));
+    private final Pose scorePose3 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
 
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));

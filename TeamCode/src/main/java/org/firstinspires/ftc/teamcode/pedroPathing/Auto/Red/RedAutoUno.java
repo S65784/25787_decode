@@ -253,14 +253,6 @@ public class RedAutoUno extends OpMode {
                 }
                 break;
 
-
-
-
-
-
-
-
-
             case 130:
                 if (!follower.isBusy()) {
                     Algorithm.shootMode2.preShoot();;

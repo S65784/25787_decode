@@ -46,11 +46,11 @@ public class RedAutoCinco extends OpMode {
     // Define Poses
     private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
 
-    private final Pose scorePose = new Pose(112.52, 115.52, Math.toRadians(38));
+    private final Pose scorePose = new Pose(100, 99.8, Math.toRadians(38));
     private final Pose controlScorePose1 = new Pose(104.91220028208745, 77.99153737658675, Math.toRadians(32));
-    private final Pose scorePose1 = new Pose(113, 111, Math.toRadians(32));
+    private final Pose scorePose1 = new Pose(100, 99.8, Math.toRadians(35.6));
     private final Pose controlScorePose2 = new Pose(104, 60.3, Math.toRadians(32));
-    private final Pose scorePose2 = new Pose(113, 109, Math.toRadians(32));
+    private final Pose scorePose2 = new Pose(100, 99.8, Math.toRadians(35));
 
 
 
@@ -58,8 +58,8 @@ public class RedAutoCinco extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
-    private final Pose controlTheGate = new Pose(114.05183356840621, 69.86741889985896, Math.toRadians(0));
-    private final Pose theGate = new Pose(128.26, 70.6798307475317468, Math.toRadians(0));
+    private final Pose controlTheGate = new Pose(140-36.81927710843374, 82.89156626506025, Math.toRadians(90));
+    private final Pose theGate = new Pose(140-16.3855421686747, 71.32530120481928, Math.toRadians(90));
 
     private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
