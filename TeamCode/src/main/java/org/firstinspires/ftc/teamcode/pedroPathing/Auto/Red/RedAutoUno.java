@@ -39,11 +39,11 @@ public class RedAutoUno extends OpMode {
     private static final double t = 0.5;
 
 
-    private static double getPointPreX = 93.9;
-    private static double getPointX = 126.5;
-    private static double Point1Y = 82;
-    private static double Point2Y = 58;
-    private static double Point3Y = 34.5;
+    private static final double getPointPreX = 93.9;
+    private static final double getPointX = 126.5;
+    private static final double Point1Y = 82;
+    private static final double Point2Y = 58;
+    private static final double Point3Y = 34.5;
 
 
     // Define Poses
