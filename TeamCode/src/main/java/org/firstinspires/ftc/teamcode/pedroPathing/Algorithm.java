@@ -98,38 +98,30 @@ public class Algorithm {
     public static boolean test = false;
     public static boolean shootState = false;
 
+    public static void setRPM(int target_RPM){
+        double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
+        shooter.setVelocity(targetTicksPerSecond);
+        targetRPM = target_RPM;
+    }
+
+    public static void shooterPID(){
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+    }
 
     public static void shoot(int target_RPM, int error, boolean state, boolean yState) {
         if (state) {
-            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            //double currentVelocityTicks = shooter.getVelocity();
-            //int MOTOR_TICK_COUNT = 28;
-            double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
-            double current_RPM = getCurrentRPM();
-            currentRPM = current_RPM;
-
+            shooterPID();
+            setRPM(target_RPM);
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
-//                    shootState = true;
                     intake.setPower(1);
                     blender.setPower(1);
-                    //block.setPosition(1);
-
                 } else {
                     stopShoot(100);
                 }
             }
-
-
-//            if(shootState) {
-//                intake.setPower(1);
-//                blender.setPower(1);
-//            }
-
-            shooter.setVelocity(targetTicksPerSecond);
-            targetRPM = target_RPM;
         }
     }
 
@@ -201,45 +193,15 @@ public class Algorithm {
     public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER);
     public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN);
     public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI);
-//    public static void shootMode(int mode, boolean yState) {
 //
-//        if (mode == 1) {
-//            shootMode1.shoot(yState);
-//        } else if (mode == 2) {
-//            shootMode2.shoot(yState);
-//        } else if (mode == 3) {
-//            shootMode3.shoot(yState);
-//        } else if (mode == 4) {
-//            shootMode4.shoot(yState);
-//        }
-//    }
-
-
-//    public static Runnable shoot(Runnable shootingMethod){
-//        //general
-//        shootingMethod.run();
-//        return null;
-//    }
-//    public static void test(){
-//        shoot(()->{
-//
-//        });
-//    }
-
     public static void shootOpenLoop(int target_RPM, boolean state, boolean yState) {
         if (state) {
-            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            //double currentVelocityTicks = shooter.getVelocity();
-            //int MOTOR_TICK_COUNT = 28;
-            double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
+            shooterPID();
             if (yState) {
                 intake.setPower(1);
                 blender.setPower(0.55);
             }
-            shooter.setVelocity(targetTicksPerSecond);
-            targetRPM = target_RPM;
+            setRPM(target_RPM);
         }
 
 
@@ -265,9 +227,7 @@ public class Algorithm {
                     blender.setPower(0.55);
                 }
             }
-            double targetTicksPerSecond = targetRPM * MOTOR_TICK_COUNT / 60;
-            shooter.setVelocity(targetTicksPerSecond);
-            targetRPM = target_RPM;
+            setRPM(target_RPM);
         }
     }
 
@@ -288,16 +248,9 @@ public class Algorithm {
 
     }
 
-
-    public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
-
-//        public static double P = 135, I = 0, D = 80, F = 14;
-
+        public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
         public static boolean lastYState = false;
         public static boolean state = false;
-
-
-
 
 }
