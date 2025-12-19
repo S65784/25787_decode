@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -31,15 +32,15 @@ public class Algorithm {
 
     //constants
     public static final int TARGET_RPM_YI = 2800;
-    public static final int ERROR_RANGE_YI = 2600;
+    public static final int ERROR_RANGE_YI =500;
     public static final double SERVO_POSITION_YI = 0.45;
 
     public static final int TARGET_RPM_ER = 3400;
-    public static final int ERROR_RANGE_ER = 2600;
+    public static final int ERROR_RANGE_ER = 500;
     public static final double SERVO_POSITION_ER = 0.45;
 
     public static final int TARGET_RPM_SAN = 4000;//2300
-    public static final int ERROR_RANGE_SAN = 3000;
+    public static final int ERROR_RANGE_SAN = 500;
     public static final double SERVO_POSITION_SAN = 0.5;
 
     public static final int TARGET_RPM_SI = 5100;//2950
@@ -49,6 +50,8 @@ public class Algorithm {
 
     public static int MOTOR_TICK_COUNT = 28;
 
+
+
     public Algorithm(HardwareMap hardwareMap) {
 
         leftFrontDrive = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
@@ -57,9 +60,11 @@ public class Algorithm {
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
         intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
-        shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "ShooterR");
 
-        block = hardwareMap.get(Servo.class, "Block");
+
+
+        //block = hardwareMap.get(Servo.class, "Block");
         ls = hardwareMap.get(Servo.class, "ls");
         rs = hardwareMap.get(Servo.class, "rs");
 
@@ -79,11 +84,12 @@ public class Algorithm {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intake.setDirection(DcMotor.Direction.FORWARD);
-        blender.setDirection(DcMotor.Direction.FORWARD);
+        blender.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public static double getCurrentRPM() {
@@ -131,7 +137,9 @@ public class Algorithm {
         shootTimer.reset();
         while (shootTimer.milliseconds() < millitime) {
             shoot(target_RPM, error, state, yState);
+            getCurrentRPM();
         }
+        stopShoot();
     }
     public static void shootTime(int target_RPM, int error, boolean state, int millitime) {
         shootTimer.reset();
@@ -151,11 +159,12 @@ public class Algorithm {
     public static void stopShoot() {
         intake.setPower(0);
         blender.setPower(0);
+        isChecked = false;
     }
 
     public static void draw() {
         state = false;
-        block.setPosition(0.3);
+        //block.setPosition(0.3);
         intake.setPower(1);
         blender.setPower(0);
         //shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
@@ -236,6 +245,7 @@ public class Algorithm {
         while (shootTimer.milliseconds() < milli) {
             shootCheckOnce(target_RPM, error, state, yState);
         }
+        stopShoot();
         isChecked = false;
     }
 

@@ -41,6 +41,10 @@ public class UNO extends LinearOpMode {
     @Override
     public void runOpMode() {
         Algorihthm = new Algorithm(hardwareMap);
+        Algorithm.shootMode4.setServos();
+//        Algorithm.ls.setPosition(0.45);
+//        Algorithm.rs.setPosition(1-0.45);
+
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -96,35 +100,54 @@ public class UNO extends LinearOpMode {
 
             if (gamepad1.a) Algorithm.draw();
 //                Algorithm.drawTime(3000);
-            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true,2000);
+            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true, 2000);
 
+
+//            Algorithm.shootMode1.shoot(gamepad1.dpad_down);
+//            Algorithm.shootMode2.shoot(gamepad1.dpad_left);
+//            Algorithm.shootMode3.shoot(gamepad1.dpad_right);
+//            Algorithm.shootMode4.shoot(gamepad1.dpad_up);
+             if(gamepad1.dpad_down) Algorithm.shootMode1.shootCheckOnceTime(1000);
+             if(gamepad1.dpad_left) Algorithm.shootMode2.shootCheckOnceTime(2000);
+             if(gamepad1.dpad_right)   Algorithm.shootMode3.shootCheckOnceTime(3000);
+             if(gamepad1.dpad_up)   Algorithm.shootMode4.shootCheckOnceTime(500);
+
+//            if(gamepad1.dpad_down) Algorithm.shootMode1.setServos();
+//            if(gamepad1.dpad_left) Algorithm.shootMode2.setServos();
+//            if(gamepad1.dpad_right)   Algorithm.shootMode3.setServos();
+//            if(gamepad1.dpad_up)   Algorithm.shootMode4.setServos();
+
+           // Algorithm.shootMode1.setServos();
+//            Algorithm.ls.setPosition(0.55);
+//            Algorithm.rs.setPosition(1-0.55);
+            //Algorithm.shooterR.setPower(0.5);
 
 //            if(Algorithm.intakeState==true) Algorithm.draw();
 
 
-            if (gamepad1.x) {
-                Algorithm.stopShoot();
-            }
+
+
+            //if (gamepad1.x) {
+
 //            if (Algorithm.flag(gamepad1.x)) {
 //                Algorithm.stopShoot();
 //            }
 
-            boolean yState = Algorithm.flag(gamepad1.y);
+            //boolean yState = Algorithm.flag(gamepad1.y);
 
-            int mode = -1;
-            if (gamepad1.dpad_down) mode = 1;
-            else if (gamepad1.dpad_left) mode = 2;
-            else if(gamepad1.dpad_up) mode = 3;
-            else if(gamepad1.dpad_right) mode = 4;
-
+//            int mode = -1;
+//            if (gamepad1.dpad_down) mode = 1;
+//            else if (gamepad1.dpad_left) mode = 2;
+//            else if(gamepad1.dpad_up) mode = 3;
+//            else if(gamepad1.dpad_right) mode = 4;
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 
             telemetry.addData("Status", "Intake Time: " + Algorithm.drawTimer.toString());
 
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Running");
             telemetry.addData("目标 RPM", Algorithm.targetRPM);
             telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
@@ -133,10 +156,11 @@ public class UNO extends LinearOpMode {
             telemetry.addData("YState", Algorithm.flag(gamepad1.y));
             telemetry.update();
 
-            telemetryManager.addData("current RPM", Algorithm.getCurrentRPM());
-            telemetryManager.update(telemetry);
+//            telemetryManager.addData("current RPM", Algorithm.getCurrentRPM());
+//            telemetryManager.update(telemetry);
 //            panelsTelemetry.addLine("extra1:${t} extra2:${t*t} extra3:${sqrt(t)}");
 //            panelsTelemetry.update(telemetry);
+
         }
     }
 }
