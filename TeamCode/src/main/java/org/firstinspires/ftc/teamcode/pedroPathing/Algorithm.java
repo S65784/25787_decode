@@ -49,11 +49,11 @@ public class Algorithm {
     public static final double BLENDER_POWER_SAN = 1;
     public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 5400;//2950
+    public static final int TARGET_RPM_SI = 5250;//2950
     public static final int ERROR_RANGE_SI = 340;
     public static final double SERVO_POSITION_SI = 0.592;
-    public static final double BLENDER_POWER_SI = 0.4;
-    public static final double INTAKE_POWER_SI = 0.5;
+    public static final double BLENDER_POWER_SI = 0.524;
+    public static final double INTAKE_POWER_SI = 0.56;
 
 
     public static int MOTOR_TICK_COUNT = 28;

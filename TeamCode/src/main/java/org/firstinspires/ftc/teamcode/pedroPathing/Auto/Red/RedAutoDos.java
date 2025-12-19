@@ -39,18 +39,18 @@ public class RedAutoDos extends OpMode {
     // Define Poses
     private final Pose startPose = new Pose(84.8, 8.4, Math.toRadians(90));
     private final Pose scorePose = new Pose(91.18072289156626, 14.65060240963856, Math.toRadians(72));
-    private final Pose pickup4Ready = new Pose(130.3132530120482, 22.939759036144576, Math.toRadians(-22));
-    private final Pose controlPickup4Pose_1 = new Pose(130.89156626506025, 2.5060240963855414, Math.toRadians(0));
-    private final Pose controlPickup4Pose_2 = new Pose(137, 22.746987951807224, Math.toRadians(0));
-    private final Pose controlPickup4Pose_3 = new Pose(132, 18.313253012048197, Math.toRadians(0));
-    private final Pose controlPickup4Pose_4 = new Pose(122.60240963855422, 12.530120481927707, Math.toRadians(0));
-    private final Pose pickup4Pose = new Pose(133, 11, Math.toRadians(-10));
+    private final Pose pickup4Ready = new Pose(127, 24, Math.toRadians(-22));
+    private final Pose controlPickup4Pose_1 = new Pose(122.21686746987952, 10.987951807228908, Math.toRadians(0));
+    private final Pose controlPickup4Pose_2 = new Pose(135.32530120481928, 15.807228915662655, Math.toRadians(0));
+    private final Pose controlPickup4Pose_3 = new Pose(122.98795180722891, 22.361445783132538, Math.toRadians(0));
+    private final Pose controlPickup4Pose_4 = new Pose(121.25301204819277, 13.108433734939762, Math.toRadians(0));
+    private final Pose pickup4Pose = new Pose(130, 11, Math.toRadians(-10));
 
     private final Pose controlPickup4Pose1 = new Pose(124.91566265060241, 15.807228915662655, Math.toRadians(-45));
-    private final Pose pickup4Pose1 = new Pose(133.0120481927711, 10.409638554216869, Math.toRadians(-37));
+    private final Pose pickup4Pose1 = new Pose(128.7710843373494, 10.409638554216869, Math.toRadians(-42));
 
     private final Pose controlScorePose4 = new Pose(104.09638554216868, 19.46987951807229, Math.toRadians(72));
-    private final Pose scorePose4 = new Pose(91.18072289156626, 14.65060240963856, Math.toRadians(72));
+    private final Pose scorePose4 = new Pose(92.5, 15, Math.toRadians(69));
 
 
     private final Pose end = new Pose(105.4, 14.5, Math.toRadians(67));
@@ -68,16 +68,17 @@ public class RedAutoDos extends OpMode {
         grabPickup4 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_1,controlPickup4Pose_2,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .setLinearHeadingInterpolation(pickup4Ready.getHeading(), pickup4Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.89, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
-        grabPickup41 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1, controlPickup4Pose_4,pickup4Pose1))
-                .setLinearHeadingInterpolation(pickup4Pose.getHeading(), pickup4Pose1.getHeading())
-                .build();
+//        grabPickup41 = follower.pathBuilder()
+//                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1, controlPickup4Pose_4,pickup4Pose1))
+//                .setLinearHeadingInterpolation(pickup4Pose.getHeading(), pickup4Pose1.getHeading())
+//                .addParametricCallback(0.2, () -> Algorithm.preShooterMove(130,0.63))
+//                .build();
 
         scorePickup4 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup4Pose1, controlScorePose4, scorePose4))
-                .setLinearHeadingInterpolation(pickup4Pose1.getHeading(), scorePose4.getHeading())
+                .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose4))
+                .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose4.getHeading())
                 .build();// 🫥
 
         endpath = follower.pathBuilder()
@@ -114,17 +115,17 @@ public class RedAutoDos extends OpMode {
                     follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup4, true);
-                    setPathState(4);
-                }
-                break;
-
-            case 4:
-                if (!follower.isBusy()) {
-                    follower.followPath(grabPickup41, true);
-                    Algorithm.keep();
                     setPathState(5);
                 }
                 break;
+
+//            case 4:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(grabPickup41, true);
+//                    Algorithm.keep();
+//                    setPathState(5);
+//                }
+//                break;
             case 5:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);

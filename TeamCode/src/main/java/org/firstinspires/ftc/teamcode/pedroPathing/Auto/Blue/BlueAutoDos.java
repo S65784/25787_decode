@@ -31,85 +31,58 @@ public class BlueAutoDos extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 3000;
-    private static final double lowMaxPower = 0.657;
-    private static final double t = 0.5;
-
-    private static final double getPointPreX = 140-95;
-    private static final double getPointX = 140-126.5;
-    private static final double Point1Y = 82;
-    private static final double Point2Y = 58;
-    private static final double Point3Y = 34.5;
-
+    private static final int millitime = 4000;
+    private static final double lowMaxPower = 0.6;
+    private static final double shooterPower = 0.6;
+    private static final double t = 0.3;
 
     // Define Poses
     private final Pose startPose = new Pose(140-84.8, 8.4, Math.toRadians(90));
+    private final Pose scorePose = new Pose(140-91.18072289156626, 14.65060240963856, Math.toRadians(180-72));
+    private final Pose pickup4Ready = new Pose(140-127, 24, Math.toRadians(180+22));
+    private final Pose controlPickup4Pose_1 = new Pose(140-129, 2.5060240963855414, Math.toRadians(180));
+    private final Pose controlPickup4Pose_2 = new Pose(140-135, 22.746987951807224, Math.toRadians(180));
+    private final Pose controlPickup4Pose_3 = new Pose(140-130, 18.313253012048197, Math.toRadians(180));
+    private final Pose controlPickup4Pose_4 = new Pose(140-122.60240963855422, 12.530120481927707, Math.toRadians(180));
+    private final Pose pickup4Pose = new Pose(140-130, 11, Math.toRadians(180+10));
 
-    private final Pose controlScorePose = new Pose(140-93.06631989596879, 62.91807542262679, Math.toRadians(180-0));
-    private final Pose scorePose = new Pose(140-87.2, 81.8, Math.toRadians(180-40));
+    private final Pose controlPickup4Pose1 = new Pose(140-122, 15.807228915662655, Math.toRadians(180+45));
+    private final Pose pickup4Pose1 = new Pose(140-129, 10.409638554216869, Math.toRadians(180+42));
 
-    private final Pose controlScorePose2 = new Pose(140-83.51625487646294, 62.73081924577374, Math.toRadians(180-40));
-    private final Pose scorePose2 = new Pose(140-87.2, 81.8, Math.toRadians(180-40));
-
-    private final Pose controlScorePose3 = new Pose(140-84, 55, Math.toRadians(180-40));
-    private final Pose scorePose3 = new Pose(140-87.2, 81.87, Math.toRadians(180-40));
-
-
-//un dux toi
-    private final Pose pickup2Ready = new Pose(140-103.17815344603382, 59.36020806241872, Math.toRadians(180-0));
-    private final Pose pickup2Pose = new Pose(140-getPointX, 59.36020806241872, Math.toRadians(180-0));
-
-    private final Pose controlTheGate = new Pose(140-119.84395318595578, 68.34850455136541, Math.toRadians(180-0));
-    private final Pose theGate = new Pose(140-129.01950585175553, 68.16124837451235, Math.toRadians(180-0));
-
-    private final Pose pickup3Ready = new Pose(140-101.30559167750326, Point3Y, Math.toRadians(180-0));
-    private final Pose pickup3Pose = new Pose(140-131, Point3Y, Math.toRadians(180-0));
-    private final Pose end = new Pose(140-102, 14.8, Math.toRadians(180-32));
+    private final Pose controlScorePose4 = new Pose(140-104.09638554216868, 19.46987951807229, Math.toRadians(180-72));
+    private final Pose scorePose4 = new Pose(140-92.5, 15, Math.toRadians(180-69));
 
 
-    private Path scorePreload, runto2, runto3, park;
-    private PathChain grabPickup2, grabPickup3, scorePickup2, scorePickup3, runTheGate, endpath                   ;
+    private final Pose end = new Pose(105.4, 14.5, Math.toRadians(180-67));
 
+    private Path scorePreload,runto4;
+    private PathChain grabPickup4, scorePickup4, grabPickup41, endpath;
 
     public void buildPaths() {
-//ichi ni san shi/yon go roku shichi/nana hachi kyu jyu
-        scorePreload = new Path(new BezierCurve(startPose, controlScorePose, scorePose));
+                                //ichi ni san shi/yon go roku shichi/nana hachi kyu jyu
+        scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-        runto2 = new Path(new BezierLine(scorePose,pickup2Ready));
-        runto2.setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Ready.getHeading());
-
-        runto3 = new Path(new BezierLine(scorePose,pickup3Ready));
-        runto3.setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Ready.getHeading());
-
-        grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Ready,pickup2Pose))
-                .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
-
+        runto4 = new Path(new BezierLine(scorePose,pickup4Ready));
+        runto4.setLinearHeadingInterpolation(scorePose.getHeading(), pickup4Ready.getHeading());
+        grabPickup4 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_1,controlPickup4Pose_2,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
+                .setLinearHeadingInterpolation(pickup4Ready.getHeading(), pickup4Pose.getHeading())
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
-        runTheGate = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup2Pose,controlTheGate, theGate))
-                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup2Pose.getHeading())
-                .build();
-        scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
-                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
+        grabPickup41 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1, controlPickup4Pose_4,pickup4Pose1))
+                .setLinearHeadingInterpolation(pickup4Pose.getHeading(), pickup4Pose1.getHeading())
                 .build();
 
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup3Ready,pickup3Pose))
-                .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
-                .build();
-        scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
-                .build();
+        scorePickup4 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup4Pose1, controlScorePose4, scorePose4))
+                .setLinearHeadingInterpolation(pickup4Pose1.getHeading(), scorePose4.getHeading())
+                .build();// 🫥
 
         endpath = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose3, end))
-                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
+                .addPath(new BezierCurve(scorePose4, end))
+                .setLinearHeadingInterpolation(scorePose4.getHeading(), end.getHeading())
                 .build();
 
     }
@@ -124,7 +97,7 @@ public class BlueAutoDos extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode4.shootTime(true, true,millitime);
+                    Algorithm.shootMode4.shootCheckOnceTime(millitime);
                     setPathState(2);
                 }
                 break;
@@ -133,7 +106,7 @@ public class BlueAutoDos extends OpMode {
 
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(runto2);
+                    follower.followPath(runto4);
                     setPathState(3);
                 }
                 break;
@@ -142,39 +115,29 @@ public class BlueAutoDos extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-                    follower.followPath(grabPickup2, true);
-                    setPathState(40);
-                }
-                break;
-
-            case 40:
-                if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    Algorithm.stopShoot();
-                    follower.followPath(runTheGate, true);
+                    follower.followPath(grabPickup4, true);
                     setPathState(4);
                 }
                 break;
 
             case 4:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    Algorithm.stopShoot();
-                    setPathState(50);
-                }
-                break;
-
-            case 50:
-                if (!follower.isBusy()) {
-                    Algorithm.shootMode4.preShoot();;
-                    follower.followPath(scorePickup2, true);
+                    follower.followPath(grabPickup41, true);
+                    Algorithm.keep();
                     setPathState(5);
                 }
                 break;
-
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode4.shootTime(true, true,millitime);
+                    follower.setMaxPower(1);
+                    Algorithm.stopShoot();
+                    setPathState(60);
+                }
+                break;
+            case 60:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode4.preShoot();;
+                    follower.followPath(scorePickup4, true);
                     setPathState(6);
                 }
                 break;
@@ -183,43 +146,12 @@ public class BlueAutoDos extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(runto3);
+                    Algorithm.shootMode4.shootCheckOnceTime(millitime);
                     setPathState(7);
                 }
                 break;
 
             case 7:
-                if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
-                    Algorithm.draw();
-                    follower.followPath(grabPickup3, true);
-                    setPathState(8);
-                }
-                break;
-
-            case 8:
-                if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    Algorithm.stopShoot();
-                    setPathState(90);
-                }
-                break;
-
-            case 90:
-                if (!follower.isBusy()) {
-                    Algorithm.shootMode4.preShoot();
-                    follower.followPath(scorePickup3, true);
-                    setPathState(9);
-                }
-                break;
-
-            case 9:
-                if (!follower.isBusy()) {
-                    Algorithm.shootMode4.shootTime(true, true,millitime);
-                    setPathState(10);
-                }
-                break;
-            case 10:
                 if (!follower.isBusy()) {
                     follower.followPath(endpath, true);
                     setPathState(-1);
