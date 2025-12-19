@@ -34,7 +34,7 @@ public class RedAutoUno extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1600;
+    private static final int millitime = 1800;
     private static final double lowMaxPower = 0.657;
     private static final double t = 0.5;
 
@@ -92,7 +92,7 @@ public class RedAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
@@ -102,7 +102,7 @@ public class RedAutoUno extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
@@ -112,7 +112,7 @@ public class RedAutoUno extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -131,12 +131,12 @@ public class RedAutoUno extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
-                Algorithm.shootMode2.preShoot();;
+                Algorithm.shootMode2.preShoot();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(2);
                 }
                 break;
@@ -171,7 +171,7 @@ public class RedAutoUno extends OpMode {
 
             case 50:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.preShoot();;
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -180,7 +180,7 @@ public class RedAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
                 break;
@@ -221,7 +221,7 @@ public class RedAutoUno extends OpMode {
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                Algorithm.shootMode2.shootTime(true, true,millitime);
+                Algorithm.shootMode2.shootCheckOnceTime(millitime);
                 setPathState(10);
             }
             break;
@@ -263,7 +263,7 @@ public class RedAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(14);
                 }
                 break;
@@ -280,11 +280,18 @@ public class RedAutoUno extends OpMode {
 
     public void setPathState(int pState) {
         pathState = pState;
-        pathTimer.resetTimer();
+        if (pathTimer != null) {
+            pathTimer.resetTimer();
+        }
     }
 
     @Override
     public void loop() {
+        if (follower == null) {
+            telemetry.addLine("FOLLOWER IS NULL");
+            telemetry.update();
+            return;
+        }
         follower.update();
         autonomousPathUpdate();
 
@@ -306,11 +313,12 @@ public class RedAutoUno extends OpMode {
     @Override
     public void init() {
         Algorihthm = new Algorithm(hardwareMap);
+        pathTimer = new Timer();
+        actionTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
-        pathTimer = new Timer();
-        actionTimer = new Timer();
+
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 

@@ -4,8 +4,8 @@ public class ShootMode {
     int targetRPM;
     int error;
     double servoPosition;
-    double lsServoPosition = servoPosition;
-    double rsServoPosition = 1-lsServoPosition;
+//    double lsServoPosition = servoPosition;
+//    double rsServoPosition = 1-lsServoPosition;
     public ShootMode(int targetRPM, int error, double servoPosition){
         this.targetRPM = targetRPM;
         this.error = error;
@@ -14,8 +14,8 @@ public class ShootMode {
 
 //    ShootMode ShootMode1=
     public void setServos(){
-        Algorithm.ls.setPosition(lsServoPosition);
-        Algorithm.rs.setPosition(rsServoPosition);
+        Algorithm.ls.setPosition(servoPosition);
+        Algorithm.rs.setPosition(1-servoPosition);
     }
 
     public void shoot(boolean yState){
@@ -30,6 +30,10 @@ public class ShootMode {
         Algorithm.shootTime(targetRPM,error,state,yState,millitime);
         setServos();
     }
+
+    public void shootTime(int milli){
+        shootTime(true,true,milli);
+    }
     public void shootCheckOnce(boolean state, boolean yState){
         Algorithm.shootCheckOnce(targetRPM,error,state,yState);
         setServos();
@@ -40,5 +44,8 @@ public class ShootMode {
         setServos();
     }
 
+    public void shootCheckOnceTime(int milli) {
+        shootCheckOnceTime(true,true,milli);
+    }
 
 }
