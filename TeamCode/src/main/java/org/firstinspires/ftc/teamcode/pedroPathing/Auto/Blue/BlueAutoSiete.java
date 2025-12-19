@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "27570侧板篮色近端合作(推gate)", group = "Competition")
-public class BlueAutoCinco extends OpMode {
+@Autonomous(name = "12527coop蓝-近端(撞gate*n)", group = "Competition")
+public class BlueAutoSiete extends OpMode {
     private Algorithm Algorihthm;
     private ElapsedTime runtime = new ElapsedTime();
 

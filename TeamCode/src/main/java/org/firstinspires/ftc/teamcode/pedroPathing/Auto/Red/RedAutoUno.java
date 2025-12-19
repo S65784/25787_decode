@@ -35,15 +35,15 @@ public class RedAutoUno extends OpMode {
     private int pathState;
 
     private static final int millitime = 1800;
-    private static final double lowMaxPower = 0.657;
-    private static final double t = 0.5;
+    private static final double lowMaxPower = 0.6;
+    private static final double t = 0.3;
 
 
     private static final double getPointPreX = 93.9;
     private static final double getPointX = 126.5;
-    private static final double Point1Y = 82;
-    private static final double Point2Y = 58;
-    private static final double Point3Y = 34.5;
+    private static final double Point1Y = 82;//82-0.23
+    private static final double Point2Y = 58-0.6;
+    private static final double Point3Y = 34.5-0.6;
 
 
     // Define Poses
@@ -68,10 +68,11 @@ public class RedAutoUno extends OpMode {
     private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(131, Point3Y, Math.toRadians(0));
+
     private final Pose end = new Pose(120.78023407022106, 93.6, Math.toRadians(32));
 
 
-    private Path scorePreload, runto1, runto2, runto3, park;
+    private Path scorePreload, runto1, runto2, runto3;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
     public void buildPaths() {
@@ -92,31 +93,34 @@ public class RedAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
+                .addParametricCallback(0.26, () -> Algorithm.preShooterMove(700,0.63))
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
+                .addParametricCallback(0.21, () -> Algorithm.keep())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Ready,pickup2Pose))
+                .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(300))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         endpath = follower.pathBuilder()
@@ -154,7 +158,6 @@ public class RedAutoUno extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
-//                    Algorithm.preShooterMove(500);
                     follower.followPath(grabPickup1, true);
 
                     setPathState(4);
@@ -196,9 +199,8 @@ public class RedAutoUno extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
-
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
                 }
@@ -221,10 +223,10 @@ public class RedAutoUno extends OpMode {
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                Algorithm.shootMode2.shootCheckOnceTime(millitime);
-                setPathState(10);
-            }
-            break;
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
+                    setPathState(10);
+                }
+                break;
 
 
 
@@ -237,7 +239,7 @@ public class RedAutoUno extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);

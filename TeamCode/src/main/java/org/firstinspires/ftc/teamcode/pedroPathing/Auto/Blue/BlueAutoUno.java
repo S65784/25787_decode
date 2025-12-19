@@ -31,16 +31,16 @@ public class BlueAutoUno extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1600;
-    private static final double lowMaxPower = 0.657;
-    private static final double t = 0.5;
+    private static final int millitime = 1800;
+    private static final double lowMaxPower = 0.6;
+    private static final double t = 0.3;
 
 
     private static final double getPointPreX = 45;
     private static final double getPointX = 12;
-    private static final double Point1Y = 82;
-    private static final double Point2Y = 58;
-    private static final double Point3Y = 34.5;
+    private static final double Point1Y = 82-0.6;
+    private static final double Point2Y = 58-0.6;
+    private static final double Point3Y = 34.5-0.6;
 
 
     // Define Poses
@@ -90,35 +90,38 @@ public class BlueAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(0.26, () -> Algorithm.preShooterMove(700,0.63))
                 .build();
 
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
+                .addParametricCallback(0.21, () -> Algorithm.keep())
                 .build();
 
 
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         endpath = follower.pathBuilder()
@@ -133,13 +136,13 @@ public class BlueAutoUno extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
-                Algorithm.shootMode2.preShoot();;
+                Algorithm.shootMode2.preShoot();
                 setPathState(1);
                 break;
 
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(2);
                 }
                 break;
@@ -172,7 +175,7 @@ public class BlueAutoUno extends OpMode {
 
             case 50:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.preShoot();;
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -180,7 +183,7 @@ public class BlueAutoUno extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
                 break;
@@ -196,7 +199,7 @@ public class BlueAutoUno extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
@@ -221,10 +224,10 @@ public class BlueAutoUno extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                Algorithm.shootMode2.shootTime(true, true,millitime);
-                setPathState(10);
-            }
-            break;
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
+                    setPathState(10);
+                }
+                break;
 
 
 
@@ -237,7 +240,7 @@ public class BlueAutoUno extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);
@@ -263,7 +266,7 @@ public class BlueAutoUno extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(14);
                 }
                 break;

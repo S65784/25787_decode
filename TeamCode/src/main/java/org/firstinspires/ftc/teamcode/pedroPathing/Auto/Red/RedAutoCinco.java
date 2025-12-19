@@ -32,14 +32,16 @@ public class RedAutoCinco extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    private static final int millitime = 1600;
-    private static final double lowMaxPower = 0.657;
-    private static final double t = 0.5;
 
-    public static double getPointPreX = 93.9;
-    public static double getPointX = 126.5;
-    public static double Point1Y = 82;
-    public static double Point2Y = 58;
+    private static final int millitime = 1800;
+    private static final double lowMaxPower = 0.6;
+    private static final double t = 0.3;
+
+
+    private static final double getPointPreX = 93.9;
+    private static final double getPointX = 126.5;
+    private static final double Point1Y = 82-0.6;
+    private static final double Point2Y = 58-0.6;
 
 
 
@@ -89,11 +91,13 @@ public class RedAutoCinco extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(0.26, () -> Algorithm.preShooterMove(700,0.63))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
+                .addParametricCallback(0.21, () -> Algorithm.keep())
+
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierCurve(theGate, controlScorePose1, scorePose1))
@@ -105,7 +109,7 @@ public class RedAutoCinco extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready,pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(t, () -> Algorithm.preShooterMove(500))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
@@ -127,12 +131,12 @@ public class RedAutoCinco extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
-                Algorithm.shootMode2.preShoot();;
+                Algorithm.shootMode2.preShoot();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(2);
                 }
                 break;
@@ -181,7 +185,7 @@ public class RedAutoCinco extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,millitime);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
                 break;
@@ -197,7 +201,7 @@ public class RedAutoCinco extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(lowMaxPower);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
@@ -214,7 +218,7 @@ public class RedAutoCinco extends OpMode {
 
             case 90:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.preShoot();;
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -222,10 +226,10 @@ public class RedAutoCinco extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode2.shootTime(true, true,2000);
-                    setPathState(10);
-                }
-                break;
+                Algorithm.shootMode2.shootCheckOnceTime(millitime);
+                setPathState(10);
+            }
+            break;
 
 
 

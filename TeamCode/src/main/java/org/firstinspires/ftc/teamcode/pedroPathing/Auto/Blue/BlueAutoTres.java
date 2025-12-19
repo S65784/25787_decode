@@ -30,40 +30,50 @@ public class BlueAutoTres extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    public static double getPointPreX = 45;
-    public static double getPointX = 12;
-    public static double Point1Y = 82;
-    public static double Point2Y = 58;
-    public static double Point3Y = 35;
+
+    private static final int millitime = 1800;
+    private static final double lowMaxPower = 0.6;
+    private static final double t = 0.3;
+
+
+    private static final double getPointPreX = 45;
+    private static final double getPointX = 12;
+    private static final double Point1Y = 82-0.6;
+    private static final double Point2Y = 58-0.6;
+    private static final double Point3Y = 34.5-0.6;
 
 
     // Define Poses
     private final Pose startPose = new Pose(16.5, 122.5, Math.toRadians(142));
-
-    private final Pose scorePose = new Pose(26.4, 115.9, Math.toRadians(142));
-    private final Pose controlScorePose1 = new Pose(140-104.91220028208745, 77.99153737658675, Math.toRadians(180-32));
-    private final Pose scorePose1 = new Pose(28, 110, Math.toRadians(148));
-    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(27, 109, Math.toRadians(148));
-    private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
-    private final Pose scorePose3 = new Pose(29, 106, Math.toRadians(148));
-
+    private final Pose scorePose = new Pose(40, 99.85542168674698, Math.toRadians(180-38));
 
     private final Pose controlPickup1Ready = new Pose(48, 97, Math.toRadians(180));
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
-    private final Pose controlTheGate = new Pose(140-123.39456981664316, 75.14809590973204, Math.toRadians(180));
-    private final Pose theGate = new Pose(140-128.8783497884344, 70.6798307475317468, Math.toRadians(180));
+    private final Pose controlTheGate = new Pose(36.81927710843374, 82.89156626506025, Math.toRadians(90));
+    private final Pose theGate = new Pose(12, 72, Math.toRadians(90));
+
+    private final Pose controlScorePose1 = new Pose(25.25301204819277, 81.92771084337349, Math.toRadians(32));
+    private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
 
     private final Pose controlPickup2Ready = new Pose(63.4, 61.9, Math.toRadians(180));
-    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(180));
+    private final Pose pickup2Ready = new Pose(getPointPreX, 59.951807228915655, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(getPointX, 59.951807228915655, Math.toRadians(180));
+
+    private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
+    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
 
     private final Pose controlPickup3Ready = new Pose(61, 70, Math.toRadians(180));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
-    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(32));
+
+    private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
+    private final Pose scorePose3 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
+
+    private final Pose end = new Pose(140-120.78023407022106, 93.6, Math.toRadians(148));
+
+
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
 
@@ -72,10 +82,7 @@ public class BlueAutoTres extends OpMode {
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-        runTheGate = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
-                .build();
+
 
         runto1 = new Path(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready));
         runto1.setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading());
@@ -90,10 +97,16 @@ public class BlueAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
+                .addParametricCallback(0.26, () -> Algorithm.preShooterMove(700,0.63))
+                .build();
+        runTheGate = follower.pathBuilder()
+                .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
+                .addParametricCallback(0.21, () -> Algorithm.keep())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(theGate, scorePose1))
+                .addPath(new BezierCurve(theGate, controlScorePose1, scorePose1))
                 .setLinearHeadingInterpolation(theGate.getHeading(), scorePose1.getHeading())
                 .build();
 
@@ -101,26 +114,30 @@ public class BlueAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
+                .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         endpath = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose2, end))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), end.getHeading())
+                .addPath(new BezierCurve(scorePose3, end))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), end.getHeading())
                 .build();
 
 
@@ -131,11 +148,12 @@ public class BlueAutoTres extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
+                Algorithm.shootMode2.preShoot();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, true,2600);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(2);
                 }
                 break;
@@ -151,7 +169,7 @@ public class BlueAutoTres extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
                     setPathState(30);
@@ -161,7 +179,10 @@ public class BlueAutoTres extends OpMode {
             case 30:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
+                    Algorithm.keep();
                     follower.followPath(runTheGate, true);
+                    Algorithm.stopShoot();
+                    Algorithm.sleepForAWhile(400);//450
                     setPathState(4);
                 }
                 break;
@@ -170,7 +191,7 @@ public class BlueAutoTres extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
-                    Algorithm.stopShoot();
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -178,7 +199,7 @@ public class BlueAutoTres extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, true,2600);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
                 break;
@@ -194,7 +215,7 @@ public class BlueAutoTres extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);
@@ -205,6 +226,13 @@ public class BlueAutoTres extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
                 }
@@ -212,7 +240,7 @@ public class BlueAutoTres extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true,true, 2600);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(10);
                 }
                 break;
@@ -228,7 +256,7 @@ public class BlueAutoTres extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);
@@ -239,6 +267,14 @@ public class BlueAutoTres extends OpMode {
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     Algorithm.stopShoot();
+
+                    setPathState(130);
+                }
+                break;
+
+            case 130:
+                if (!follower.isBusy()) {
+                    Algorithm.shootMode2.preShoot();;
                     follower.followPath(scorePickup3, true);
                     setPathState(13);
                 }
@@ -246,7 +282,7 @@ public class BlueAutoTres extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    Algorithm.shootTime(Algorithm.TARGET_RPM_YI, Algorithm.ERROR_RANGE_YI, true, true,2600);
+                    Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(14);
                 }
                 break;
@@ -256,7 +292,7 @@ public class BlueAutoTres extends OpMode {
                     follower.followPath(endpath, true);
                     setPathState(-1);
                 }
-                break       ;
+                break;
 
         }
     }

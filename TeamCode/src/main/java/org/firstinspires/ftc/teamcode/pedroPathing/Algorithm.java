@@ -31,21 +31,29 @@ public class Algorithm {
 
 
     //constants
-    public static final int TARGET_RPM_YI = 2800;
+    public static final int TARGET_RPM_YI = 3600;
     public static final int ERROR_RANGE_YI =500;
-    public static final double SERVO_POSITION_YI = 0.45;
+    public static final double SERVO_POSITION_YI = 0.5;
+    public static final double BLENDER_POWER_YI = 1;
+    public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3400;
-    public static final int ERROR_RANGE_ER = 500;
-    public static final double SERVO_POSITION_ER = 0.45;
+    public static final int TARGET_RPM_ER = 3500;
+    public static final int ERROR_RANGE_ER = 357;
+    public static final double SERVO_POSITION_ER = 0.5;
+    public static final double BLENDER_POWER_ER = 1;
+    public static final double INTAKE_POWER_ER = 1;
 
     public static final int TARGET_RPM_SAN = 4000;//2300
     public static final int ERROR_RANGE_SAN = 500;
-    public static final double SERVO_POSITION_SAN = 0.5;
+    public static final double SERVO_POSITION_SAN = 0.523;
+    public static final double BLENDER_POWER_SAN = 1;
+    public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 5100;//2950
-    public static final int ERROR_RANGE_SI = 3400;
-    public static final double SERVO_POSITION_SI = 0.55;
+    public static final int TARGET_RPM_SI = 5400;//2950
+    public static final int ERROR_RANGE_SI = 340;
+    public static final double SERVO_POSITION_SI = 0.592;
+    public static final double BLENDER_POWER_SI = 0.4;
+    public static final double INTAKE_POWER_SI = 0.5;
 
 
     public static int MOTOR_TICK_COUNT = 28;
@@ -60,7 +68,7 @@ public class Algorithm {
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
         intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
-        shooter = hardwareMap.get(DcMotorEx.class, "ShooterR");
+        shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
 
 
 
@@ -116,14 +124,14 @@ public class Algorithm {
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
-    public static void shoot(int target_RPM, int error, boolean state, boolean yState) {
+    public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState) {
         if (state) {
             shooterPID();
             setRPM(target_RPM);
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
                     intake.setPower(1);
-                    blender.setPower(1);
+                    blender.setPower(blenderPower);
                 } else {
                     stopShoot(100);
                 }
@@ -133,18 +141,18 @@ public class Algorithm {
 
     static ElapsedTime shootTimer = new ElapsedTime();
 
-    public static void shootTime(int target_RPM, int error, boolean state, boolean yState, int millitime) {
+    public static void shootTime(int target_RPM, int error,double blenderPower, boolean state, boolean yState, int millitime) {
         shootTimer.reset();
         while (shootTimer.milliseconds() < millitime) {
-            shoot(target_RPM, error, state, yState);
+            shoot(target_RPM, error,blenderPower ,state, yState);
             getCurrentRPM();
         }
         stopShoot();
     }
-    public static void shootTime(int target_RPM, int error, boolean state, int millitime) {
+    public static void shootTime(int target_RPM, int error,double blenderPower ,boolean state, int millitime) {
         shootTimer.reset();
         while (shootTimer.milliseconds() < millitime) {
-            shoot(target_RPM, error, state, true);
+            shoot(target_RPM, error, blenderPower,state, true);
         }
     }
     public static ElapsedTime drawTimer = new ElapsedTime();
@@ -173,11 +181,31 @@ public class Algorithm {
 
 
     static ElapsedTime preShooterTimer = new ElapsedTime();
-    public static void preShooterMove(int millitime) {
+    public static void preShooterMove(int millitime, double power) {
             shootState = true;
             preShooterTimer.reset();
+        while (preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(power);
+        blender.setPower(0);
 
-        if(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.5);
+    }
+    public static void keep(double power) {
+        intake.setPower(power);
+    }
+
+    public static void keep() {
+        intake.setPower(0.12);
+    }
+    public static void preShooterMove(int millitime) {
+        shootState = true;
+        preShooterTimer.reset();
+        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.53);
+        blender.setPower(0);
+
+    }
+    public static void preShooterMove() {
+        shootState = true;
+        preShooterTimer.reset();
+        if(preShooterTimer.milliseconds() < 420 && shootState)  blender.setPower(0.53);
         else  blender.setPower(0);
 
     }
@@ -198,17 +226,17 @@ public class Algorithm {
         lastState = gamepad;
         return flagState;
     }
-    public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI);
-    public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER);
-    public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN);
-    public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI);
+    public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI,BLENDER_POWER_YI,INTAKE_POWER_YI);
+    public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,BLENDER_POWER_ER,INTAKE_POWER_ER);
+    public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN,BLENDER_POWER_SAN,INTAKE_POWER_SAN);
+    public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI,BLENDER_POWER_SI,INTAKE_POWER_SI);
 //
-    public static void shootOpenLoop(int target_RPM, boolean state, boolean yState) {
+    public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
             shooterPID();
             if (yState) {
-                intake.setPower(1);
-                blender.setPower(0.55);
+                intake.setPower(intakePower);
+                blender.setPower(blenderPower);
             }
             setRPM(target_RPM);
         }
@@ -225,25 +253,25 @@ public class Algorithm {
         }
     }
     static boolean isChecked = false;
-    public static void shootCheckOnce(int target_RPM,int error,boolean state, boolean yState){
+    public static void shootCheckOnce(int target_RPM,int error,double blenderPower,double intakePower,boolean state, boolean yState){
         if(state) {
             if (yState) {
                 if (checkRPM(target_RPM, error)) {
                     isChecked = true;
                 }
                 if (isChecked) {
-                    intake.setPower(1);
-                    blender.setPower(0.55);
+                    intake.setPower(intakePower);
+                    blender.setPower(blenderPower);
                 }
             }
             setRPM(target_RPM);
         }
     }
 
-    public static void shootCheckOnceTime(int target_RPM,int error,boolean state, boolean yState,int milli){
+    public static void shootCheckOnceTime(int target_RPM,int error,double blenderPower,double intakePower,boolean state, boolean yState,int milli){
         shootTimer.reset();
         while (shootTimer.milliseconds() < milli) {
-            shootCheckOnce(target_RPM, error, state, yState);
+            shootCheckOnce(target_RPM, error,blenderPower ,intakePower,state, yState);
         }
         stopShoot();
         isChecked = false;
@@ -255,6 +283,23 @@ public class Algorithm {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+
+    }
+
+    public static void sleepForAWhile(long ms){
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+    }
+    public static void sleepForAWhile(){
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
     }
 
