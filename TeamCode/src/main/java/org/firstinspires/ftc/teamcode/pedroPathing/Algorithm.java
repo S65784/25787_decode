@@ -37,8 +37,8 @@ public class Algorithm {
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3500;
-    public static final int ERROR_RANGE_ER = 357;
+    public static final int TARGET_RPM_ER = 3450;
+    public static final int ERROR_RANGE_ER = 200;
     public static final double SERVO_POSITION_ER = 0.5;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
@@ -50,13 +50,23 @@ public class Algorithm {
     public static final double INTAKE_POWER_SAN = 1;
 
     public static final int TARGET_RPM_SI = 5250;//2950
-    public static final int ERROR_RANGE_SI = 340;
+    public static final int ERROR_RANGE_SI = 205;
     public static final double SERVO_POSITION_SI = 0.592;
-    public static final double BLENDER_POWER_SI = 0.524;
-    public static final double INTAKE_POWER_SI = 0.56;
+    public static final double BLENDER_POWER_SI = 0.8;
+    public static final double INTAKE_POWER_SI = 1;
 
 
     public static int MOTOR_TICK_COUNT = 28;
+
+    public static double P = 90, I = 0, D = 1, F = 13;
+    public static double dP = 125, dI = 0.4, dD = 0.1, dF = 16.27;//da
+    //        public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
+//    public static double P = 140, I = 20, D = 33, F = 14.5;
+    public static boolean lastYState = false;
+    public static boolean state = false;
+
+    public static PIDFCoefficients pidClose = new PIDFCoefficients(P, I, D, F);
+    public static PIDFCoefficients pidFar = new PIDFCoefficients(dP, dI, dD, dF);
 
 
 
@@ -69,8 +79,6 @@ public class Algorithm {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
         shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
-
-
 
         //block = hardwareMap.get(Servo.class, "Block");
         ls = hardwareMap.get(Servo.class, "ls");
@@ -123,10 +131,29 @@ public class Algorithm {
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
+    public static void shooterPIDFar(){
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(dP, dI, dD, dF);
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+    }
 
     public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState) {
         if (state) {
-            shooterPID();
+            setRPM(target_RPM);
+            currentRPM = getCurrentRPM();
+            if (yState) {
+                if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
+                    intake.setPower(1);
+                    blender.setPower(blenderPower);
+                } else {
+                    stopShoot(100);
+                }
+            }
+        }
+    }
+    public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState, boolean iyu) {
+        if (state) {
+            shooterPIDFar();
             setRPM(target_RPM);
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
@@ -226,10 +253,10 @@ public class Algorithm {
         lastState = gamepad;
         return flagState;
     }
-    public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI,BLENDER_POWER_YI,INTAKE_POWER_YI);
-    public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,BLENDER_POWER_ER,INTAKE_POWER_ER);
-    public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN,BLENDER_POWER_SAN,INTAKE_POWER_SAN);
-    public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI,BLENDER_POWER_SI,INTAKE_POWER_SI);
+    public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI,BLENDER_POWER_YI,INTAKE_POWER_YI,pidClose);
+    public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,BLENDER_POWER_ER,INTAKE_POWER_ER,pidClose);
+    public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN,BLENDER_POWER_SAN,INTAKE_POWER_SAN,pidClose);
+    public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI,BLENDER_POWER_SI,INTAKE_POWER_SI,pidFar);
 //
     public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
@@ -240,7 +267,6 @@ public class Algorithm {
             }
             setRPM(target_RPM);
         }
-
 
     }
     public static boolean checkRPM(int targetRPM,int error){
@@ -303,9 +329,5 @@ public class Algorithm {
 
     }
 
-        public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
-//    public static double P = 140, I = 20, D = 33, F = 14.5;
-        public static boolean lastYState = false;
-        public static boolean state = false;
 
 }

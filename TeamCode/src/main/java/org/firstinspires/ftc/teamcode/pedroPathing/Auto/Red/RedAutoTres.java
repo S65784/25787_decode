@@ -54,7 +54,7 @@ public class RedAutoTres extends OpMode {
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
     private final Pose controlTheGate = new Pose(140-36.81927710843374, 82.89156626506025, Math.toRadians(270));
-    private final Pose theGate = new Pose(140-12, 72, Math.toRadians(90));
+    private final Pose theGate = new Pose(140-11, 72, Math.toRadians(90));
 
     private final Pose controlScorePose1 = new Pose(140-25.25301204819277, 81.92771084337349, Math.toRadians(35.6));
     private final Pose scorePose1 = new Pose(140-40, 99.8, Math.toRadians(36.9));//
@@ -73,7 +73,7 @@ public class RedAutoTres extends OpMode {
     private final Pose controlScorePose3 = new Pose(113, 39, Math.toRadians(32));
     private final Pose scorePose3 = new Pose(100, 99.8, Math.toRadians(35));//
 
-    private final Pose end = new Pose(120.78023407022106, 93.6, Math.toRadians(32));
+    private final Pose end = new Pose(94, 108, Math.toRadians(35));
 
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
@@ -113,7 +113,7 @@ public class RedAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(850,0.63))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -126,7 +126,7 @@ public class RedAutoTres extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(850,0.63))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -180,7 +180,7 @@ public class RedAutoTres extends OpMode {
                     Algorithm.keep();
                     follower.followPath(runTheGate, true);
                     Algorithm.stopShoot();
-                    Algorithm.sleepForAWhile(400);//450
+                    Algorithm.sleepForAWhile(1200);//450
                     setPathState(4);
                 }
                 break;

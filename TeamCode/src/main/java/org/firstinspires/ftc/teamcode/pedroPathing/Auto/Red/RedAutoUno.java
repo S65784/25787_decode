@@ -58,6 +58,7 @@ public class RedAutoUno extends OpMode {
 
 
     private final Pose controlPickup1Ready = new Pose(93.94464033850494, 96.27080394922427, Math.toRadians(0));
+
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
