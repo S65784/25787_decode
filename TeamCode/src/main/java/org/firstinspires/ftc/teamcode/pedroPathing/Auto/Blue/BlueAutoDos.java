@@ -102,8 +102,14 @@ public class BlueAutoDos extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode4.shootCheckOnceTime(millitime);
-                    setPathState(2);
+
+                        Algorithm.shootMode4.shootTime(millitime);
+
+
+
+                    if(Algorithm.shootTimeCheck(millitime)){
+                        setPathState(2);
+                    }
                 }
                 break;
 

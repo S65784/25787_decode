@@ -30,17 +30,17 @@ public class ShootMode {
     public void shoot(boolean yState){
         Algorithm.shoot(targetRPM,error,blenderPower,true,yState);
         setServos();
-        setPid();
+        applyPID();
     }
     public void preShoot(){
         Algorithm.shoot(targetRPM,error,blenderPower,true,false);
         setServos();
-        setPid();
+        applyPID();
     }
     public void shootTime(boolean state, boolean yState,int millitime){
         Algorithm.shootTime(targetRPM,error,blenderPower,state,yState,millitime);
         setServos();
-        setPid();
+        applyPID();
     }
 
     public void shootTime(int milli){
@@ -49,21 +49,20 @@ public class ShootMode {
     public void shootCheckOnce(boolean state, boolean yState){
         Algorithm.shootCheckOnce(targetRPM,error,blenderPower,intakePower,state,yState);
         setServos();
-        setPid();
+        applyPID();
     }
 
     public void shootCheckOnceTime(boolean state, boolean yState,int milli){
         Algorithm.shootCheckOnceTime(targetRPM,error,blenderPower,intakePower,state,yState,milli);
         setServos();
-        setPid();
+        applyPID();
     }
 
     public void shootCheckOnceTime(int milli) {
         shootCheckOnceTime(true,true,milli);
     }
 
-    public void setPid(){
-        Algorithm.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public  void applyPID(){
         Algorithm.shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pid);
     }
 }
