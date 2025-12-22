@@ -31,27 +31,30 @@ public class RedAutoDos extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 4000;
+    private static final int millitime = 5000;
+    private static final int ADDITIONAL_TIME = 20;
     private static final double lowMaxPower = 0.6;
     private static final double shooterPower = 0.6;
     private static final double t = 0.3;
+    private static final double PATH_TIMEOUT = 6000;
+
 
     // Define Poses
     private final Pose startPose = new Pose(84.8, 8.4, Math.toRadians(90));
-    private final Pose scorePose = new Pose(91.18072289156626, 14.65060240963856, Math.toRadians(72));
+    private final Pose scorePose = new Pose(140-49, 14.65060240963856, Math.toRadians(180-108));//49x  108度
     private final Pose controlPickup4Ready = new Pose(103.71084337349397, 4.2409638554216915, Math.toRadians(-22));
-    private final Pose pickup4Ready = new Pose(129.34939759036143, 19, Math.toRadians(-22));
+    private final Pose pickup4Ready = new Pose(127.42168674698796, 19.66265060240964, Math.toRadians(-22));
 //    private final Pose controlPickup4Pose_1 = new Pose(122.21686746987952, 10.987951807228908, Math.toRadians(0));
 //    private final Pose controlPickup4Pose_2 = new Pose(135.32530120481928, 15.807228915662655, Math.toRadians(0));
-    private final Pose controlPickup4Pose_3 = new Pose(122.98795180722891, 22.361445783132538, Math.toRadians(0));
-    private final Pose controlPickup4Pose_4 = new Pose(121.25301204819277, 13.108433734939762, Math.toRadians(0));
-    private final Pose pickup4Pose = new Pose(130, 11, Math.toRadians(-10));
+    private final Pose controlPickup4Pose_3 = new Pose(140.72289156626508, 18.313253012048197, Math.toRadians(0));
+    private final Pose controlPickup4Pose_4 = new Pose(122.60240963855422, 12.530120481927707, Math.toRadians(0));
+    private final Pose pickup4Pose = new Pose(136.09638554216866, 7.518072289156624, Math.toRadians(0));
 
 //    private final Pose controlPickup4Pose1 = new Pose(124.91566265060241, 15.807228915662655, Math.toRadians(-45));
 //    private final Pose pickup4Pose1 = new Pose(129.1566265060241, 10.216867469879517, Math.toRadians(-42));
 
     private final Pose controlScorePose4 = new Pose(104.09638554216868, 19.46987951807229, Math.toRadians(72));
-    private final Pose scorePose4 = new Pose(92.5, 15, Math.toRadians(63));
+    private final Pose scorePose4 = new Pose(92.5, 15, Math.toRadians(63));//140-47.5x   117度
 
 
     private final Pose end = new Pose(105.4, 14.5, Math.toRadians(63));
@@ -70,17 +73,20 @@ public class RedAutoDos extends OpMode {
 //                .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_1,controlPickup4Pose_2,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .setLinearHeadingInterpolation(pickup4Ready.getHeading(), pickup4Pose.getHeading())
-                .addParametricCallback(0.89, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.314, () -> Algorithm.preShooterMove(200,0.63))
+                .addParametricCallback(0.89, () -> Algorithm.preShooterMove(650,0.63))
                 .build();
 //        grabPickup41 = follower.pathBuilder()
 //                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1,pickup4Pose1))
 //                .setLinearHeadingInterpolation(pickup4Pose.getHeading(), pickup4Pose1.getHeading())
 //                .addParametricCallback(0.2, () -> Algorithm.preShooterMove(130,0.63))
-//                .build();
+//                .build();😉
 
         scorePickup4 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose4))
                 .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose4.getHeading())
+                .addParametricCallback(0.21, () -> Algorithm.keep())
+
                 .build();// 🫥
 
         endpath = follower.pathBuilder()
@@ -90,18 +96,25 @@ public class RedAutoDos extends OpMode {
 
     }
 
+    int rotean = 1;
+
     public void autonomousPathUpdate() {
         switch (pathState) {
 
             case 0:
                 follower.followPath(scorePreload);
-                Algorithm.shootMode4.preShoot();;
+                Algorithm.shootMode4.preShoot();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
+
                     Algorithm.shootMode4.shootTime(millitime);
-                    setPathState(2);
+
+                    if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
+                        follower.breakFollowing();   // 强制停止路径
+                        setPathState(2);
+                    }
                 }
                 break;
 
@@ -114,6 +127,7 @@ public class RedAutoDos extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
+                    pathTimeout(5);
                     follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup4, true);
@@ -131,9 +145,11 @@ public class RedAutoDos extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
+                    Algorithm.keep();
                     Algorithm.stopShoot();
                     setPathState(60);
                 }
+                pathTimeout(60);
                 break;
 
             case 60:
@@ -142,11 +158,24 @@ public class RedAutoDos extends OpMode {
                     follower.followPath(scorePickup4, true);
                     setPathState(6);
                 }
+                pathTimeout(6);
                 break;
             case 6:
                 if (!follower.isBusy()) {
+
                     Algorithm.shootMode4.shootTime(millitime);
-                    setPathState(7);
+
+                   if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
+                        follower.breakFollowing();   // 强制停止路径
+                       if(rotean==1){
+                           setPathState(2);//🩵
+                           rotean++;
+                       }
+                       else{
+                           setPathState(7);//🤎
+
+                       }
+                    }
                 }
                 break;
             case 7:
@@ -205,6 +234,15 @@ public class RedAutoDos extends OpMode {
     public void start() {
         opmodeTimer.resetTimer();
     }
+    private boolean pathTimeout(int nextState) {
+        if (pathTimer.getElapsedTime() > PATH_TIMEOUT) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
+    }
+
 
 
 }

@@ -49,9 +49,9 @@ public class Algorithm {
     public static final double BLENDER_POWER_SAN = 1;
     public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 5250;//2950
-    public static final int ERROR_RANGE_SI = 600;//205
-    public static final double SERVO_POSITION_SI = 0.592;
+    public static final int TARGET_RPM_SI = 4800;//2950
+    public static final int ERROR_RANGE_SI = 200;//205
+    public static final double SERVO_POSITION_SI = 0.632;
     public static final double BLENDER_POWER_SI = 0.8;
     public static final double INTAKE_POWER_SI = 1;
 
@@ -173,6 +173,7 @@ public class Algorithm {
     public static void shootTime(int target_RPM, int error,double blenderPower, boolean state, boolean yState, int millitime) {
         if(!isStart){
             shootTimer.reset();
+            isStart = true;
         }
         if (shootTimer.milliseconds() < millitime) {
             shoot(target_RPM, error,blenderPower ,state, yState);
@@ -183,8 +184,8 @@ public class Algorithm {
         }
     }
 
-    public static boolean shootTimeCheck(int millitime){
-        return !(shootTimer.milliseconds() < millitime);
+    public static boolean shootTimeCheck(){
+        return !isStart;
     }
     public static void shootTime(int target_RPM, int error,double blenderPower ,boolean state, int millitime) {
         shootTimer.reset();

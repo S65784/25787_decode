@@ -37,6 +37,7 @@ public class RedAutoUno extends OpMode {
     private static final int millitime = 1800;
     private static final double lowMaxPower = 0.6;
     private static final double t = 0.3;
+    private static final double PATH_TIMEOUT = 5000;
 
 
     private static final double getPointPreX = 93.9;
@@ -333,7 +334,23 @@ public class RedAutoUno extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+    }
+    private boolean pathTimeout(int nextState) {
+        if (pathTimer.getElapsedTime() > PATH_TIMEOUT) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
+    }
 
+    private boolean pathTimeout(int maxtime, int nextState) {
+        if (pathTimer.getElapsedTime() > maxtime) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
     }
 
 

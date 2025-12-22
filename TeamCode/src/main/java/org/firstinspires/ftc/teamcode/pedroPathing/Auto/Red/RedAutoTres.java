@@ -36,6 +36,7 @@ public class RedAutoTres extends OpMode {
     private static final int millitime = 1800;
     private static final double lowMaxPower = 0.6;
     private static final double t = 0.3;
+    private static final double PATH_TIMEOUT = 5000;
 
 
     private static final double getPointPreX = 93.9;
@@ -57,14 +58,14 @@ public class RedAutoTres extends OpMode {
     private final Pose theGate = new Pose(140-11, 72, Math.toRadians(90));
 
     private final Pose controlScorePose1 = new Pose(140-25.25301204819277, 81.92771084337349, Math.toRadians(35.6));
-    private final Pose scorePose1 = new Pose(140-40, 99.8, Math.toRadians(36.9));//
+    private final Pose scorePose1 = new Pose(140-40, 99.8, Math.toRadians(37.2));//
 
     private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
     private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(getPointX, Point2Y, Math.toRadians(0));
 
     private final Pose controlScorePose2 = new Pose(104, 60.3, Math.toRadians(32));
-    private final Pose scorePose2 = new Pose(100, 99.8, Math.toRadians(36));//
+    private final Pose scorePose2 = new Pose(100, 99.8, Math.toRadians(36.5));//
 
     private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
@@ -183,6 +184,7 @@ public class RedAutoTres extends OpMode {
                     Algorithm.sleepForAWhile(1200);//450
                     setPathState(4);
                 }
+                pathTimeout(5000,4);
                 break;
 
 
@@ -193,6 +195,7 @@ public class RedAutoTres extends OpMode {
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
+                pathTimeout(8000,4);
                 break;
 
             case 5:
@@ -200,6 +203,7 @@ public class RedAutoTres extends OpMode {
                     Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
+                pathTimeout(8000,4);
                 break;
 
 
@@ -338,6 +342,23 @@ public class RedAutoTres extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+    }
+    private boolean pathTimeout(int nextState) {
+        if (pathTimer.getElapsedTime() > PATH_TIMEOUT) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
+    }
+
+    private boolean pathTimeout(int maxtime, int nextState) {
+        if (pathTimer.getElapsedTime() > maxtime) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
     }
 
 

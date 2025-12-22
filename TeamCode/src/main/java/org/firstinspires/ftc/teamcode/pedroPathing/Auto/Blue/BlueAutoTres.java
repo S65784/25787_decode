@@ -34,6 +34,7 @@ public class BlueAutoTres extends OpMode {
     private static final int millitime = 1800;
     private static final double lowMaxPower = 0.6;
     private static final double t = 0.3;
+    private static final double PATH_TIMEOUT = 5000;
 
 
     private static final double getPointPreX = 45;
@@ -62,14 +63,14 @@ public class BlueAutoTres extends OpMode {
     private final Pose pickup2Pose = new Pose(getPointX, 58.9, Math.toRadians(180));
 
     private final Pose controlScorePose2 = new Pose(36, 60.3, Math.toRadians(148));
-    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
+    private final Pose scorePose2 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
 
     private final Pose controlPickup3Ready = new Pose(61, 70, Math.toRadians(180));
     private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(9, Point3Y, Math.toRadians(180));
 
     private final Pose controlScorePose3 = new Pose(27, 39, Math.toRadians(148));
-    private final Pose scorePose3 = new Pose(40, 99.85542168674698, Math.toRadians(180-35));
+    private final Pose scorePose3 = new Pose(40, 99.85542168674698, Math.toRadians(180-36.5));
 
     private final Pose end = new Pose(50, 110, Math.toRadians(180-35));
 
@@ -81,8 +82,6 @@ public class BlueAutoTres extends OpMode {
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
-
-
 
         runto1 = new Path(new BezierCurve(scorePose,controlPickup1Ready,pickup1Ready));
         runto1.setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Ready.getHeading());
@@ -185,6 +184,7 @@ public class BlueAutoTres extends OpMode {
                     Algorithm.sleepForAWhile(1200);//450
                     setPathState(4);
                 }
+                pathTimeout(5000,4);
                 break;
 
 
@@ -195,6 +195,7 @@ public class BlueAutoTres extends OpMode {
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
+                pathTimeout(8000,4);
                 break;
 
             case 5:
@@ -202,6 +203,7 @@ public class BlueAutoTres extends OpMode {
                     Algorithm.shootMode2.shootCheckOnceTime(millitime);
                     setPathState(6);
                 }
+                pathTimeout(8000,4);
                 break;
 
 
@@ -340,6 +342,23 @@ public class BlueAutoTres extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+    }
+    private boolean pathTimeout(int nextState) {
+        if (pathTimer.getElapsedTime() > PATH_TIMEOUT) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
+    }
+
+    private boolean pathTimeout(int maxtime, int nextState) {
+        if (pathTimer.getElapsedTime() > maxtime) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
     }
 
 
