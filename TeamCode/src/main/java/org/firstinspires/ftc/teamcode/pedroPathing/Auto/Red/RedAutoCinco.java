@@ -33,7 +33,7 @@
 //    private Timer pathTimer, actionTimer, opmodeTimer;
 //    private int pathState;
 //
-//    private static final int millitime = 1800;
+//    private static final int millitime = 1800;kgliy8pdiy
 //    private static final double lowMaxPower = 0.6;
 //    private static final double t = 0.3;
 //
@@ -42,7 +42,7 @@
 //    private static final double getPointX = 126.5;
 //    private static final double Point1Y = 82-0.6;
 //    private static final double Point2Y = 58-0.6;
-//
+//vjgkucjhkg
 //
 //
 //    // Define Poses
