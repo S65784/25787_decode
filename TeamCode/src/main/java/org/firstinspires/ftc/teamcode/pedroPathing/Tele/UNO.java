@@ -100,7 +100,7 @@ public class UNO extends LinearOpMode {
 
             if (gamepad1.a) Algorithm.draw();
 //                Algorithm.drawTime(3000);
-            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true, 2000);
+            if (gamepad2.touchpad) Algorithm.shootMode2.shootTime(true, true, 2000);
 
 
 //            Algorithm.shootMode1.shoot(gamepad1.dpad_down);

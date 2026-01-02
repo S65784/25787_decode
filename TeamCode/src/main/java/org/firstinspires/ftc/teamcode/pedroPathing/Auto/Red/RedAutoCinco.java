@@ -37,7 +37,7 @@
 //    private static final double lowMaxPower = 0.6;
 //    private static final double t = 0.3;
 //
-//
+//hhħbb
 //    private static final double getPointPreX = 93.9;
 //    private static final double getPointX = 126.5;
 //    private static final double Point1Y = 82-0.6;
