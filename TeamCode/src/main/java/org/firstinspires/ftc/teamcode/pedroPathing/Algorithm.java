@@ -34,13 +34,13 @@ public class Algorithm {
     //constants
     public static final int TARGET_RPM_YI = 3600;
     public static final int ERROR_RANGE_YI =500;
-    public static final double SERVO_POSITION_YI = 0.5;
+    public static final double SERVO_POSITION_YI = 0.46;
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3450;
+    public static final int TARGET_RPM_ER = 3540;
     public static final int ERROR_RANGE_ER = 200;
-    public static final double SERVO_POSITION_ER = 0.5;
+    public static final double SERVO_POSITION_ER = 0.46;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
@@ -253,26 +253,32 @@ public class Algorithm {
         blender.setPower(0);
 
     }
-    public static void keep(double power) {
-        intake.setPower(power);
-    }
-
-    public static void keep() {
-        intake.setPower(0.12);
-    }
     public static void preShooterMove(int millitime) {
         shootState = true;
         preShooterTimer.reset();
-        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.53);
+        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.2);
         blender.setPower(0);
 
     }
     public static void preShooterMove() {
         shootState = true;
         preShooterTimer.reset();
-        if(preShooterTimer.milliseconds() < 420 && shootState)  blender.setPower(0.53);
+        if(preShooterTimer.milliseconds() < 90 && shootState)  blender.setPower(0.1);//420, 0.53
         else  blender.setPower(0);
 
+    }
+
+    public static void preShooterMove_Blue3() {
+        shootState = true;
+        preShooterTimer.reset();
+        if(preShooterTimer.milliseconds() < 100 && shootState)  blender.setPower(0.1);//420, 0.53
+        else  blender.setPower(0);
+
+    }
+
+    public static void keep(double power) {intake.setPower(power);}
+    public static void keep() {
+        intake.setPower(0.12);
     }
 
     public static void servoControl() {

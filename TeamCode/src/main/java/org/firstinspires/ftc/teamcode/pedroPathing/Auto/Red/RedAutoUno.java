@@ -34,7 +34,7 @@ public class RedAutoUno extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1800;
+    private static final int millitime = 1600;
     private static final double lowMaxPower = 0.6;
     private static final double t = 0.3;
     private static final double PATH_TIMEOUT = 5000;
@@ -95,7 +95,7 @@ public class RedAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.26, () -> Algorithm.preShooterMove(700,0.63))
+                .addParametricCallback(0.26, () -> Algorithm.preShooterMove())
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
@@ -106,7 +106,7 @@ public class RedAutoUno extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
@@ -117,7 +117,7 @@ public class RedAutoUno extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove(900,0.63))
+                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
