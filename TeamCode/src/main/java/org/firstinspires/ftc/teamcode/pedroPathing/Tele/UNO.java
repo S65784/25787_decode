@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.vision.QuickScope.AprilTagLocalizer;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -33,6 +35,7 @@ import kotlin.math.*;
 
 public class UNO extends LinearOpMode {
     private Algorithm Algorihthm;
+    private TurretAlgorithm turretAlgorithm;
     private TelemetryManager telemetryManager;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -41,6 +44,8 @@ public class UNO extends LinearOpMode {
     @Override
     public void runOpMode() {
         Algorihthm = new Algorithm(hardwareMap);
+        AprilTagLocalizer aprilTagLocalizer = new AprilTagLocalizer(hardwareMap);
+        TurretAlgorithm turretAlgorithm = new TurretAlgorithm(hardwareMap,aprilTagLocalizer, Algorithm.Alliance.BLUE);
         Algorithm.shootMode4.setServos();
 //        Algorithm.ls.setPosition(0.45);
 //        Algorithm.rs.setPosition(1-0.45);
@@ -98,19 +103,19 @@ public class UNO extends LinearOpMode {
 //
 //            }
 
-            if (gamepad1.a) Algorithm.draw();
-//                Algorithm.drawTime(3000);
-            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true, 2000);
-
-
-//            Algorithm.shootMode1.shoot(gamepad1.dpad_down);
-//            Algorithm.shootMode2.shoot(gamepad1.dpad_left);
-//            Algorithm.shootMode3.shoot(gamepad1.dpad_right);
-//            Algorithm.shootMode4.shoot(gamepad1.dpad_up);
-             if(gamepad1.dpad_down) Algorithm.shootMode1.shootCheckOnceTime(1000);
-             if(gamepad1.dpad_left) Algorithm.shootMode2.shootCheckOnceTime(2000);
-             if(gamepad1.dpad_right)   Algorithm.shootMode3.shootCheckOnceTime(3000);
-             if(gamepad1.dpad_up)   Algorithm.shootMode4.shootCheckOnceTime(500);
+//            if (gamepad1.a) Algorithm.draw();
+////                Algorithm.drawTime(3000);
+//            if (gamepad2.a) Algorithm.shootMode2.shootTime(true, true, 2000);
+//
+//
+////            Algorithm.shootMode1.shoot(gamepad1.dpad_down);
+////            Algorithm.shootMode2.shoot(gamepad1.dpad_left);
+////            Algorithm.shootMode3.shoot(gamepad1.dpad_right);
+////            Algorithm.shootMode4.shoot(gamepad1.dpad_up);
+//             if(gamepad1.dpad_down) Algorithm.shootMode1.shootCheckOnceTime(1000);
+//             if(gamepad1.dpad_left) Algorithm.shootMode2.shootCheckOnceTime(2000);
+//             if(gamepad1.dpad_right)   Algorithm.shootMode3.shootCheckOnceTime(3000);
+//             if(gamepad1.dpad_up)   Algorithm.shootMode4.shootCheckOnceTime(500);
 
 //            if(gamepad1.dpad_down) Algorithm.shootMode1.setServos();
 //            if(gamepad1.dpad_left) Algorithm.shootMode2.setServos();
@@ -142,18 +147,23 @@ public class UNO extends LinearOpMode {
 //            else if(gamepad1.dpad_right) mode = 4;
 
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            turretAlgorithm.update();
 
-            telemetry.addData("Status", "Intake Time: " + Algorithm.drawTimer.toString());
 
-            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Status", "Running");
-            telemetry.addData("目标 RPM", Algorithm.targetRPM);
-            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
-            telemetry.addData("test", Algorithm.test);
-            telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
-            telemetry.addData("YState", Algorithm.flag(gamepad1.y));
+
+
+//            telemetry.addData("Status", "Run Time: " + runtime.toString());
+//
+//            telemetry.addData("Status", "Intake Time: " + Algorithm.drawTimer.toString());
+//
+//            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+//            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+//            telemetry.addData("Status", "Running");
+//            telemetry.addData("目标 RPM", Algorithm.targetRPM);
+//            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+//            telemetry.addData("test", Algorithm.test);
+//            telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
+//            telemetry.addData("YState", Algorithm.flag(gamepad1.y));
             telemetry.update();
 
 //            telemetryManager.addData("current RPM", Algorithm.getCurrentRPM());

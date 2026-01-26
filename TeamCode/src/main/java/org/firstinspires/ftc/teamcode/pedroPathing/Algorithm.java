@@ -24,6 +24,7 @@ public class Algorithm {
     public static DcMotor intake = null;
     public static DcMotor blender = null;
     public static DcMotorEx shooter = null;
+    public static DcMotorEx terrace = null;
 
     public static Servo block = null;
     public static Servo ls = null;
@@ -55,6 +56,28 @@ public class Algorithm {
     public static final double BLENDER_POWER_SI = 0.8;
     public static final double INTAKE_POWER_SI = 1;
 
+    public static final double TERRACE_GEAR_RATIO = 1;
+
+    public enum Alliance{
+    RED(new Point(RED_GOAL_POSITION_X,RED_GOAL_POSITION_Y)),
+    BLUE(new Point(BLUR_GOAL_POSITION_X,BLUR_GOAL_POSITION_Y));
+
+    private Point point;
+
+        Alliance(Point point){
+        this.point = point;
+        }
+
+        public Point getPoint(){
+            return point;
+        }
+    }
+    public static final int BLUR_GOAL_POSITION_X =10;
+    public static final int BLUR_GOAL_POSITION_Y =135;
+    public static final int RED_GOAL_POSITION_X =144-10;
+    public static final int RED_GOAL_POSITION_Y =135;
+
+
 
     public static int MOTOR_TICK_COUNT = 28;
 
@@ -79,6 +102,8 @@ public class Algorithm {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
         shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
+        terrace = hardwareMap.get(DcMotorEx.class, "Terrace");
+
 
         //block = hardwareMap.get(Servo.class, "Block");
         ls = hardwareMap.get(Servo.class, "ls");
@@ -106,11 +131,13 @@ public class Algorithm {
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        terrace.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
     public static double getCurrentRPM() {
         double currentVelocityTicks = shooter.getVelocity();
-        //int MOTOR_TICK_COUNT = 28;
         double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
         return currentRPM;
     }
@@ -339,6 +366,38 @@ public class Algorithm {
         }
 
     }
-
-
+//
+//    public static int targetAngle;
+//    public static int currentAngle;
+//
+//    public static int getCurrentAngle(){
+//        int ticks = terrace.getCurrentPosition();
+//        return ticks / MOTOR_TICK_COUNT * 360;
+//    }
+//    public static int angleToTicks(int angle){
+//        return angle/360*MOTOR_TICK_COUNT;
+//    }
+//
+//    public static void changeTerraceAngle(int angleChange){
+//        targetAngle+=angleChange;
+//        if(targetAngle != getCurrentAngle()){
+//            terrace.setTargetPosition(angleToTicks(targetAngle));
+//            terrace.setPower(1);
+//        }
+//    }
+//
+//    public static void setTerraceAngle(int angle){
+//        targetAngle = angle;
+//        if(targetAngle != getCurrentAngle()){
+//            terrace.setTargetPosition(angleToTicks(targetAngle));
+//            terrace.setPower(1);
+//        }
+//    }
+//
+//    public static void initializeTerracePID(){
+//        PID terracePID = new PID(P,I,D);
+//    }
+//    public static void updateTerracePID(){
+//
+//    }
 }
