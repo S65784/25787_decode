@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,9 +25,9 @@ public class Algorithm {
     public static DcMotor intake = null;
     public static DcMotor blender = null;
     public static DcMotorEx shooter = null;
-    public static DcMotorEx terrace = null;
+    public static DcMotorEx shooter2 = null;
+    //public static DcMotorEx terrace = null;
 
-    public static Servo block = null;
     public static Servo ls = null;
     public static Servo rs = null;
 
@@ -101,8 +102,8 @@ public class Algorithm {
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
         intake = hardwareMap.get(DcMotor.class, "Intake");
         blender = hardwareMap.get(DcMotor.class, "Blender");
-        shooter = hardwareMap.get(DcMotorEx.class, "Shooter");
-        terrace = hardwareMap.get(DcMotorEx.class, "Terrace");
+        shooter = hardwareMap.get(DcMotorEx.class, "ShooterL");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "ShooterR");
 
 
         //block = hardwareMap.get(Servo.class, "Block");
@@ -111,13 +112,13 @@ public class Algorithm {
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new com.qualcomm.hardware.rev.RevHubOrientationOnRobot(
-                com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -126,12 +127,14 @@ public class Algorithm {
 
         intake.setDirection(DcMotor.Direction.FORWARD);
         blender.setDirection(DcMotor.Direction.REVERSE);
-        shooter.setDirection(DcMotorEx.Direction.REVERSE);
+        shooter.setDirection(DcMotorEx.Direction.FORWARD);
+        shooter2.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        terrace.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
 
     }
@@ -150,6 +153,7 @@ public class Algorithm {
     public static void setRPM(int target_RPM){
         double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
         shooter.setVelocity(targetTicksPerSecond);
+        shooter2.setVelocity(targetTicksPerSecond);
         targetRPM = target_RPM;
     }
 
@@ -372,38 +376,4 @@ public class Algorithm {
         }
 
     }
-//
-//    public static int targetAngle;
-//    public static int currentAngle;
-//
-//    public static int getCurrentAngle(){
-//        int ticks = terrace.getCurrentPosition();
-//        return ticks / MOTOR_TICK_COUNT * 360;
-//    }
-//    public static int angleToTicks(int angle){
-//        return angle/360*MOTOR_TICK_COUNT;
-//    }
-//
-//    public static void changeTerraceAngle(int angleChange){
-//        targetAngle+=angleChange;
-//        if(targetAngle != getCurrentAngle()){
-//            terrace.setTargetPosition(angleToTicks(targetAngle));
-//            terrace.setPower(1);
-//        }
-//    }
-//
-//    public static void setTerraceAngle(int angle){
-//        targetAngle = angle;
-//        if(targetAngle != getCurrentAngle()){
-//            terrace.setTargetPosition(angleToTicks(targetAngle));
-//            terrace.setPower(1);
-//        }
-//    }
-//
-//    public static void initializeTerracePID(){
-//        PID terracePID = new PID(P,I,D);
-//    }
-//    public static void updateTerracePID(){
-//
-//    }
 }

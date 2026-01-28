@@ -11,14 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
-import org.firstinspires.ftc.teamcode.pedroPathing.vision.QuickScope.AprilTagLocalizer;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import kotlin.math.*;
+
 
 
 /**
@@ -34,7 +30,7 @@ import kotlin.math.*;
 @TeleOp
 
 public class UNO extends LinearOpMode {
-    private Algorithm Algorihthm;
+    private Algorithm algorithm;
     private TurretAlgorithm turretAlgorithm;
     private TelemetryManager telemetryManager;
 
@@ -43,9 +39,8 @@ public class UNO extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Algorihthm = new Algorithm(hardwareMap);
-        AprilTagLocalizer aprilTagLocalizer = new AprilTagLocalizer(hardwareMap);
-        TurretAlgorithm turretAlgorithm = new TurretAlgorithm(hardwareMap,aprilTagLocalizer, Algorithm.Alliance.BLUE);
+        algorithm = new Algorithm(hardwareMap);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.BLUE);
         Algorithm.shootMode4.setServos();
 //        Algorithm.ls.setPosition(0.45);
 //        Algorithm.rs.setPosition(1-0.45);
