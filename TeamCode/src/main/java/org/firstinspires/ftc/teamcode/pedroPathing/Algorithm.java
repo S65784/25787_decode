@@ -126,7 +126,7 @@ public class Algorithm {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intake.setDirection(DcMotor.Direction.FORWARD);
-        blender.setDirection(DcMotor.Direction.REVERSE);
+        blender.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotorEx.Direction.FORWARD);
         shooter2.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -287,7 +287,7 @@ public class Algorithm {
 
     public static void servoControl() {
         ls.setPosition(0.5);
-        rs.setPosition(0.6);
+        rs.setPosition(0.5);
     }
 
     private static boolean lastState = false;
