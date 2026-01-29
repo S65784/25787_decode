@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ShootMode {
     int targetRPM;
     int error;
-    double servoPosition;
+    double servoPosition;//0.15 to 0.6
     double blenderPower;
     double intakePower;
     PIDFCoefficients pid;
@@ -24,7 +24,7 @@ public class ShootMode {
 //    ShootMode ShootMode1=
     public void setServos(){
         Algorithm.ls.setPosition(servoPosition);
-        Algorithm.rs.setPosition(1-servoPosition);
+        Algorithm.rs.setPosition(1-servoPosition+0.1);
     }
 
     public void shoot(boolean yState){
