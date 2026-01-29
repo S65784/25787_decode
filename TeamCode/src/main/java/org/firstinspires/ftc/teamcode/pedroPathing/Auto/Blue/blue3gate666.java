@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Red;
+package org.firstinspires.ftc.teamcode.pedroPathing.Auto.Blue;
 
 import static android.os.SystemClock.sleep;
 
@@ -24,8 +24,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "613-red(推gate)", group = "Competition")
-public class red3gate666 extends OpMode {
+@Autonomous(name = "613-blue(推gate)", group = "Competition")
+public class blue3gate666 extends OpMode {
     private Algorithm Algorihthm;
     private TelemetryManager telemetryManager;
     private ElapsedTime runtime = new ElapsedTime();
@@ -48,38 +48,38 @@ public class red3gate666 extends OpMode {
 
 
     // Define Poses
-    private final Pose startPose = new Pose(123.5, 122.5, Math.toRadians(38));
-    private final Pose scorePose = new Pose(100, 99.8, Math.toRadians(38));//
+    private final Pose startPose = new Pose(140-123.5, 122.5, Math.toRadians(180-38));
+    private final Pose scorePose = new Pose(140-100, 99.8, Math.toRadians(180-38));//
 
-    private final Pose controlPickup1Ready = new Pose(93.94464033850494, 96.27080394922427, Math.toRadians(0));
-    private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(127.3, Point1Y, Math.toRadians(0));
+    private final Pose controlPickup1Ready = new Pose(140-93.94464033850494, 96.27080394922427, Math.toRadians(180-0));
+    private final Pose pickup1Ready = new Pose(140-getPointPreX, Point1Y, Math.toRadians(180-0));
+    private final Pose pickup1Pose = new Pose(140-127.3, Point1Y, Math.toRadians(180-0));
 
-    private final Pose controlTheGate = new Pose(140-36.81927710843374, 82.89156626506025, Math.toRadians(270));
-    private final Pose theGate = new Pose(140-10, 72, Math.toRadians(90));
+    private final Pose controlTheGate = new Pose(36.81927710843374, 82.89156626506025, Math.toRadians(180-270));
+    private final Pose theGate = new Pose(10, 72, Math.toRadians(180-90));
 
-    private final Pose controlScorePose1 = new Pose(140-25.25301204819277, 81.92771084337349, Math.toRadians(35.6));
-    private final Pose scorePose1 = new Pose(140-40, 99.8, Math.toRadians(37.2));//
+    private final Pose controlScorePose1 = new Pose(25.25301204819277, 81.92771084337349, Math.toRadians(180-35.6));
+    private final Pose scorePose1 = new Pose(40, 99.8, Math.toRadians(180-37.2));//
 
-    private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(0));
-    private final Pose pickup2Ready = new Pose(getPointPreX, Point2Y, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(129, Point2Y, Math.toRadians(0));
+    private final Pose controlPickup2Ready = new Pose(76.6, 61.9, Math.toRadians(180-0));
+    private final Pose pickup2Ready = new Pose(140-getPointPreX, Point2Y, Math.toRadians(180-0));
+    private final Pose pickup2Pose = new Pose(140-129, Point2Y, Math.toRadians(180-0));//140-135
 
-    private final Pose controlTheGate2 = new Pose(140-33.727910238429175, 52.91444600280506, Math.toRadians(270));
-    private final Pose theGate2 = new Pose(140-10, 72, Math.toRadians(90));
+    private final Pose controlTheGate2 = new Pose(33.727910238429175, 52.91444600280506, Math.toRadians(180-270));
+    private final Pose theGate2 = new Pose(10, 72, Math.toRadians(180-90));
 
 
-    private final Pose controlScorePose2 = new Pose(104, 60.3, Math.toRadians(32));
-    private final Pose scorePose2 = new Pose(100, 99.8, Math.toRadians(36.5));//
+    private final Pose controlScorePose2 = new Pose(140-104, 60.3, Math.toRadians(180-32));
+    private final Pose scorePose2 = new Pose(140-100, 99.8, Math.toRadians(180-36.5));//
 
-    private final Pose controlPickup3Ready = new Pose(84, 55, Math.toRadians(0));
-    private final Pose pickup3Ready = new Pose(getPointPreX, Point3Y, Math.toRadians(0));
-    private final Pose pickup3Pose = new Pose(130, Point3Y, Math.toRadians(0));
+    private final Pose controlPickup3Ready = new Pose(140-84, 55, Math.toRadians(180-0));
+    private final Pose pickup3Ready = new Pose(140-getPointPreX, Point3Y, Math.toRadians(180-0));
+    private final Pose pickup3Pose = new Pose(140-130, Point3Y, Math.toRadians(180-0));
 
-    private final Pose controlScorePose3 = new Pose(113, 39, Math.toRadians(32));
-    private final Pose scorePose3 = new Pose(100, 99.8, Math.toRadians(35));//
+    private final Pose controlScorePose3 = new Pose(140-113, 39, Math.toRadians(180-32));
+    private final Pose scorePose3 = new Pose(140-100, 99.8, Math.toRadians(180-35));//
 
-    private final Pose end = new Pose(94, 108, Math.toRadians(0));
+    private final Pose end = new Pose(140-94, 108, Math.toRadians(180));
 
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain runTheGate, runTheGate2, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
