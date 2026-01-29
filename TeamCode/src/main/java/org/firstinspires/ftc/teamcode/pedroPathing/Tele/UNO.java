@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithmAI;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -41,9 +42,10 @@ public class UNO extends LinearOpMode {
     public void runOpMode() {
         algorithm = new Algorithm(hardwareMap);
         turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.BLUE);
-        Algorithm.shootMode4.setServos();
+        //Algorithm.shootMode4.setServos();
 //        Algorithm.ls.setPosition(0.45);
 //        Algorithm.rs.setPosition(1-0.45);
+        turretAlgorithm.lockCenter();
 
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry.addData("Status", "Initialized");
@@ -52,12 +54,13 @@ public class UNO extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Algorithm.servoControl();
+        //Algorithm.servoControl();
 
         runtime.reset();
         Algorithm.imu.resetYaw();
 
         while (opModeIsActive()) {
+
 
             double max;
             double botHeading = Algorithm.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
