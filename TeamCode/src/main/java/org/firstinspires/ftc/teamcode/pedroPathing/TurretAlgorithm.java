@@ -48,7 +48,7 @@ public class TurretAlgorithm {
     public final double SERVO_RANGE = 180.0/130*255;
     public final double TURRET_ROBOT_OFFSET = 50;
     public final double TURRET_CENTER_POSITION = 0.9;
-    public final double KALMAN_GAIN = 0.3;
+    public final double KALMAN_GAIN = 0.03;
     public double currentRobotHeading;
     public double targetTurretHeading;
     public double cameraTurretHeading;
