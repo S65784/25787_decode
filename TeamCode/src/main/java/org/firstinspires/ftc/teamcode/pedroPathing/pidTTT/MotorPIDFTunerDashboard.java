@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.PID;
 
 // @Config 注解让FTC Dashboard可以识别并修改这个类中的 public static 变量
 @Config
@@ -18,6 +21,7 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
 
     // 定义电机对象
     private DcMotorEx motor;
+    private DcMotorEx motor2;
 
     // FtcDashboard 实例
     private FtcDashboard dashboard;
@@ -35,8 +39,8 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
 
     // PIDF 系数 - 现在可以通过Dashboard实时修改！
     // P, I, D, F 必须是独立的 public static 变量才能被Dashboard识别
-    public static double P = 50, I = 0, D = 10;
-    public static double F = 13;
+    public static double P = 0.006, I = 0, D = 0.00001;
+    public static double F = 0.0004;
 
 
     // *****************************************************************************************
@@ -50,10 +54,13 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         // 从硬件映射中获取电机
-        motor = hardwareMap.get(DcMotorEx.class, "Shooter");
+        motor = hardwareMap.get(DcMotorEx.class, "ShooterL");
+        motor2 = hardwareMap.get(DcMotorEx.class, "ShooterR");
         motor.setDirection(DcMotor.Direction.FORWARD);
+        motor2.setDirection(DcMotor.Direction.REVERSE);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addLine("准备开始...");
         telemetry.addLine("连接到FTC Dashboard，并打开浏览器访问 http://192.168.43.1:8080/dash");
@@ -65,20 +72,27 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
 
             while (opModeIsActive()) {
                 // 从Dashboard实时更新PIDF系数
-                PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-                motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-
-                // 将目标RPM转换为每秒的编码器刻度数
-                double targetTicksPerSecond = TARGET_RPM * MOTOR_TICK_COUNT / 60;
-
-                // 设置电机的目标速度
-                motor.setVelocity(targetTicksPerSecond);
+//                PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+//                motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
                 // 获取当前电机的速度（单位：刻度/秒）
                 double currentVelocityTicks = motor.getVelocity();
 
                 // 将当前速度从 刻度/秒 转换为 RPM
                 double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
+
+                PID pid = new PID(P,0,D);
+                // 将目标RPM转换为每秒的编码器刻度数和功率
+                double targetTicksPerSecond = TARGET_RPM * MOTOR_TICK_COUNT / 60.0;
+                double feedForward = F * targetTicksPerSecond;
+//
+                double pidPower = pid.update(targetTicksPerSecond-currentVelocityTicks);
+                double targetPower = Range.clip(feedForward + pidPower, -1.0, 1.0);
+                // 设置电机的目标功率
+                motor.setPower(targetPower);
+                motor2.setPower(targetPower);
+
+
 
                 // 创建一个数据包，用于发送到Dashboard
                 TelemetryPacket packet = new TelemetryPacket();
