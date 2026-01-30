@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -33,6 +34,7 @@ public class TurretAlgorithm {
         Encoder = hardwareMap.get(DcMotorEx.class,"ShooterR");
         ppt = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        Encoder.setDirection(DcMotorSimple.Direction.REVERSE);
         Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         Encoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -144,7 +146,7 @@ public class TurretAlgorithm {
         return currentTicks;
     }
     public double getDegrees(){
-        currentDegrees = (currentTicks / TICKS_PER_REV) * 360.0;
+        currentDegrees = (currentTicks / TICKS_PER_REV) * (20.0/96.0) * 360.0;
         return currentDegrees;
     }
 
