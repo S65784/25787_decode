@@ -287,7 +287,7 @@ public class Algorithm {
 
     public static void servoControl() {
         ls.setPosition(0.5);
-        rs.setPosition(0.5);
+        rs.setPosition(0.6);
     }
 
     private static boolean lastState = false;
