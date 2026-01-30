@@ -33,27 +33,27 @@ public class Algorithm {
 
 
     //constants
-    public static final int TARGET_RPM_YI = 3600;
+    public static final int TARGET_RPM_YI = 2450;
     public static final int ERROR_RANGE_YI =500;
-    public static final double SERVO_POSITION_YI = 0.46;
+    public static final double SERVO_POSITION_YI = 0.56;
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3540;
+    public static final int TARGET_RPM_ER = 3000;
     public static final int ERROR_RANGE_ER = 200;
-    public static final double SERVO_POSITION_ER = 0.46;
+    public static final double SERVO_POSITION_ER = 0.644;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
-    public static final int TARGET_RPM_SAN = 4000;//2300
+    public static final int TARGET_RPM_SAN = 3600;//2300
     public static final int ERROR_RANGE_SAN = 500;
-    public static final double SERVO_POSITION_SAN = 0.523;
+    public static final double SERVO_POSITION_SAN = 0.77;
     public static final double BLENDER_POWER_SAN = 1;
     public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 4800;//2950
+    public static final int TARGET_RPM_SI = 4500;//2950
     public static final int ERROR_RANGE_SI = 200;//205
-    public static final double SERVO_POSITION_SI = 0.632;
+    public static final double SERVO_POSITION_SI = 0.79;
     public static final double BLENDER_POWER_SI = 0.8;
     public static final double INTAKE_POWER_SI = 1;
 
@@ -82,7 +82,11 @@ public class Algorithm {
 
     public static int MOTOR_TICK_COUNT = 28;
 
-    public static double P = 90, I = 0, D = 1, F = 13;
+    public static double P = 0.005, I = 0, D = 0;
+    public static double F = 0.0004;
+    public static PID pid = new PID(P,0,D);
+
+//    public static double P = 90, I = 0, D = 1, F = 13;
     public static double dP = 125, dI = 0.4, dD = 0.1, dF = 16.27;//da
     //        public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
@@ -134,9 +138,6 @@ public class Algorithm {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
-
     }
 
     public static double getCurrentRPM() {
@@ -146,15 +147,21 @@ public class Algorithm {
     }
 
     public static int targetRPM = 0;
+    public static double targetPower = 0;
     public static double currentRPM;
     public static boolean test = false;
     public static boolean shootState = false;
 
     public static void setRPM(int target_RPM){
         double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
-        shooter.setVelocity(targetTicksPerSecond);
-        shooter2.setVelocity(targetTicksPerSecond);
+        double feedForward = F * targetTicksPerSecond;
+        double pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
+        double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
+
+        shooter.setPower(target_Power);
+        shooter2.setPower(target_Power);
         targetRPM = target_RPM;
+        targetPower = target_Power;
     }
 
     public static void shooterPID(){
@@ -260,14 +267,14 @@ public class Algorithm {
     public static void preShooterMove(int millitime) {
         shootState = true;
         preShooterTimer.reset();
-        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(0.2);
+        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(-0.43);
         blender.setPower(0);
 
     }
     public static void preShooterMove() {
         shootState = true;
         preShooterTimer.reset();
-        if(preShooterTimer.milliseconds() < 90 && shootState)  blender.setPower(0.1);//420, 0.53
+        if(preShooterTimer.milliseconds() < 312 && shootState)  blender.setPower(-0.6);//420, 0.53
         else  blender.setPower(0);
 
     }
@@ -275,7 +282,7 @@ public class Algorithm {
     public static void preShooterMove_Blue3() {
         shootState = true;
         preShooterTimer.reset();
-        if(preShooterTimer.milliseconds() < 100 && shootState)  blender.setPower(0.1);//420, 0.53
+        if(preShooterTimer.milliseconds() < 100 && shootState)  blender.setPower(-0.1);//420, 0.53
         else  blender.setPower(0);
 
     }
@@ -287,7 +294,7 @@ public class Algorithm {
 
     public static void servoControl() {
         ls.setPosition(0.5);
-        rs.setPosition(0.6);
+        rs.setPosition(0.5);
     }
 
     private static boolean lastState = false;
