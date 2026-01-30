@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.vision.EchoLapse.GoBildaPinpo
 public class TurretAlgorithm {
     public Algorithm.Alliance alliance;
     public  Servo servo1, servo2;
+    public DcMotorEx Encoder;
     public GoBildaPinpointDriver ppt;
     private final Limelight3A limelight;
     private final Telemetry telemetry;
@@ -28,8 +30,11 @@ public class TurretAlgorithm {
     public TurretAlgorithm(HardwareMap hardwareMap,Telemetry telemetry ,Algorithm.Alliance alliance){
         servo1 = hardwareMap.get(Servo.class,"tr");
         servo2 = hardwareMap.get(Servo.class,"tl");
+        Encoder = hardwareMap.get(DcMotorEx.class,"ShooterR");
         ppt = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        Encoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         //telemetry.setMsTransmissionInterval(11);
@@ -66,8 +71,12 @@ public class TurretAlgorithm {
     public double xPartialOffset;
     public double yPartialOffset;
     public double yawPartialOffset;
+    public double yawLastOffset = 0;
 
     public double servoPosition;
+
+    final double TICKS_PER_REV = 8192.0;
+
     public double pidOut;
     public Pose3D cameraPose;
     public Point rawRobotPoint;
@@ -82,7 +91,7 @@ public class TurretAlgorithm {
         ppt.update();
         rawRobotPoint = new Point(ppt.getPosition().getX(DistanceUnit.MM),ppt.getPosition().getY(DistanceUnit.MM));
         rawRobotHeading = normalizeAngle(ppt.getPosition().getHeading(AngleUnit.DEGREES));
-        calcTurretHeading = (servo1.getPosition()-TURRET_CENTER_POSITION)*SERVO_RANGE*TURRET_GEAR_RATIO+currentRobotHeading;
+        calcTurretHeading = normalizeAngle((servo1.getPosition()-TURRET_CENTER_POSITION)*SERVO_RANGE*TURRET_GEAR_RATIO+currentRobotHeading);
         usingCamera = false;
     }
 
@@ -105,12 +114,12 @@ public class TurretAlgorithm {
     }
 
     public void setTargetTurretHeading(){
-        targetTurretHeading = normalizeAngle(Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint()));
+        targetTurretHeading = normalizeAngle(Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint())-180);
     }
     public void setServoPosition(){
         //may need to be changed
         servoPosition = TURRET_CENTER_POSITION + targetLocalHeading/(SERVO_RANGE*TURRET_GEAR_RATIO)-pidOut;
-        servoPosition = Range.clip(servoPosition,0.7,1);
+        servoPosition = Range.clip(servoPosition,0.08,0.92);
         servo1.setPosition(servoPosition);
         servo2.setPosition(servoPosition);
     }
@@ -128,11 +137,27 @@ public class TurretAlgorithm {
 //        }
 //    }
 
+    int currentTicks;
+    double currentDegrees;
+    public double getTicks(){
+        currentTicks = Encoder.getCurrentPosition();
+        return currentTicks;
+    }
+    public double getDegrees(){
+        currentDegrees = (currentTicks / TICKS_PER_REV) * 360.0;
+        return currentDegrees;
+    }
+
+
     public void adjustHeading(){
         if(usingCamera){
             yawTotalOffset = normalizeAngle((cameraTurretHeading-currentServoAngle) - rawRobotHeading);
         }
+//        if(Math.abs(normalizeAngle(yawPartialOffset-yawLastOffset))>45){
+//            return;
+//        }
         currentRobotHeading = normalizeAngle(rawRobotHeading+yawPartialOffset);
+        yawPartialOffset = yawLastOffset;
     }
 
     public void adjustPoint(){
@@ -181,6 +206,9 @@ public class TurretAlgorithm {
         telemetry.addData("calc heading",calcTurretHeading);
         telemetry.addData("target heading",targetTurretHeading);
         telemetry.addData("robot heading",currentRobotHeading);
+        telemetry.addData("servo position",servoPosition);
+        telemetry.addData("ticks",currentTicks);
+        telemetry.addData("degrees",currentDegrees);
     }
 
     public void update(){
@@ -195,6 +223,8 @@ public class TurretAlgorithm {
         setTargetTurretHeading();
         pidOut = updatePID();
         setServoPosition();
+        getTicks();
+        getDegrees();
         updateTelemetry();
     }
 
