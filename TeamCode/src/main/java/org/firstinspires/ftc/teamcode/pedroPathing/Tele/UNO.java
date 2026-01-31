@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
-import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithmAI;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -41,11 +40,12 @@ public class UNO extends LinearOpMode {
     @Override
     public void runOpMode() {
         algorithm = new Algorithm(hardwareMap);
-        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.BLUE);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.RED);
         //Algorithm.shootMode4.setServos();
 //        Algorithm.ls.setPosition(0.45);
+
 //        Algorithm.rs.setPosition(1-0.45);
-        turretAlgorithm.lockCenter();
+        turretAlgorithm.setCenter();
 
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry.addData("Status", "Initialized");
@@ -65,8 +65,8 @@ public class UNO extends LinearOpMode {
             double max;
             double botHeading = Algorithm.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral = gamepad1.left_stick_x;
+            double axial = -gamepad1.left_stick_y; //left_stick_y
+            double lateral = gamepad1.left_stick_x;//
             double yaw = gamepad1.right_stick_x;
 
             double newAxial = axial * Math.cos(botHeading) - lateral * Math.sin(botHeading);
@@ -143,7 +143,12 @@ public class UNO extends LinearOpMode {
 //            else if (gamepad1.dpad_left) mode = 2;
 //            else if(gamepad1.dpad_up) mode = 3;
 //            else if(gamepad1.dpad_right) mode = 4;
-
+        if(gamepad1.a){
+            turretAlgorithm.resetYaw();
+        }
+        if(gamepad1.b){
+            turretAlgorithm.hardResetYaw();
+        }
 
             turretAlgorithm.update();
 
