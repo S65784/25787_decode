@@ -35,8 +35,8 @@ public class TurretAlgorithm {
         Encoder = hardwareMap.get(DcMotorEx.class,"ShooterR");
         ppt = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        Encoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        Encoder.setDirection(DcMotorSimple.Direction.FORWARD);
+
         Encoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
@@ -67,6 +67,7 @@ public class TurretAlgorithm {
     public double calcRobotHeading;
     public double currentServoAngle;
     public double adjustedRobotHeading;
+    private double encoderTurretHeading;
 
     public double xTotalOffset = 0;
     public double yTotalOffset = 0;
@@ -95,7 +96,7 @@ public class TurretAlgorithm {
     private boolean foundTarget = false;
     public boolean autoResetYaw = true;
     public boolean isHardResetYaw = false;
-    public boolean isLockCenter = true;
+    public boolean isLockCenter = false;
 
     private final double CAMERA_INTERVAL = 100;
     ElapsedTime cameraTime = new ElapsedTime();
@@ -126,20 +127,26 @@ public class TurretAlgorithm {
     private final double P=0,I=0,D=0;
     public PID pid = new PID(P,I,D);
     public double updatePID(){
-        targetLocalHeading = normalizeAngle(targetTurretHeading - currentRobotHeading);
+        targetLocalHeading = targetTurretHeading - currentRobotHeading;
         double error = normalizeAngle(targetLocalHeading-currentDegrees);
         return pid.update(error);
     }
 
     public void setTargetTurretHeading(){
-        targetTurretHeading = normalizeAngle(Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint()));
+        targetTurretHeading = normalizeAngle(Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint())-90);
     }
     public void setServoPosition(){
         //may need to be changed
-        servoPosition = TURRET_CENTER_POSITION + targetLocalHeading/(SERVO_RANGE*TURRET_GEAR_RATIO)-pidOut;
-        servoPosition = Range.clip(servoPosition,0.08,0.92);
-        servo1.setPosition(servoPosition);
-        servo2.setPosition(servoPosition);
+        double target = targetLocalHeading;
+        if(target-currentDegrees>180){
+            target-=360;
+        }else if(target-currentDegrees<-180){
+            target+=360;
+        }
+        servoPosition = TURRET_CENTER_POSITION + target/(SERVO_RANGE*TURRET_GEAR_RATIO)+pidOut;//targetLocalHeading
+        double servoPositionClip = Range.clip(servoPosition,0.08,0.92);
+        //servo1.setPosition(servoPositionClip);
+        servo2.setPosition(servoPositionClip);
     }
 
 //    public void updatePosition(){
@@ -234,32 +241,35 @@ public class TurretAlgorithm {
     }
 
     public void setCenter(){
-        servo1.setPosition(TURRET_CENTER_POSITION);
+        //servo1.setPosition(TURRET_CENTER_POSITION);
         servo2.setPosition(TURRET_CENTER_POSITION);
+        Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     public void updateTelemetry(){
         telemetry.addData("using camera",usingCamera);
-        telemetry.addData("x offset",xTotalOffset);
-        telemetry.addData("y offset",yTotalOffset);
-        telemetry.addData("yaw offset",yawTotalOffset);
-        telemetry.addData("camera point x",cameraTurretPoint.x);
-        telemetry.addData("camera point y",cameraTurretPoint.y);
-        telemetry.addData("raw x",rawRobotPoint.x);
-        telemetry.addData("raw y",rawRobotPoint.y);
+        //telemetry.addData("x offset",xTotalOffset);
+        //telemetry.addData("y offset",yTotalOffset);
+        //telemetry.addData("yaw offset",yawTotalOffset);
+        //telemetry.addData("camera point x",cameraTurretPoint.x);
+        //telemetry.addData("camera point y",cameraTurretPoint.y);
+        //telemetry.addData("raw x",rawRobotPoint.x);
+        //telemetry.addData("raw y",rawRobotPoint.y);
         telemetry.addData("adjusted raw x",adjustedRawPoint.x);
         telemetry.addData("adjusted raw y",adjustedRawPoint.y);
-        telemetry.addData("calc turret Point x",calcTurretPoint.x);
-        telemetry.addData("calc turret Point y",calcTurretPoint.y);
+        //telemetry.addData("calc turret Point x",calcTurretPoint.x);
+        //telemetry.addData("calc turret Point y",calcTurretPoint.y);
         telemetry.addData("robot point x",adjustedRobotPoint.x);
         telemetry.addData("robot point y",adjustedRobotPoint.y);
-        telemetry.addData("camera heading",cameraTurretHeading);
-        telemetry.addData("calc heading",calcTurretHeading);
+        //telemetry.addData("camera heading",cameraTurretHeading);
+        //telemetry.addData("calc heading",calcTurretHeading);
+        telemetry.addData("turret heading",encoderTurretHeading);
         telemetry.addData("target heading",targetTurretHeading);
         telemetry.addData("robot heading",currentRobotHeading);
         telemetry.addData("servo position",servoPosition);
-        //telemetry.addData("ticks",currentTicks)
-        //telemetry.addData("degrees",currentServoAngle);
+        //telemetry.addData("ticks",currentTicks);
+        telemetry.addData("degrees",currentDegrees);
     }
 
     public void update(){
@@ -271,25 +281,26 @@ public class TurretAlgorithm {
         adjustPoint();
         updateOffset();
         turretLocalHeading = normalizeAngle(calcTurretHeading - currentRobotHeading);
+        encoderTurretHeading = normalizeAngle(currentRobotHeading + currentDegrees);
         setTargetTurretHeading();
         pidOut = updatePID();
         setDegrees();
         updateTelemetry();
-        if(foundTarget && !isLockCenter) {
+        if(!isLockCenter) {//foundTarget &&
             setServoPosition();
         }else{
             setCenter();
         }
     }
 
-    public static double normalizeAngle(double Angle){
-        while (Angle>180) Angle-=360;
-        while (Angle<=-180) Angle+=360;
-        return Angle;
-    }
+//    public static double normalizeAngle(double Angle){
+//        while (Angle>180) Angle-=360;
+//        while (Angle<=-180) Angle+=360;
+//        return Angle;
+//    }
 
-    public static double normalizeDegrees(double  angle){
-        return Math.IEEEremainder(angle,360);
+    public static double normalizeAngle(double  angle){
+        return AngleUnit.normalizeDegrees(angle);
     }
 
 }

@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -46,6 +47,9 @@ public class UNO extends LinearOpMode {
 
 //        Algorithm.rs.setPosition(1-0.45);
         turretAlgorithm.setCenter();
+        sleep(1800);
+        turretAlgorithm.Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
 
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry.addData("Status", "Initialized");
