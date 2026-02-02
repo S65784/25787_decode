@@ -96,7 +96,7 @@ public class TurretAlgorithm {
     private boolean foundTarget = false;
     public boolean autoResetYaw = true;
     public boolean isHardResetYaw = false;
-    public boolean isLockCenter = false;
+    public boolean isLockCenter = true;
 
     private final double CAMERA_INTERVAL = 100;
     ElapsedTime cameraTime = new ElapsedTime();
@@ -115,7 +115,7 @@ public class TurretAlgorithm {
     public void updatePointWithCamera(){
         if(limelightResult!=null && limelightResult.isValid()){//&& Algorithm.shootState  && cameraTime.milliseconds()>CAMERA_INTERVAL
             cameraPose = limelightResult.getBotpose();
-            cameraTurretPoint = new Point(cameraPose.getPosition().x*1000, cameraPose.getPosition().y*1000);
+            cameraTurretPoint = new Point(-cameraPose.getPosition().x*1000, cameraPose.getPosition().y*1000);
             cameraTurretHeading = normalizeAngle(cameraPose.getOrientation().getYaw()-90);//-90
             usingCamera = true;
             foundTarget = true;
@@ -133,7 +133,7 @@ public class TurretAlgorithm {
     }
 
     public void setTargetTurretHeading(){
-        targetTurretHeading = normalizeAngle(Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint())-90);
+        targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint()));
     }
     public void setServoPosition(){
         //may need to be changed
@@ -241,7 +241,7 @@ public class TurretAlgorithm {
     }
 
     public void setCenter(){
-        //servo1.setPosition(TURRET_CENTER_POSITION);
+        servo1.setPosition(TURRET_CENTER_POSITION);
         servo2.setPosition(TURRET_CENTER_POSITION);
         Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -254,8 +254,8 @@ public class TurretAlgorithm {
         //telemetry.addData("yaw offset",yawTotalOffset);
         //telemetry.addData("camera point x",cameraTurretPoint.x);
         //telemetry.addData("camera point y",cameraTurretPoint.y);
-        //telemetry.addData("raw x",rawRobotPoint.x);
-        //telemetry.addData("raw y",rawRobotPoint.y);
+        telemetry.addData("raw x",rawRobotPoint.x);
+        telemetry.addData("raw y",rawRobotPoint.y);
         telemetry.addData("adjusted raw x",adjustedRawPoint.x);
         telemetry.addData("adjusted raw y",adjustedRawPoint.y);
         //telemetry.addData("calc turret Point x",calcTurretPoint.x);
@@ -286,7 +286,7 @@ public class TurretAlgorithm {
         pidOut = updatePID();
         setDegrees();
         updateTelemetry();
-        if(!isLockCenter) {//foundTarget &&
+        if(foundTarget && !isLockCenter) {
             setServoPosition();
         }else{
             setCenter();
