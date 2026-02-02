@@ -73,8 +73,8 @@ public class Algorithm {
             return point;
         }
     }
-    public static final int BLUR_GOAL_POSITION_X = -1750;//-1750
-    public static final int BLUR_GOAL_POSITION_Y = 1750;//1750
+    public static final int BLUR_GOAL_POSITION_X = 1750;//-1750
+    public static final int BLUR_GOAL_POSITION_Y = -1750;//1750
     public static final int RED_GOAL_POSITION_X =1750;
     public static final int RED_GOAL_POSITION_Y =1750;
 
