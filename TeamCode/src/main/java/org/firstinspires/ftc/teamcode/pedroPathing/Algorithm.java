@@ -164,16 +164,16 @@ public class Algorithm {
         targetPower = target_Power;
     }
 
-    public static void shooterPID(){
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-    }
-    public static void shooterPIDFar(){
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(dP, dI, dD, dF);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-    }
+//    public static void shooterPID(){
+//        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+//        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//    }
+//    public static void shooterPIDFar(){
+//        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(dP, dI, dD, dF);
+//        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//    }
 
     public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState) {
         if (state) {
@@ -191,7 +191,7 @@ public class Algorithm {
     }
     public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState, boolean iyu) {
         if (state) {
-            shooterPIDFar();
+            //shooterPIDFar();
             setRPM(target_RPM);
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
@@ -315,7 +315,7 @@ public class Algorithm {
 //
     public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
-            shooterPID();
+            //shooterPID();
             if (yState) {
                 intake.setPower(intakePower);
                 blender.setPower(blenderPower);

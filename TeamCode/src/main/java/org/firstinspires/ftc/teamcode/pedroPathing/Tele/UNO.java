@@ -6,6 +6,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -53,6 +54,7 @@ public class UNO extends LinearOpMode {
         turretAlgorithm.setCenter();
         sleep(1800);
         turretAlgorithm.Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        turretAlgorithm.Encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -135,8 +137,26 @@ public class UNO extends LinearOpMode {
 
 //            if(Algorithm.intakeState==true) Algorithm.draw();
 
-
-
+if(gamepad2.a){
+    Algorithm.setRPM(1000);
+}
+if(gamepad2.b){
+    Algorithm.setRPM(4000);
+}if(gamepad2.x){
+    Algorithm.shooter2.setPower(1);
+    Algorithm.shooter.setPower(0);
+            }
+if(gamepad2.y){
+    Algorithm.shooter2.setPower(0);
+    Algorithm.shooter.setPower(1);
+}
+if(gamepad2.dpad_up){
+    Algorithm.shooter2.setPower(0);
+    Algorithm.shooter.setPower(0);
+}if(gamepad2.dpad_down){
+                Algorithm.shooter2.setPower(0.3);
+                Algorithm.shooter.setPower(0.3);
+            }
 
             //if (gamepad1.x) {
 
@@ -177,9 +197,10 @@ public class UNO extends LinearOpMode {
 //            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
 //            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 //            telemetry.addData("Status", "Running");
-//            telemetry.addData("目标 RPM", Algorithm.targetRPM);
-//            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
-//            telemetry.addData("test", Algorithm.test);
+            telemetry.addData("目标 RPM", Algorithm.targetRPM);
+            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+            telemetry.addData("lPower", Algorithm.shooter.getPower());
+            telemetry.addData("rPower", Algorithm.shooter2.getPower());
 //            telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
 //            telemetry.addData("YState", Algorithm.flag(gamepad1.y));
             telemetry.update();

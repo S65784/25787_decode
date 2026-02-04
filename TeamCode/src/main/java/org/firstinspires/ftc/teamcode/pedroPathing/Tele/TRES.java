@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.PID;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
@@ -25,8 +26,9 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 
-@TeleOp(name = "AAAHardyGameBlue")
+@TeleOp(name = "AAAHardyGameBlue-Tres")
 public class TRES extends LinearOpMode {
+    private Algorithm algorithm;
     private TurretAlgorithm turretAlgorithm;
     private Follower follower;
     private ElapsedTime runtime = new ElapsedTime();
@@ -85,6 +87,8 @@ public class TRES extends LinearOpMode {
     @Override
     public void runOpMode() {
         ElapsedTime drawTime = new ElapsedTime();
+        follower = Constants.createFollower(hardwareMap);
+        algorithm = new Algorithm(hardwareMap);
         turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry, Algorithm.Alliance.BLUE,follower);
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
@@ -151,8 +155,8 @@ public class TRES extends LinearOpMode {
         limelight.start();
 
         // 初始同步位置
-        tl.setPosition(currentPos);
-        tr.setPosition(currentPos);
+        //tl.setPosition(currentPos);
+        //tr.setPosition(currentPos);
 
 
 
@@ -160,7 +164,7 @@ public class TRES extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
@@ -183,8 +187,8 @@ public class TRES extends LinearOpMode {
             ls.setPosition(servoPosition);
             rs.setPosition(1-servoPosition);
 
-            tr.setPosition(TURRET_CENTER_POSITION);
-            tl.setPosition(TURRET_CENTER_POSITION);
+            //tr.setPosition(TURRET_CENTER_POSITION);
+            //tl.setPosition(TURRET_CENTER_POSITION);
 
 
             if (gamepad1.left_bumper){
