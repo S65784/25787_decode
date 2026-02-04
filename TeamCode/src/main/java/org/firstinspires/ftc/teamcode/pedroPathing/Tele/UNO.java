@@ -104,6 +104,33 @@ public class UNO extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 Algorithm.imu.resetYaw();
             }
+            if (gamepad2.left_bumper) {
+                Algorithm.setRPM(3000);
+            }
+
+            if (gamepad2.right_bumper) {
+                Algorithm.setRPM(4300);
+            }
+
+            if (gamepad2.a) {
+                Algorithm.setRPM(2599);
+            }
+
+            if (gamepad2.b) {
+                Algorithm.setRPM(3300);
+            }
+
+            if (gamepad2.x) {
+                Algorithm.setRPM(3590);
+            }
+
+            if (gamepad2.y) {
+                Algorithm.setRPM(3689);
+            }
+
+            if (gamepad2.dpad_down) {
+                Algorithm.setPower1();
+            }
 //            if (gamepad2.a) {
 //                Algorithm.shootTime(1700, Algorithm.ERROR_RANGE_YI, true, true,2500);
 //
@@ -165,7 +192,7 @@ public class UNO extends LinearOpMode {
             turretAlgorithm.banCamera();
         }
 
-            turretAlgorithm.update();
+//            turretAlgorithm.update();
 
 
 
@@ -177,8 +204,11 @@ public class UNO extends LinearOpMode {
 //            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
 //            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 //            telemetry.addData("Status", "Running");
-//            telemetry.addData("目标 RPM", Algorithm.targetRPM);
-//            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+            telemetry.addData("目标 RPM", Algorithm.targetRPM);
+            telemetry.addData("当前 RPM", "%.2f", Algorithm.getCurrentRPM());
+
+            telemetry.addData("当前 POWER", Algorithm.targetPower);
+            telemetry.addData("当前 POWER", "%.2f", Algorithm.getCurrentPOWER());//abcdefghijklmnopqrstuvwxyz
 //            telemetry.addData("test", Algorithm.test);
 //            telemetry.addData("intakeState", Algorithm.flag(gamepad1.x));
 //            telemetry.addData("YState", Algorithm.flag(gamepad1.y));
