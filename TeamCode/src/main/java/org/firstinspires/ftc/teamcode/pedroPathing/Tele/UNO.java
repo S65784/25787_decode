@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Tele;
 
 
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
 
@@ -32,6 +34,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 public class UNO extends LinearOpMode {
     private Algorithm algorithm;
+    Follower follower;
     private TurretAlgorithm turretAlgorithm;
     private TelemetryManager telemetryManager;
 
@@ -41,7 +44,8 @@ public class UNO extends LinearOpMode {
     @Override
     public void runOpMode() {
         algorithm = new Algorithm(hardwareMap);
-        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.RED);
+        follower = Constants.createFollower(hardwareMap);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.RED,follower);
         //Algorithm.shootMode4.setServos();
 //        Algorithm.ls.setPosition(0.45);
 
@@ -152,6 +156,13 @@ public class UNO extends LinearOpMode {
         }
         if(gamepad1.b){
             turretAlgorithm.hardResetYaw();
+        }
+
+        if (gamepad1.x){
+            turretAlgorithm.allowCamera();
+        }
+        if (gamepad1.y){
+            turretAlgorithm.banCamera();
         }
 
             turretAlgorithm.update();
