@@ -39,9 +39,9 @@ public class Algorithm {
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 2340;//3200 3000
-    public static final int ERROR_RANGE_ER = 8900;//200
-    public static final double SERVO_POSITION_ER = 0.730;//0.644
+    public static final int TARGET_RPM_ER = 3000;
+    public static final int ERROR_RANGE_ER = 200;
+    public static final double SERVO_POSITION_ER = 0.644;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
@@ -51,10 +51,10 @@ public class Algorithm {
     public static final double BLENDER_POWER_SAN = 1;
     public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 4300;//2950
+    public static final int TARGET_RPM_SI = 4500;//2950
     public static final int ERROR_RANGE_SI = 200;//205
     public static final double SERVO_POSITION_SI = 0.79;
-    public static final double BLENDER_POWER_SI = 0.8;//0.83
+    public static final double BLENDER_POWER_SI = 0.8;
     public static final double INTAKE_POWER_SI = 1;
 
     public static final double TERRACE_GEAR_RATIO = 1;
@@ -138,59 +138,46 @@ public class Algorithm {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
     public static double getCurrentRPM() {
         double currentVelocityTicks = shooter.getVelocity();
-        double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60.0;
+        double currentRPM = (currentVelocityTicks / MOTOR_TICK_COUNT) * 60;
         return currentRPM;
-    }
-    public static double currentPOWER;
-    public static double getCurrentPOWER() {
-        double currentPower = shooter.getPower();
-        currentPOWER = currentPower;
-        return currentPower;
-
     }
 
     public static int targetRPM = 0;
     public static double targetPower = 0;
     public static double currentRPM;
-
     public static boolean test = false;
     public static boolean shootState = false;
+    public static double pidPower;
+    public static double targetTicksPerSecond;
 
     public static void setRPM(int target_RPM){
-        double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60.0;
-        double feedForward = F * targetTicksPerSecond;
-        double pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
-        double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
+        targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
+        targetRPM = target_RPM;
 
+    }
+
+    public static void updateRPM(){
+        double feedForward = F * targetTicksPerSecond;
+        double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
         shooter.setPower(target_Power);
         shooter2.setPower(target_Power);
-        targetRPM = target_RPM;
         targetPower = target_Power;
     }
 
-    public static void setPower1(){
-
-        shooter.setPower(1);
-        shooter2.setPower(1);
-
-    }
-
-    public static void shooterPID(){
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-    }
-    public static void shooterPIDFar(){
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(dP, dI, dD, dF);
-        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-    }
+//    public static void shooterPID(){
+//        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, I, D, F);
+//        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//    }
+//    public static void shooterPIDFar(){
+//        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(dP, dI, dD, dF);
+//        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//    }
 
     public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState) {
         if (state) {
@@ -208,7 +195,7 @@ public class Algorithm {
     }
     public static void shoot(int target_RPM, int error,double blenderPower, boolean state, boolean yState, boolean iyu) {
         if (state) {
-            shooterPIDFar();
+            //shooterPIDFar();
             setRPM(target_RPM);
             if (yState) {
                 if ((target_RPM + error) > currentRPM && currentRPM > (target_RPM - error)) {
@@ -332,7 +319,7 @@ public class Algorithm {
 //
     public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
-            shooterPID();
+            //shooterPID();
             if (yState) {
                 intake.setPower(intakePower);
                 blender.setPower(blenderPower);
@@ -340,6 +327,10 @@ public class Algorithm {
             setRPM(target_RPM);
         }
 
+    }
+
+    public static void update(){
+        pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
     }
     public static boolean checkRPM(int targetRPM,int error){
         double current_RPM = getCurrentRPM();
@@ -400,7 +391,4 @@ public class Algorithm {
         }
 
     }
-
-
-
 }

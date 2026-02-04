@@ -27,19 +27,17 @@ public class TurretAlgorithm {
     private Algorithm.Alliance alliance;
     public    Servo servo1, servo2;
     public DcMotorEx Encoder;
-    //public GoBildaPinpointDriver ppt;
+    //public GoBildaP[inpointDriver ppt;
     private final Limelight3A limelight;
     private final Telemetry telemetry;
 
     public TurretAlgorithm(HardwareMap hardwareMap,Telemetry telemetry ,Algorithm.Alliance alliance,Follower follower){
         servo1 = hardwareMap.get(Servo.class,"tr");
         servo2 = hardwareMap.get(Servo.class,"tl");
-        Encoder = hardwareMap.get(DcMotorEx.class,"ShooterR");
+        Encoder = Algorithm.shooter2;
         //ppt = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        Encoder.setDirection(DcMotorSimple.Direction.FORWARD);
         this.follower = follower;
-        Encoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         //telemetry.setMsTransmissionInterval(11);
@@ -177,7 +175,7 @@ public class TurretAlgorithm {
     int currentTicks;
     double currentDegrees;
     public void setTicks(){
-        currentTicks = Encoder.getCurrentPosition();
+        currentTicks = -Encoder.getCurrentPosition();
     }
     public void setDegrees(){
         setTicks();
@@ -255,8 +253,6 @@ public class TurretAlgorithm {
     public void setCenter(){
         servo1.setPosition(TURRET_CENTER_POSITION);
         servo2.setPosition(TURRET_CENTER_POSITION);
-        Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
     }
 
     public void allowCamera(){

@@ -21,10 +21,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
 @Autonomous(name = "蓝色近端单独跑", group = "Competition")
 public class BlueAutoUno extends OpMode {
-    private Algorithm Algorihthm;
+    private Algorithm Algorithm;
+    private TurretAlgorithm turretAlgorithm;
     private ElapsedTime runtime = new ElapsedTime();
 
     private Follower follower;
@@ -137,6 +139,7 @@ public class BlueAutoUno extends OpMode {
             case 0:
                 follower.followPath(scorePreload);
                 Algorithm.shootMode2.preShoot();
+                turretAlgorithm.setCenter();
                 setPathState(1);
                 break;
 
@@ -309,7 +312,8 @@ public class BlueAutoUno extends OpMode {
 
     @Override
     public void init() {
-        Algorihthm = new Algorithm(hardwareMap);
+        Algorithm = new Algorithm(hardwareMap);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry, org.firstinspires.ftc.teamcode.pedroPathing.Algorithm.Alliance.BLUE,follower);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
