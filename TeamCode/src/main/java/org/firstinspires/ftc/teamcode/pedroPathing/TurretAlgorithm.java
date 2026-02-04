@@ -27,7 +27,7 @@ public class TurretAlgorithm {
     private Algorithm.Alliance alliance;
     public    Servo servo1, servo2;
     public DcMotorEx Encoder;
-    //public GoBildaP[inpointDriver ppt;
+    //public GoBildaPinpointDriver ppt;
     private final Limelight3A limelight;
     private final Telemetry telemetry;
 
@@ -101,7 +101,7 @@ public class TurretAlgorithm {
     public boolean autoResetYaw = true;
     public boolean isHardResetYaw = false;
     public boolean isLockCenter = false;
-    public double timeThreshold = 1000;
+    public double timeThreshold = 200;
 
     ElapsedTime cameraTime = new ElapsedTime();
 
