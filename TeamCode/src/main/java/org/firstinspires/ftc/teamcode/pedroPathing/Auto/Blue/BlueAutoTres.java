@@ -96,7 +96,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.26, () -> Algorithm.preShooterMove())
+                //.addParametricCallback(0.26, () -> Algorithm.preShooterMove())
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -113,7 +113,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
+                //.addParametricCallback(0.23, () -> Algorithm.preShooterMove())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -126,7 +126,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())//650
+                //.addParametricCallback(0.23, () -> Algorithm.preShooterMove())//650
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -308,6 +308,7 @@ public class BlueAutoTres extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        Algorithm.updateRPM();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

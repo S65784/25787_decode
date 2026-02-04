@@ -33,15 +33,15 @@ public class Algorithm {
 
 
     //constants
-    public static final int TARGET_RPM_YI = 2450;
+    public static final int TARGET_RPM_YI = 2700;//2450
     public static final int ERROR_RANGE_YI =500;
     public static final double SERVO_POSITION_YI = 0.56;
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3000;
+    public static final int TARGET_RPM_ER = 3200;//3000 3300
     public static final int ERROR_RANGE_ER = 200;
-    public static final double SERVO_POSITION_ER = 0.644;
+    public static final double SERVO_POSITION_ER = 0.715;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
@@ -254,7 +254,7 @@ public class Algorithm {
         state = false;
         //block.setPosition(0.3);
         intake.setPower(1);
-        blender.setPower(0);
+        blender.setPower(-0.81);
         //shoot(Algorithm.TARGET_RPM_YI,Algorithm.ERROR_RANGE_YI,true);
         test = true;
     }
@@ -271,14 +271,14 @@ public class Algorithm {
     public static void preShooterMove(int millitime) {
         shootState = true;
         preShooterTimer.reset();
-        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(-0.43);
+        while(preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(-0.81);
         blender.setPower(0);
 
     }
     public static void preShooterMove() {
         shootState = true;
         preShooterTimer.reset();
-        if(preShooterTimer.milliseconds() < 312 && shootState)  blender.setPower(-0.6);//420, 0.53
+        if(preShooterTimer.milliseconds() < 312 && shootState)  blender.setPower(-0.81);//420, 0.53
         else  blender.setPower(0);
 
     }
