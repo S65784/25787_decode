@@ -151,16 +151,20 @@ public class Algorithm {
     public static double currentRPM;
     public static boolean test = false;
     public static boolean shootState = false;
+    public static double pidPower;
+    public static double targetTicksPerSecond;
 
     public static void setRPM(int target_RPM){
-        double targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
-        double feedForward = F * targetTicksPerSecond;
-        double pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
-        double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
+        targetTicksPerSecond = target_RPM * MOTOR_TICK_COUNT / 60;
+        targetRPM = target_RPM;
 
+    }
+
+    public static void updateRPM(){
+        double feedForward = F * targetTicksPerSecond;
+        double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
         shooter.setPower(target_Power);
         shooter2.setPower(target_Power);
-        targetRPM = target_RPM;
         targetPower = target_Power;
     }
 
@@ -323,6 +327,10 @@ public class Algorithm {
             setRPM(target_RPM);
         }
 
+    }
+
+    public static void update(){
+        pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
     }
     public static boolean checkRPM(int targetRPM,int error){
         double current_RPM = getCurrentRPM();

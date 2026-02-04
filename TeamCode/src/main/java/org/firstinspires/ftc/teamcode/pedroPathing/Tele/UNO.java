@@ -184,8 +184,9 @@ if(gamepad2.dpad_up){
         if (gamepad1.y){
             turretAlgorithm.banCamera();
         }
-
+            Algorithm.updateRPM();
             turretAlgorithm.update();
+//zxcvbnm,./asdfghjkl
 
 
 
