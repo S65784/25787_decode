@@ -39,7 +39,7 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
 
     // PIDF 系数 - 现在可以通过Dashboard实时修改！
     // P, I, D, F 必须是独立的 public static 变量才能被Dashboard识别
-    public static double P = 0.006, I = 0, D = 0.00001;
+    public static double P = 0.006, I = 0, D = 0.0000;
     public static double F = 0.0004;
 
 
@@ -58,7 +58,7 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
         motor2 = hardwareMap.get(DcMotorEx.class, "ShooterR");
         motor.setDirection(DcMotor.Direction.FORWARD);
         motor2.setDirection(DcMotor.Direction.REVERSE);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -115,5 +115,6 @@ public class MotorPIDFTunerDashboard extends LinearOpMode {
 
         // 停止电机
         motor.setPower(0);
+        motor2.setPower(0);
     }
 }

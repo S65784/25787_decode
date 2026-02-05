@@ -60,32 +60,23 @@ public class Algorithm {
     public static final double TERRACE_GEAR_RATIO = 1;
 
     public enum Alliance{
-    RED(new Point(RED_GOAL_POSITION_X,RED_GOAL_POSITION_Y),FAR_TURRET_HEADING_RED,1),
-    BLUE(new Point(BLUR_GOAL_POSITION_X,BLUR_GOAL_POSITION_Y),FAR_TURRET_HEADING_BLUE,-1);
+        RED(new Point(RED_GOAL_POSITION_X,RED_GOAL_POSITION_Y)),
+        BLUE(new Point(BLUR_GOAL_POSITION_X,BLUR_GOAL_POSITION_Y));
 
-    private Point point;
-    private double farTurretHeading;
-    private int xDirection;
+        private Point point;
 
-
-        Alliance(Point point,double farTurretHeading,int xDirection){
-        this.point = point;
-        this.farTurretHeading = farTurretHeading;
-        this.xDirection = xDirection;
+        Alliance(Point point){
+            this.point = point;
         }
 
         public Point getPoint(){
             return point;
         }
-        public double getFarTurretHeading(){return farTurretHeading;}
-        public int getXDirection(){return xDirection;}
     }
     public static final int BLUR_GOAL_POSITION_X = 1400;//-1750
     public static final int BLUR_GOAL_POSITION_Y = -1400;//1750
     public static final int RED_GOAL_POSITION_X =1400;
     public static final int RED_GOAL_POSITION_Y =1400;
-    private static final double FAR_TURRET_HEADING_RED = 75;
-    private static final double FAR_TURRET_HEADING_BLUE = 180-75;
 
 
 
@@ -95,7 +86,7 @@ public class Algorithm {
     public static double F = 0.0004;
     public static PID pid = new PID(P,0,D);
 
-//    public static double P = 90, I = 0, D = 1, F = 13;
+    //    public static double P = 90, I = 0, D = 1, F = 13;
     public static double dP = 125, dI = 0.4, dD = 0.1, dF = 16.27;//da
     //        public static double P = 125, I = 0.4, D = 0.1, F = 16.27;
 //    public static double P = 140, I = 20, D = 33, F = 14.5;
@@ -171,6 +162,7 @@ public class Algorithm {
 
     public static void updateRPM(){
         double feedForward = F * targetTicksPerSecond;
+        pidPower = pid.update(targetTicksPerSecond-shooter.getVelocity());
         double target_Power = Range.clip(feedForward + pidPower, -1.0, 1.0);
         shooter.setPower(target_Power);
         shooter2.setPower(target_Power);
@@ -271,8 +263,8 @@ public class Algorithm {
 
     static ElapsedTime preShooterTimer = new ElapsedTime();
     public static void preShooterMove(int millitime, double power) {
-            shootState = true;
-            preShooterTimer.reset();
+        shootState = true;
+        preShooterTimer.reset();
         while (preShooterTimer.milliseconds() < millitime && shootState)  blender.setPower(power);
         blender.setPower(0);
 
@@ -325,7 +317,7 @@ public class Algorithm {
     public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,BLENDER_POWER_ER,INTAKE_POWER_ER,pidClose);
     public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN,BLENDER_POWER_SAN,INTAKE_POWER_SAN,pidClose);
     public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI,BLENDER_POWER_SI,INTAKE_POWER_SI,pidFar);
-//
+    //
     public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
             //shooterPID();
@@ -376,11 +368,11 @@ public class Algorithm {
     }
 
     public static void sleep(long ms){
-            try {
-                Thread.sleep(ms);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
     }
 

@@ -293,6 +293,7 @@ public class BlueAutoUno extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        Algorithm.updateRPM();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

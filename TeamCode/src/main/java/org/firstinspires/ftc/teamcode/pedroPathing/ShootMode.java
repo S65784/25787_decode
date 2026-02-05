@@ -63,6 +63,6 @@ public class ShootMode {
     }
 
     public  void applyPID(){
-        Algorithm.shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pid);
+        //Algorithm.shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pid);
     }
 }

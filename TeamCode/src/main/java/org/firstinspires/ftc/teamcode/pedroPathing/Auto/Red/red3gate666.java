@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 
-@Autonomous(name = "613-red(推gate)", group = "Competition")
+@Autonomous(name = "red(推gate*2)", group = "Competition")
 public class red3gate666 extends OpMode {
     private Algorithm Algorihthm;
     private TelemetryManager telemetryManager;
@@ -323,6 +323,7 @@ public class red3gate666 extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        Algorithm.updateRPM();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

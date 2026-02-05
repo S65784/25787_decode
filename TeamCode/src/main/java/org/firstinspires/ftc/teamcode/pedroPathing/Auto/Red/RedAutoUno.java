@@ -298,6 +298,7 @@ public class RedAutoUno extends OpMode {
         }
         follower.update();
         autonomousPathUpdate();
+        Algorithm.updateRPM();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

@@ -22,10 +22,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
 @Autonomous(name = "红色近端单独跑(推gate)", group = "Competition")
 public class RedAutoTres extends OpMode {
     private Algorithm Algorihthm;
+    private TurretAlgorithm turretAlgorithm;
     private TelemetryManager telemetryManager;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -308,6 +310,7 @@ public class RedAutoTres extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        Algorithm.updateRPM();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -327,6 +330,7 @@ public class RedAutoTres extends OpMode {
     @Override
     public void init() {
         Algorihthm = new Algorithm(hardwareMap);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.RED,follower);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
@@ -337,6 +341,7 @@ public class RedAutoTres extends OpMode {
         setPathState(0);
 
         Algorithm.servoControl();
+        turretAlgorithm.setCenter();
     }
 
     @Override
