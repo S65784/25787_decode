@@ -27,7 +27,7 @@ public class TurretAlgorithm {
     private Algorithm.Alliance alliance;
     public    Servo servo1, servo2;
     public DcMotorEx Encoder;
-    //public GoBildaP[inpointDriver ppt;
+    //public GoBildaPinpointDriver ppt;
     private final Limelight3A limelight;
     private final Telemetry telemetry;
 
@@ -101,7 +101,9 @@ public class TurretAlgorithm {
     public boolean autoResetYaw = true;
     public boolean isHardResetYaw = false;
     public boolean isLockCenter = false;
-    public double timeThreshold = 1000;
+    public double timeThreshold = 200;
+    private double tx;
+    private boolean useFar = false;
 
     ElapsedTime cameraTime = new ElapsedTime();
 
@@ -133,17 +135,27 @@ public class TurretAlgorithm {
             cameraTime.reset();
         }
     }
+    public void updateTx(){
+        if(limelightResult!=null && limelightResult.isValid()){
+            tx = limelightResult.getTx();
+        }
+    }
 
     private final double P=0.00003,I=0,D=0.000;
     public PID pid = new PID(P,I,D);
     public double updatePID(){
-        targetLocalHeading = targetTurretHeading - currentRobotHeading;
-        double error = normalizeAngle(targetLocalHeading-currentDegrees);
-        return pid.update(error);
+        targetLocalHeading = currentDegrees + tx;
+        //double error = normalizeAngle(targetLocalHeading-currentDegrees);
+        return pid.update(tx);
     }
 
     public void setTargetTurretHeading(){
-        targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(),alliance.getPoint())+90);
+        if(useFar){
+            targetTurretHeading = alliance.getFarTurretHeading();
+        }else {
+            if(alliance == Algorithm.Alliance.RED){targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(), alliance.getPoint()) + 90);}
+            else{targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(alliance.getPoint(), getTurretPoint()) + 90);}
+        }
     }
     public void setServoPosition(){
         //may need to be changed
@@ -180,6 +192,14 @@ public class TurretAlgorithm {
     public void setDegrees(){
         setTicks();
         currentDegrees = (currentTicks / TICKS_PER_REV) * (20.0/96.0) * 360.0;
+    }
+
+    public void useFar(){
+        useFar = true;
+    }
+
+    public void useAllTime(){
+        useFar = false;
     }
 
 
@@ -262,6 +282,12 @@ public class TurretAlgorithm {
         allowCamera = false;
     }
 
+    public void chanceAlliance(){
+        if(alliance == Algorithm.Alliance.RED)alliance = Algorithm.Alliance.BLUE;
+        else alliance = Algorithm.Alliance.RED;
+
+    }
+
     public void updateTelemetry(){
         telemetry.addData("using camera",usingCamera);
         telemetry.addData("allow camera", allowCamera);
@@ -291,6 +317,7 @@ public class TurretAlgorithm {
     }
 
     public void update(){
+        updateTx();
         allowCameraTime = !(cameraTime.milliseconds() < timeThreshold);
         currentServoAngle = (servo1.getPosition() - TURRET_CENTER_POSITION) * SERVO_RANGE * TURRET_GEAR_RATIO;
         limelightResult = limelight.getLatestResult();
@@ -312,11 +339,6 @@ public class TurretAlgorithm {
         }
     }
 
-//    public static double normalizeAngle(double Angle){
-//        while (Angle>180) Angle-=360;
-//        while (Angle<=-180) Angle+=360;
-//        return Angle;
-//    }
 
     public static double normalizeAngle(double  angle){
         return AngleUnit.normalizeDegrees(angle);
