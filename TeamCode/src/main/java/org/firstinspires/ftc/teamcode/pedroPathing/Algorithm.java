@@ -60,23 +60,32 @@ public class Algorithm {
     public static final double TERRACE_GEAR_RATIO = 1;
 
     public enum Alliance{
-    RED(new Point(RED_GOAL_POSITION_X,RED_GOAL_POSITION_Y)),
-    BLUE(new Point(BLUR_GOAL_POSITION_X,BLUR_GOAL_POSITION_Y));
+    RED(new Point(RED_GOAL_POSITION_X,RED_GOAL_POSITION_Y),FAR_TURRET_HEADING_RED,1),
+    BLUE(new Point(BLUR_GOAL_POSITION_X,BLUR_GOAL_POSITION_Y),FAR_TURRET_HEADING_BLUE,-1);
 
     private Point point;
+    private double farTurretHeading;
+    private int xDirection;
 
-        Alliance(Point point){
+
+        Alliance(Point point,double farTurretHeading,int xDirection){
         this.point = point;
+        this.farTurretHeading = farTurretHeading;
+        this.xDirection = xDirection;
         }
 
         public Point getPoint(){
             return point;
         }
+        public double getFarTurretHeading(){return farTurretHeading;}
+        public int getXDirection(){return xDirection;}
     }
     public static final int BLUR_GOAL_POSITION_X = 1400;//-1750
     public static final int BLUR_GOAL_POSITION_Y = -1400;//1750
     public static final int RED_GOAL_POSITION_X =1400;
     public static final int RED_GOAL_POSITION_Y =1400;
+    private static final double FAR_TURRET_HEADING_RED = 75;
+    private static final double FAR_TURRET_HEADING_BLUE = 180-75;
 
 
 
