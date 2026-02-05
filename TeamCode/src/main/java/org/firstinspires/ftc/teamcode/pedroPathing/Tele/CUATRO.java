@@ -26,8 +26,8 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 
-@TeleOp(name = "AAAHardyGameBlue-Tres")
-public class TRES extends LinearOpMode {
+@TeleOp(name = "AAAHardyGameRED-Tres")
+public class CUATRO extends LinearOpMode {
     private Algorithm algorithm;
     private TurretAlgorithm turretAlgorithm;
     private Follower follower;
@@ -88,7 +88,7 @@ public class TRES extends LinearOpMode {
         ElapsedTime drawTime = new ElapsedTime();
         follower = Constants.createFollower(hardwareMap);
         algorithm = new Algorithm(hardwareMap);
-        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry, Algorithm.Alliance.BLUE,follower);
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry, Algorithm.Alliance.RED,follower);
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "LeftBackDrive");
@@ -179,8 +179,8 @@ public class TRES extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            //ls.setPosition(servoPosition);
-            //rs.setPosition(1-servoPosition);
+            ls.setPosition(servoPosition);
+            rs.setPosition(1-servoPosition);
 
             //tr.setPosition(TURRET_CENTER_POSITION);
             //tl.setPosition(TURRET_CENTER_POSITION);
@@ -328,12 +328,12 @@ public class TRES extends LinearOpMode {
                 check = true;
             }
             if(gamepad1.dpad_right){
-                TARGET_RPM = 4300;//超远 4
-                ErrorRangeStart = 100;
-                ErrorRangeEnd = 200;
-                servoPosition = 0.83;
+                TARGET_RPM = 4350;//超远 4
+                ErrorRangeStart = 50;
+                ErrorRangeEnd = 50;
+                servoPosition = 0.85;
                 normalState = false;
-                blenderPower = 0.65;
+                blenderPower = 0.85;
                 check = true;
             }
 
