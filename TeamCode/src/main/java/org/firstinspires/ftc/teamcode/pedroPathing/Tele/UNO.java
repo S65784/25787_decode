@@ -186,7 +186,6 @@ if(gamepad2.dpad_up){
         }
             Algorithm.updateRPM();
             turretAlgorithm.update();
-//zxcvbnm,./asdfghjkl
 
 
 

@@ -22,6 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.pedroPathing.vision.EchoLapse.GoBildaPinpointDriver;
 
+import java.util.List;
+
 
 public class TurretAlgorithm {
     private Algorithm.Alliance alliance;
@@ -143,17 +145,70 @@ public class TurretAlgorithm {
 
     private final double P=0.00003,I=0,D=0.000;
     public PID pid = new PID(P,I,D);
-    public double updatePID(){
-        targetLocalHeading = currentDegrees + tx;
-        //double error = normalizeAngle(targetLocalHeading-currentDegrees);
-        return pid.update(tx);
+//    public double updatePID(){
+//        if()
+//        targetLocalHeading = currentDegrees - targetTurretHeading;
+//        double error = normalizeAngle(targetLocalHeading-currentDegrees);
+//        return pid.update(error);
+//    }
+
+
+
+    /**
+     * 更新PID逻辑：
+     * 1. 优先尝试识别 ID 为 21 的 AprilTag。
+     * 2. 如果识别到 ID 21，使用其 TX (水平偏差) 进行视觉闭环控制。
+     * 3. 如果没识别到 ID 21 (即使有其他Tag)，回退到使用里程计/场坐标控制。
+     */
+    public double updatePID() {
+        boolean foundID = false;
+        double txError = 0;
+
+        // 1. 检查 Limelight 结果是否有效
+        if (limelightResult != null && limelightResult.isValid()) {
+            // 获取所有识别到的标签列表
+            List<LLResultTypes.FiducialResult> fiducials = limelightResult.getFiducialResults();
+
+            if (fiducials != null) {
+                // 2. 遍历列表，专门寻找 ID 21
+                for (LLResultTypes.FiducialResult tag : fiducials) {
+                    if (tag.getFiducialId() == alliance.getID()) {
+                        txError = tx; // 获取水平角度偏差
+                        foundID = true;
+                        break; // 找到目标后，停止遍历
+                    }
+                }
+            }
+        }
+
+        if (foundID) {
+            // === 视觉闭环模式 (ID 21) ===
+
+            // 更新 targetLocalHeading。这一步是为了让 setServoPosition 中的前馈计算(Feedforward)保持连贯。
+            // 逻辑：目标位置(绝对) = 当前位置 + 偏差
+            // 如果发现转塔往反方向修正，请将下面的 + txError 改为 - txError
+            targetLocalHeading = currentDegrees + txError;
+
+            // 将 tx 直接作为 PID 的误差输入
+            // tx > 0 表示目标在右侧。通常 PID 输出正值会驱动转塔向右转。
+            return pid.update(txError);
+
+        } else {
+            // === 里程计/场坐标模式 (无 ID 21) ===
+            // 传统的场坐标计算逻辑
+            targetLocalHeading = targetTurretHeading - currentRobotHeading;
+            double error = normalizeAngle(targetLocalHeading - currentDegrees);
+
+            return pid.update(error);
+        }
     }
+
 
     public void setTargetTurretHeading(){
         if(useFar){
             targetTurretHeading = alliance.getFarTurretHeading();
         }else {
-            if(alliance == Algorithm.Alliance.RED){targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(), alliance.getPoint()) + 90);}
+            if(alliance == Algorithm.Alliance.RED){targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(), alliance.getPoint()) + 90-5);}
             else{targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(alliance.getPoint(), getTurretPoint()) + 90);}
         }
     }
@@ -290,6 +345,7 @@ public class TurretAlgorithm {
 
     public void updateTelemetry(){
         telemetry.addData("using camera",usingCamera);
+        telemetry.addData("camera data valid",limelightResult.isValid());
         telemetry.addData("allow camera", allowCamera);
         telemetry.addData("allow by time",allowCameraTime);
         telemetry.addData("x offset",xTotalOffset);
