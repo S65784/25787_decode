@@ -39,7 +39,7 @@ public class Algorithm {
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3200;//3000 3300
+    public static final int TARGET_RPM_ER = 3150;//3000 3300
     public static final int ERROR_RANGE_ER = 200;
     public static final double SERVO_POSITION_ER = 0.715;
     public static final double BLENDER_POWER_ER = 1;
@@ -304,6 +304,10 @@ public class Algorithm {
     public static void keep(double power) {intake.setPower(power);}
     public static void keep() {
         intake.setPower(0.12);
+    }
+    public static void reverseBlender(double power) {blender.setPower(power);}
+    public static void reverseBlender() {
+        blender.setPower(-0.81);
     }
 
     public static void servoControl() {

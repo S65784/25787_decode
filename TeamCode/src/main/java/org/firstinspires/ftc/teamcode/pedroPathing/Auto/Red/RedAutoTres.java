@@ -35,8 +35,8 @@ public class RedAutoTres extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1500;
-    private static final double lowMaxPower = 0.6;
+    private static final int millitime = 1500;//1500
+    private static final double lowMaxPower = 0.7;
     private static final double t = 0.3;
     private static final double PATH_TIMEOUT = 5000;
 
@@ -76,7 +76,7 @@ public class RedAutoTres extends OpMode {
     private final Pose controlScorePose3 = new Pose(113, 39, Math.toRadians(32));
     private final Pose scorePose3 = new Pose(100, 99.8, Math.toRadians(35));//
 
-    private final Pose end = new Pose(94, 108, Math.toRadians(35));
+    private final Pose end = new Pose(94, 108, Math.toRadians(0));
 
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain runTheGate, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
@@ -99,12 +99,12 @@ public class RedAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.26, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.26, () -> Algorithm.reverseBlender())
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), theGate.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+      //          .addParametricCallback(0.21, () -> Algorithm.keep())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -116,25 +116,25 @@ public class RedAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.keep())
+      //          .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.keep())
+ //               .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         endpath = follower.pathBuilder()
@@ -173,17 +173,18 @@ public class RedAutoTres extends OpMode {
                     follower.setMaxPower(lowMaxPower);
                     Algorithm.draw();
                     follower.followPath(grabPickup1, true);
+                    follower.setMaxPower(1);
                     setPathState(30);
                 }
                 break;
 
             case 30:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
+                   // follower.setMaxPower(1);
                     Algorithm.keep();
                     follower.followPath(runTheGate, true);
                     Algorithm.stopShoot();
-                    Algorithm.sleepForAWhile(1200);//450
+                    Algorithm.sleepForAWhile(201);//450 1200
                     setPathState(4);
                 }
                 pathTimeout(5000,4);
