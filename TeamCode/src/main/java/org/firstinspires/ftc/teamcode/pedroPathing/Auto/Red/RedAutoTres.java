@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
 import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
-@Autonomous(name = "红色近端单独跑(推gate)", group = "Competition")
+@Autonomous(name = "红色近端(推gate)", group = "Competition")
 public class RedAutoTres extends OpMode {
     private Algorithm Algorihthm;
     private TurretAlgorithm turretAlgorithm;
@@ -35,7 +35,7 @@ public class RedAutoTres extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1500;//1500
+    private static final int millitime = 1000;//1500
     private static final double lowMaxPower = 0.7;
     private static final double t = 0.3;
     private static final double PATH_TIMEOUT = 5000;
@@ -56,8 +56,8 @@ public class RedAutoTres extends OpMode {
     private final Pose pickup1Ready = new Pose(getPointPreX, Point1Y, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(0));
 
-    private final Pose controlTheGate = new Pose(140-36.81927710843374, 82.89156626506025, Math.toRadians(270));
-    private final Pose theGate = new Pose(140-11, 72, Math.toRadians(90));
+    private final Pose controlTheGate = new Pose(114.93227091633466, 69.4183266932271, Math.toRadians(270));
+    private final Pose theGate = new Pose(131.08, 72, Math.toRadians(90));//140-11
 
     private final Pose controlScorePose1 = new Pose(140-25.25301204819277, 81.92771084337349, Math.toRadians(35.6));
     private final Pose scorePose1 = new Pose(140-40, 99.8, Math.toRadians(37.2));//
@@ -99,7 +99,7 @@ public class RedAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.26, () -> Algorithm.reverseBlender())
+                .addParametricCallback(0.173, () -> Algorithm.reverseBlender(-0.916))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -129,7 +129,7 @@ public class RedAutoTres extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
+                .addParametricCallback(0.13, () -> Algorithm.reverseBlender(-0.93))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -184,7 +184,7 @@ public class RedAutoTres extends OpMode {
                     Algorithm.keep();
                     follower.followPath(runTheGate, true);
                     Algorithm.stopShoot();
-                    Algorithm.sleepForAWhile(201);//450 1200
+                    Algorithm.sleepForAWhile(210);//450 1200
                     setPathState(4);
                 }
                 pathTimeout(5000,4);
@@ -194,7 +194,9 @@ public class RedAutoTres extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
+                    Algorithm.sleepForAWhile(183);
                     Algorithm.shootMode2.preShoot();
+
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
@@ -220,7 +222,7 @@ public class RedAutoTres extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.45);
+                    follower.setMaxPower(0.4);
                     Algorithm.draw();
                     follower.followPath(grabPickup2, true);
                     setPathState(8);

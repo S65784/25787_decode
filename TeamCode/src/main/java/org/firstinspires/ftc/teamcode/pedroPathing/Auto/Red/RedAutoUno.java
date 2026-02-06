@@ -24,10 +24,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Algorithm;
+import org.firstinspires.ftc.teamcode.pedroPathing.TurretAlgorithm;
 
 @Autonomous(name = "红色近端单独跑", group = "Competition")
 public class RedAutoUno extends OpMode {
     private Algorithm Algorihthm;
+    private TurretAlgorithm turretAlgorithm;
+
     private final ElapsedTime runtime = new ElapsedTime();
 
     private Follower follower;
@@ -95,34 +98,34 @@ public class RedAutoUno extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.26, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.26, () -> Algorithm.reverseBlender())
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+          //      .addParametricCallback(0.21, () -> Algorithm.keep())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
                 .build();
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose, controlScorePose2, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.keep())
+      //          .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.keep())
+ //               .addParametricCallback(0.13, () -> Algorithm.keep())
                 .build();
 
         endpath = follower.pathBuilder()
@@ -318,8 +321,7 @@ public class RedAutoUno extends OpMode {
     @Override
     public void init() {
         Algorihthm = new Algorithm(hardwareMap);
-        pathTimer = new Timer();
-        actionTimer = new Timer();
+        turretAlgorithm = new TurretAlgorithm(hardwareMap,telemetry,Algorithm.Alliance.RED,follower);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
@@ -330,6 +332,7 @@ public class RedAutoUno extends OpMode {
         setPathState(0);
 
         Algorithm.servoControl();
+        turretAlgorithm.setCenter();
     }
 
     @Override

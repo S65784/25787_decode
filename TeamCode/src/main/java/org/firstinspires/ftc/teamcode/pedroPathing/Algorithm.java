@@ -39,9 +39,9 @@ public class Algorithm {
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3150;//3000 3300
+    public static final int TARGET_RPM_ER = 3000;//3000 3300
     public static final int ERROR_RANGE_ER = 200;
-    public static final double SERVO_POSITION_ER = 0.715;
+    public static final double SERVO_POSITION_ER = 0.73;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
@@ -374,6 +374,7 @@ public class Algorithm {
     public static void shootCheckOnceTime(int target_RPM,int error,double blenderPower,double intakePower,boolean state, boolean yState,int milli){
         shootTimer.reset();
         while (shootTimer.milliseconds() < milli) {
+            updateRPM();
             shootCheckOnce(target_RPM, error,blenderPower ,intakePower,state, yState);
         }
         stopShoot();
