@@ -188,7 +188,9 @@ if(gamepad2.dpad_up){
             turretAlgorithm.update();
 
 
-
+if(gamepad1.dpad_up){
+    turretAlgorithm.useFar();
+}
 
 //            telemetry.addData("Status", "Run Time: " + runtime.toString());
 //

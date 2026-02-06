@@ -26,8 +26,8 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 
-@TeleOp(name = "AAAHardyGameBLUE-Tres")
-public class TRES extends LinearOpMode {
+@TeleOp(name = "AAAEddieGameBLUE-Tres")
+public class CINCO extends LinearOpMode {
     private Algorithm algorithm;
     private TurretAlgorithm turretAlgorithm;
     private Follower follower;
@@ -141,7 +141,7 @@ public class TRES extends LinearOpMode {
         telemetry.update();
         ls.setPosition(0.47);
         rs.setPosition(0.53);
-       turretAlgorithm.init();
+        turretAlgorithm.init();
 
         ElapsedTime preTime = new ElapsedTime();
         boolean preState = false;

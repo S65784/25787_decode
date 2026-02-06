@@ -8,8 +8,10 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,7 +35,7 @@ public class TurretAlgorithm {
     private final Limelight3A limelight;
     private final Telemetry telemetry;
 
-    public TurretAlgorithm(HardwareMap hardwareMap,Telemetry telemetry ,Algorithm.Alliance alliance,Follower follower){
+    public TurretAlgorithm(HardwareMap hardwareMap,Telemetry telemetry ,Algorithm.Alliance alliance,Follower follower,Gamepad gamepad){
         servo1 = hardwareMap.get(Servo.class,"tr");
         servo2 = hardwareMap.get(Servo.class,"tl");
         Encoder = Algorithm.shooter2;
@@ -52,6 +54,11 @@ public class TurretAlgorithm {
         servo1.setDirection(Servo.Direction.REVERSE);
         servo2.setDirection(Servo.Direction.REVERSE);
         //ppt.resetPosAndIMU();
+
+        gamepad2 = gamepad;
+    }
+    public TurretAlgorithm(HardwareMap hardwareMap,Telemetry telemetry ,Algorithm.Alliance alliance,Follower follower){
+        this(hardwareMap,telemetry,alliance,follower,null);
     }
 
     public final double FIELD_RANGE = 1750;
@@ -59,7 +66,7 @@ public class TurretAlgorithm {
     private final double SERVO_RANGE = 180.0/130*255;
     private final double TURRET_ROBOT_OFFSET = 50;
     private final double TURRET_CENTER_POSITION = 0.9;
-    private final double KALMAN_GAIN = 0.3;
+    private final double KALMAN_GAIN = 0.03;
     private double currentRobotHeading;
     public double targetTurretHeading;
     public double cameraTurretHeading;
@@ -96,6 +103,7 @@ public class TurretAlgorithm {
     public Point calcTurretPoint;
     public Pose2D robotPose;
     public LLResult limelightResult;
+    private Gamepad gamepad2;
     private boolean usingCamera;
     private boolean allowCamera = true;
     private boolean allowCameraTime = true;
@@ -103,9 +111,10 @@ public class TurretAlgorithm {
     public boolean autoResetYaw = true;
     public boolean isHardResetYaw = false;
     public boolean isLockCenter = false;
-    public double timeThreshold = 200;
+    public double timeThreshold = 1000;
     private double tx;
     private boolean useFar = false;
+    private boolean useManually = false;
 
     ElapsedTime cameraTime = new ElapsedTime();
 
@@ -134,7 +143,9 @@ public class TurretAlgorithm {
             usingCamera = true;
             foundTarget = true;
             //updatePpt();
-            cameraTime.reset();
+            if(allowCameraTime){
+                cameraTime.reset();
+            }
         }
     }
     public void updateTx(){
@@ -143,7 +154,7 @@ public class TurretAlgorithm {
         }
     }
 
-    private final double P=0.00003,I=0,D=0.000;
+    private final double P=0.001,I=0.00001,D=0.000;
     public PID pid = new PID(P,I,D);
 //    public double updatePID(){
 //        if()
@@ -187,7 +198,7 @@ public class TurretAlgorithm {
             // 更新 targetLocalHeading。这一步是为了让 setServoPosition 中的前馈计算(Feedforward)保持连贯。
             // 逻辑：目标位置(绝对) = 当前位置 + 偏差
             // 如果发现转塔往反方向修正，请将下面的 + txError 改为 - txError
-            targetLocalHeading = currentDegrees + txError;
+            targetLocalHeading = normalizeAngle(currentDegrees + txError);
 
             // 将 tx 直接作为 PID 的误差输入
             // tx > 0 表示目标在右侧。通常 PID 输出正值会驱动转塔向右转。
@@ -209,7 +220,7 @@ public class TurretAlgorithm {
             targetTurretHeading = alliance.getFarTurretHeading();
         }else {
             if(alliance == Algorithm.Alliance.RED){targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(getTurretPoint(), alliance.getPoint()) + 90-5);}
-            else{targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(alliance.getPoint(), getTurretPoint()) + 90);}
+            else{targetTurretHeading = normalizeAngle(-Point.getAngleFromPoints(alliance.getPoint(), getTurretPoint()) - 90);}
         }
     }
     public void setServoPosition(){
@@ -283,6 +294,9 @@ public class TurretAlgorithm {
     public void lockCenter(){
         isLockCenter = true;
     }
+    public void unlock(){
+        isLockCenter = false;
+    }
 
 
     public void adjustPoint(){
@@ -342,15 +356,49 @@ public class TurretAlgorithm {
         else alliance = Algorithm.Alliance.RED;
 
     }
+    public void init(){
+        setCenter();
+        Algorithm.sleep(300);
+        Encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        Encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void setManually(){
+        useManually = true;
+    }
+    public void stopManually(){
+        useManually = false;
+    }
+
+    public void useManually(){
+        if(gamepad2.dpad_down){
+            servo1.setPosition(1-0.1);
+            servo2.setPosition(1-0.1);
+
+        }
+        if(gamepad2.dpad_left){
+            servo1.setPosition(1-0.36);
+            servo2.setPosition(1-0.36);
+
+        }
+        if(gamepad2.dpad_up){
+            servo1.setPosition(1-0.63);
+            servo2.setPosition(1-0.63);
+        }
+        if(gamepad2.dpad_right){
+            servo1.setPosition(1-0.93);
+            servo2.setPosition(1-0.93);
+        }
+    }
 
     public void updateTelemetry(){
         telemetry.addData("using camera",usingCamera);
-        telemetry.addData("camera data valid",limelightResult.isValid());
+        telemetry.addData("use far",useFar);
         telemetry.addData("allow camera", allowCamera);
         telemetry.addData("allow by time",allowCameraTime);
         telemetry.addData("x offset",xTotalOffset);
         telemetry.addData("y offset",yTotalOffset);
-        //telemetry.addData("yaw offset",yawTotalOffset);
+        telemetry.addData("yaw offset",yawTotalOffset);
         telemetry.addData("camera point x",cameraTurretPoint.x);
         telemetry.addData("camera point y",cameraTurretPoint.y);
         telemetry.addData("raw x",rawRobotPoint.x);
@@ -390,7 +438,10 @@ public class TurretAlgorithm {
         updateTelemetry();
         if((foundTarget || !allowCamera) && !isLockCenter) {//foundTarget &&
             setServoPosition();
-        }else{
+        }else if(useManually && gamepad2!=null){
+            useManually();
+        }
+        else{
             setCenter();
         }
     }

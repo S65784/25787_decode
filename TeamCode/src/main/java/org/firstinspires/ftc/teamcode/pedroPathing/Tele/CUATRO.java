@@ -140,8 +140,7 @@ public class CUATRO extends LinearOpMode {
         telemetry.update();
         ls.setPosition(0.47);
         rs.setPosition(0.53);
-        turretAlgorithm.setCenter();
-        sleep(300);
+        turretAlgorithm.init();
 
         ElapsedTime preTime = new ElapsedTime();
         boolean preState = false;
@@ -300,6 +299,10 @@ public class CUATRO extends LinearOpMode {
                 shooter2.setPower(0);
             }
 
+            if (gamepad1.touchpad){
+                turretAlgorithm.lockCenter();
+            }
+
 
 
             if(gamepad1.dpad_down){
@@ -393,6 +396,11 @@ public class CUATRO extends LinearOpMode {
                 }
             }
 
+            if(gamepad2.a){
+                turretAlgorithm.useManually();
+            }if(gamepad2.b){
+                turretAlgorithm.stopManually();
+            }
             turretAlgorithm.update();
 
 
