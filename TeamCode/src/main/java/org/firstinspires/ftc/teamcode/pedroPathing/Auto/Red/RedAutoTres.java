@@ -99,7 +99,7 @@ public class RedAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.173, () -> Algorithm.reverseBlender(-0.916))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -116,7 +116,7 @@ public class RedAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -129,7 +129,7 @@ public class RedAutoTres extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.reverseBlender(-0.93))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -187,7 +187,7 @@ public class RedAutoTres extends OpMode {
                     Algorithm.sleepForAWhile(210);//450 1200
                     setPathState(4);
                 }
-                pathTimeout(5000,4);
+                pathTimeout(4500,4);
                 break;
 
 

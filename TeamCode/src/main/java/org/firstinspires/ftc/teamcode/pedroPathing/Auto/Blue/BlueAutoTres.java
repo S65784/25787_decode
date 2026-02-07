@@ -57,7 +57,7 @@ public class BlueAutoTres extends OpMode {
     private final Pose pickup1Pose = new Pose(getPointX, Point1Y, Math.toRadians(180));
 
     private final Pose controlTheGate = new Pose(140-114.93227091633466, 69.4183266932271, Math.toRadians(90));
-    private final Pose theGate = new Pose(140-131.08, 72, Math.toRadians(90));//140-11
+    private final Pose theGate = new Pose(140-132.3, 72, Math.toRadians(90));//140-11
 
     private final Pose controlScorePose1 = new Pose(25.25301204819277, 81.92771084337349, Math.toRadians(32));
     private final Pose scorePose1 = new Pose(40, 99.85542168674698, Math.toRadians(180-35.6));
@@ -100,7 +100,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.173, () -> Algorithm.reverseBlender(-0.916))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -117,7 +117,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -130,7 +130,7 @@ public class BlueAutoTres extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.reverseBlender(-0.93))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -189,7 +189,7 @@ public class BlueAutoTres extends OpMode {
                     Algorithm.sleepForAWhile(210);//450 1200
                     setPathState(4);
                 }
-                pathTimeout(5000,4);
+                pathTimeout(4500,4);
                 break;
 
 

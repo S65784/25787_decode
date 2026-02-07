@@ -36,16 +36,16 @@ public class BlueAutoCinco extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private static final int millitime = 1005;//1400
+    private static final int millitime = 925;//1400
     private static final double lowMaxPower = 0.7;
     private static final double t = 0.3;
     private static final double PATH_TIMEOUT = 5000;
 
 
-    private static final double getPointPreX = 93.9;
+    private static final double getPointPreX = 99;
     private static final double getPointX = 126.5;
     private static final double Point1Y = 82-0.6;
-    private static final double Point2Y = 59.1807228915655;
+    private static final double Point2Y = 58.9;//59.1807228915655
     private static final double Point3Y = 34.5-0.6;
 
 
@@ -55,10 +55,10 @@ public class BlueAutoCinco extends OpMode {
 
     private final Pose controlPickup1Ready = new Pose(140-93.94464033850494, 96.27080394922427, Math.toRadians(180));
     private final Pose pickup1Ready = new Pose(140-getPointPreX, Point1Y, Math.toRadians(180));
-    private final Pose pickup1Pose = new Pose(140-127.3, Point1Y, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(140-128.9, Point1Y, Math.toRadians(180));
 
-    private final Pose controlTheGate = new Pose(140-114.93227091633466, 69.4183266932271, Math.toRadians(180-270));
-    private final Pose theGate = new Pose(10.3, 72, Math.toRadians(180));
+    private final Pose controlTheGate = new Pose(140-104.93227091633466, 69.4183266932271, Math.toRadians(180-270));
+    private final Pose theGate = new Pose(7.5, 72, Math.toRadians(180));//7
 
     private final Pose controlScorePose1 = new Pose(25.25301204819277, 81.92771084337349, Math.toRadians(180-35.6));
     private final Pose scorePose1 = new Pose(40, 99.8, Math.toRadians(180-37.2));//
@@ -67,21 +67,21 @@ public class BlueAutoCinco extends OpMode {
     private final Pose pickup2Ready = new Pose(140-getPointPreX, Point2Y, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(140-129, Point2Y, Math.toRadians(180));//140-135
 
-    private final Pose controlTheGate2 = new Pose(20, 52.91444600280506, Math.toRadians(180-270));
-    private final Pose theGate2 = new Pose(11, 72, Math.toRadians(180));
+    private final Pose controlTheGate2 = new Pose(34, 52.91444600280506, Math.toRadians(180-270));
+    private final Pose theGate2 = new Pose(7.5, 72, Math.toRadians(180));
 
 
     private final Pose controlScorePose2 = new Pose(140-104, 60.3, Math.toRadians(180-32));
     private final Pose scorePose2 = new Pose(140-100, 99.8, Math.toRadians(180-36.5));//
 
-    private final Pose controlPickup3Ready = new Pose(50.41176470588236, 67.45882352941175, Math.toRadians(180-0));
-    private final Pose pickup3Ready = new Pose(140-getPointPreX, Point3Y, Math.toRadians(180-0));
-    private final Pose pickup3Pose = new Pose(140-130, Point3Y, Math.toRadians(180-0));
+    private final Pose controlPickup3Ready = new Pose(50.41176470588236, 67.45882352941175, Math.toRadians(180));
+    private final Pose pickup3Ready = new Pose(140-getPointPreX, Point3Y, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(140-131.3, Point3Y, Math.toRadians(180));
 
-    private final Pose controlScorePose3 = new Pose(140-113, 39, Math.toRadians(180-32));
+    private final Pose controlScorePose3 = new Pose(140-102, 39, Math.toRadians(180-32));
     private final Pose scorePose3 = new Pose(140-100, 99.8, Math.toRadians(180-35));//
 
-    private final Pose end = new Pose(140-94, 108, Math.toRadians(180));
+    private final Pose end = new Pose(140-99, 108, Math.toRadians(180));
 
     private Path scorePreload, runto1, runto2, runto3;
     private PathChain runTheGate, runTheGate2, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, endpath;
@@ -104,7 +104,7 @@ public class BlueAutoCinco extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Ready,pickup1Pose))
                 .setLinearHeadingInterpolation(pickup1Ready.getHeading(), pickup1Pose.getHeading())
-                .addParametricCallback(0.173, () -> Algorithm.reverseBlender(-0.916))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         runTheGate = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup1Pose,controlTheGate, theGate))
@@ -121,7 +121,7 @@ public class BlueAutoCinco extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup2Ready, pickup2Pose))
                 .setLinearHeadingInterpolation(pickup2Ready.getHeading(), pickup2Pose.getHeading())
-                .addParametricCallback(0.23, () -> Algorithm.reverseBlender())
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         runTheGate2 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup2Pose,controlTheGate2, theGate2))
@@ -139,7 +139,7 @@ public class BlueAutoCinco extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup3Ready,pickup3Pose))
                 .setLinearHeadingInterpolation(pickup3Ready.getHeading(), pickup3Pose.getHeading())
-                .addParametricCallback(0.13, () -> Algorithm.reverseBlender(-0.93))
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
         scorePickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup3Pose, controlScorePose3, scorePose3))
@@ -208,7 +208,7 @@ public class BlueAutoCinco extends OpMode {
                     follower.followPath(scorePickup1, true);
                     setPathState(5);
                 }
-                pathTimeout(8000,4);
+                pathTimeout(5000,4);
                 break;
 
             case 5:
@@ -247,11 +247,12 @@ public class BlueAutoCinco extends OpMode {
                     Algorithm.sleepForAWhile(300);//450 360
                     setPathState(90);
                 }
-                pathTimeout(5000,90);
+                pathTimeout(3000,90);
                 break;
 
             case 90:
                 if (!follower.isBusy()) {
+                    Algorithm.sleepForAWhile(203);//2207
                     Algorithm.shootMode2.preShoot();
                     follower.followPath(scorePickup2, true);
                     setPathState(9);
@@ -276,7 +277,7 @@ public class BlueAutoCinco extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.4);
+                    follower.setMaxPower(0.45);
                     Algorithm.draw();
                     follower.followPath(grabPickup3, true);
                     setPathState(12);

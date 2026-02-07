@@ -39,9 +39,9 @@ public class Algorithm {
     public static final double BLENDER_POWER_YI = 1;
     public static final double INTAKE_POWER_YI = 1;
 
-    public static final int TARGET_RPM_ER = 3000;//3000 3300
+    public static final int TARGET_RPM_ER = 2900;//3000 3300
     public static final int ERROR_RANGE_ER = 200;
-    public static final double SERVO_POSITION_ER = 0.73;
+    public static final double SERVO_POSITION_ER = 0.745;
     public static final double BLENDER_POWER_ER = 1;
     public static final double INTAKE_POWER_ER = 1;
 
@@ -51,9 +51,9 @@ public class Algorithm {
     public static final double BLENDER_POWER_SAN = 1;
     public static final double INTAKE_POWER_SAN = 1;
 
-    public static final int TARGET_RPM_SI = 4500;//2950
+    public static final int TARGET_RPM_SI = 4300;//2950
     public static final int ERROR_RANGE_SI = 200;//205
-    public static final double SERVO_POSITION_SI = 0.79;
+    public static final double SERVO_POSITION_SI = 0.9;//0.79
     public static final double BLENDER_POWER_SI = 0.8;
     public static final double INTAKE_POWER_SI = 1;
 
@@ -328,9 +328,12 @@ public class Algorithm {
     }
     public static ShootMode shootMode1 = new ShootMode(TARGET_RPM_YI, ERROR_RANGE_YI, SERVO_POSITION_YI,BLENDER_POWER_YI,INTAKE_POWER_YI,pidClose);
     public static ShootMode shootMode2 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,BLENDER_POWER_ER,INTAKE_POWER_ER,pidClose);
+
     public static ShootMode shootMode3 = new ShootMode(TARGET_RPM_SAN, ERROR_RANGE_SAN, SERVO_POSITION_SAN,BLENDER_POWER_SAN,INTAKE_POWER_SAN,pidClose);
     public static ShootMode shootMode4 = new ShootMode(TARGET_RPM_SI, ERROR_RANGE_SI, SERVO_POSITION_SI,BLENDER_POWER_SI,INTAKE_POWER_SI,pidFar);
-//
+    public static ShootMode shootMode5 = new ShootMode(TARGET_RPM_ER, ERROR_RANGE_ER, SERVO_POSITION_ER,0.4,INTAKE_POWER_ER,pidClose);
+
+    //
     public static void shootOpenLoop(int target_RPM,double blenderPower,double intakePower ,boolean state, boolean yState) {
         if (state) {
             //shooterPID();

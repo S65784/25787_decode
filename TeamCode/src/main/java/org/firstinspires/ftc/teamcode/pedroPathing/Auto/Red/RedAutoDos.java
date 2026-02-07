@@ -54,7 +54,7 @@ public class RedAutoDos extends OpMode {
 //    private final Pose pickup4Pose1 = new Pose(129.1566265060241, 10.216867469879517, Math.toRadians(-42));
 
     private final Pose controlScorePose4 = new Pose(104.09638554216868, 19.46987951807229, Math.toRadians(72));
-    private final Pose scorePose4 = new Pose(92.5, 15, Math.toRadians(68.5));//140-47.5x   117度
+    private final Pose scorePose4 = new Pose(92.5, 15, Math.toRadians(63));//140-47.5x   117度
     private final Pose scorePose5 = new Pose(92.5, 15, Math.toRadians(65));//140-47.5x   117度//69
 
 
@@ -74,8 +74,7 @@ public class RedAutoDos extends OpMode {
 //                .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_1,controlPickup4Pose_2,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .setLinearHeadingInterpolation(pickup4Ready.getHeading(), pickup4Pose.getHeading())
-                .addParametricCallback(0.314, () -> Algorithm.preShooterMove(57,0.09))
-                .addParametricCallback(0.89, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
 //        grabPickup41 = follower.pathBuilder()
 //                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1,pickup4Pose1))
@@ -86,14 +85,14 @@ public class RedAutoDos extends OpMode {
         scorePickup4 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose4))
                 .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose4.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+               // .addParametricCallback(0.21, () -> Algorithm.keep())
 
                 .build();// 🫥
 
         scorePickup5 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose5))
                 .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose5.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+             //   .addParametricCallback(0.21, () -> Algorithm.keep())
 
                 .build();// 🫥
 
@@ -111,13 +110,13 @@ public class RedAutoDos extends OpMode {
 
             case 0:
                 follower.followPath(scorePreload);
-                Algorithm.shootMode4.preShoot();
+                Algorithm.shootMode5.preShoot();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                    Algorithm.shootMode5.shootCheckOnceTime(millitime);
 
                     if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
@@ -164,7 +163,7 @@ public class RedAutoDos extends OpMode {
 
             case 60:
                 if (!follower.isBusy()) {
-                    Algorithm.shootMode4.preShoot();
+                    Algorithm.shootMode5.preShoot();
                     follower.followPath(scorePickup4, true);
                     setPathState(6);
                 }
@@ -173,12 +172,12 @@ public class RedAutoDos extends OpMode {
             case 6:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                    Algorithm.shootMode5.shootCheckOnceTime(millitime);
 
                    if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
 
-                           setPathState(7);//🤎
+                           setPathState(7);
 
 
                     }
@@ -196,7 +195,10 @@ public class RedAutoDos extends OpMode {
                     follower.followPath(runto4);
                     setPathState(31);
                 }
+                pathTimeout(3000,31);
+
                 break;
+
 
             case 31:
                 if (!follower.isBusy()) {
@@ -207,6 +209,8 @@ public class RedAutoDos extends OpMode {
 
                     setPathState(51);
                 }
+                pathTimeout(3000,51);
+
                 break;
 
 //            case 50:
@@ -220,17 +224,20 @@ public class RedAutoDos extends OpMode {
                 if (!follower.isBusy()) {
                     pathTimeout(601);
                     follower.setMaxPower(1);
-                    Algorithm.keep();
+                  //  Algorithm.keep();
                     Algorithm.stopShoot();
                     setPathState(601);
                 }
+                pathTimeout(3000,601);
+
+
 
                 break;
 
             case 601:
                 if (!follower.isBusy()) {
                     pathTimeout(61);
-                    Algorithm.shootMode4.preShoot();
+                    Algorithm.shootMode5.preShoot();
                     follower.followPath(scorePickup5, false);
 
                     setPathState(61);
@@ -240,12 +247,12 @@ public class RedAutoDos extends OpMode {
             case 61:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                    Algorithm.shootMode5.shootTime(millitime);
 
                     if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
 
-                        setPathState(71);//🤎
+                        setPathState(71);
 
 
                     }
@@ -309,6 +316,14 @@ public class RedAutoDos extends OpMode {
     }
     private boolean pathTimeout(int nextState) {
         if (pathTimer.getElapsedTime() > PATH_TIMEOUT) {
+            follower.breakFollowing();   // 强制停止路径
+            setPathState(nextState);     // 直接跳到下一个安全状态
+            return true;
+        }
+        return false;
+    }
+    private boolean pathTimeout(int maxtime, int nextState) {
+        if (pathTimer.getElapsedTime() > maxtime) {
             follower.breakFollowing();   // 强制停止路径
             setPathState(nextState);     // 直接跳到下一个安全状态
             return true;

@@ -78,8 +78,7 @@ public class BlueAutoDos extends OpMode {
 //                .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_1,controlPickup4Pose_2,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .addPath(new BezierCurve(pickup4Ready,controlPickup4Pose_3,controlPickup4Pose_4,pickup4Pose))
                 .setLinearHeadingInterpolation(pickup4Ready.getHeading(), pickup4Pose.getHeading())
-                .addParametricCallback(0.314, () -> Algorithm.preShooterMove(57,0.09))
-                .addParametricCallback(0.89, () -> Algorithm.preShooterMove())
+                .addParametricCallback(0.03, () -> Algorithm.reverseBlender(-1))
                 .build();
 //        grabPickup41 = follower.pathBuilder()
 //                .addPath(new BezierCurve(pickup4Pose,controlPickup4Pose1,pickup4Pose1))
@@ -90,14 +89,14 @@ public class BlueAutoDos extends OpMode {
         scorePickup4 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose4))
                 .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose4.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+               // .addParametricCallback(0.21, () -> Algorithm.keep())
 
                 .build();// 🫥
 
         scorePickup5 = follower.pathBuilder()
                 .addPath(new BezierCurve(pickup4Pose, controlScorePose4, scorePose5))
                 .setLinearHeadingInterpolation(pickup4Pose.getHeading(), scorePose5.getHeading())
-                .addParametricCallback(0.21, () -> Algorithm.keep())
+             //   .addParametricCallback(0.21, () -> Algorithm.keep())
 
                 .build();// 🫥
 
@@ -121,7 +120,7 @@ public class BlueAutoDos extends OpMode {
             case 1:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                        Algorithm.shootMode4.shootCheckOnceTime(millitime);
 
                     if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
@@ -177,7 +176,7 @@ public class BlueAutoDos extends OpMode {
             case 6:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                    Algorithm.shootMode4.shootCheckOnceTime(millitime);
 
                     if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
@@ -224,7 +223,7 @@ public class BlueAutoDos extends OpMode {
                 if (!follower.isBusy()) {
                     pathTimeout(601);
                     follower.setMaxPower(1);
-                    Algorithm.keep();
+                  //  Algorithm.keep();
                     Algorithm.stopShoot();
                     setPathState(601);
                 }
@@ -244,7 +243,7 @@ public class BlueAutoDos extends OpMode {
             case 61:
                 if (!follower.isBusy()) {
 
-                    Algorithm.shootMode4.shootTime(millitime);
+                    Algorithm.shootMode4.shootCheckOnceTime(millitime);
 
                     if(pathTimer.getElapsedTime() > millitime + ADDITIONAL_TIME) {
                         follower.breakFollowing();   // 强制停止路径
